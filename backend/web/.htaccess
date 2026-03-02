@@ -1,6 +1,8 @@
 RewriteEngine On
-# If a directory or a file exists, use the request directly
+
+RewriteBase /ba5cop/backend/web/
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-# Otherwise forward the request to inbox.php
-RewriteRule . index.php
+
+RewriteRule ^ index.php [L,QSA]

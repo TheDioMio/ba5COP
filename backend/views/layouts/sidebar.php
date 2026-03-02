@@ -1,3 +1,8 @@
+<?php
+
+use hail812\adminlte\widgets\Menu;
+
+?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
@@ -33,45 +38,26 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <?php
-            echo \hail812\adminlte\widgets\Menu::widget([
+            echo Menu::widget([
                 'items' => [
-                    [
-                        'label' => 'Starter Pages',
-                        'icon' => 'tachometer-alt',
-                        'badge' => '<span class="right badge badge-info">2</span>',
-                        'items' => [
-                            ['label' => 'Active Page', 'url' => ['site/index'], 'iconStyle' => 'far'],
-                            ['label' => 'Inactive Page', 'iconStyle' => 'far'],
-                        ]
-                    ],
-                    ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
-                    ['label' => 'Yii2 PROVIDED', 'header' => true],
-                    ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
-                    ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
-                    ['label' => 'Debug', 'icon' => 'bug', 'url' => ['/debug'], 'target' => '_blank'],
-                    ['label' => 'MULTI LEVEL EXAMPLE', 'header' => true],
-                    ['label' => 'Level1'],
-                    [
-                        'label' => 'Level1',
-                        'items' => [
-                            ['label' => 'Level2', 'iconStyle' => 'far'],
-                            [
-                                'label' => 'Level2',
-                                'iconStyle' => 'far',
-                                'items' => [
-                                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle'],
-                                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle'],
-                                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle']
-                                ]
-                            ],
-                            ['label' => 'Level2', 'iconStyle' => 'far']
-                        ]
-                    ],
-                    ['label' => 'Level1'],
-                    ['label' => 'LABELS', 'header' => true],
-                    ['label' => 'Important', 'iconStyle' => 'far', 'iconClassAdded' => 'text-danger'],
-                    ['label' => 'Warning', 'iconClass' => 'nav-icon far fa-circle text-warning'],
-                    ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],
+                    ['label' => 'Página Inicial', 'url' => ['site/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Branch', 'url' => ['branch/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Incident Type', 'url' => ['incident-type/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Location Type', 'url' => ['location-type/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Lodging Entry', 'url' => ['lodging-entry/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Lodging Site', 'url' => ['lodging-site/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Location', 'url' => ['location/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Task', 'url' => ['task/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Incident', 'url' => ['incident/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Decision Log', 'url' => ['decision-log/index'], 'iconStyle' => 'far'],
+                    ['label' => 'User', 'url' => ['user/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Priority', 'url' => ['priority/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Request', 'url' => ['request/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Entity', 'url' => ['entity/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Entity Type', 'url' => ['entity-type/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Status Type', 'url' => ['status-type/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Entity Update', 'url' => ['entity-update/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'iconStyle' => 'far'],
                 ],
             ]);
             ?>
