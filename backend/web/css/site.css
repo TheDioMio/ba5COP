@@ -88,3 +88,48 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+
+
+/*
+
+FIM CSS DEFAULT
+
+*/
+
+
+/* ===== SECÇÕES COLORIDAS (neutras slate) ===== */
+.nav-sidebar li.nav-ops > a.nav-link { background:#2f3e4d !important; color:#fff !important; }
+.nav-sidebar li.nav-loc > a.nav-link { background:#34495e !important; color:#fff !important; }
+.nav-sidebar li.nav-log > a.nav-link { background:#3b4a59 !important; color:#fff !important; }
+.nav-sidebar li.nav-admin > a.nav-link { background:#2d3436 !important; color:#fff !important; }
+.nav-sidebar li.nav-config > a.nav-link { background:#495057 !important; color:#fff !important; }
+
+.nav-sidebar li[class*="nav-"] > a.nav-link:hover {
+    filter: brightness(1.05);
+}
+
+/* ícones + setas */
+.nav-sidebar li.nav-ops > a.nav-link i,
+.nav-sidebar li.nav-loc > a.nav-link i,
+.nav-sidebar li.nav-log > a.nav-link i,
+.nav-sidebar li.nav-admin > a.nav-link i,
+.nav-sidebar li.nav-config > a.nav-link i {
+    color:#fff !important;
+}
+
+/* hover */
+.nav-sidebar li.nav-ops > a.nav-link:hover,
+.nav-sidebar li.nav-loc > a.nav-link:hover,
+.nav-sidebar li.nav-log > a.nav-link:hover,
+.nav-sidebar li.nav-admin > a.nav-link:hover,
+.nav-sidebar li.nav-config > a.nav-link:hover {
+    filter: brightness(0.95);
+}
+
+
+/* ===== LOGO DO DASHBOARD =====*/
+.img-logo-dashboard {
+    max-width: 70px;
+    max-height: 70px;
+}

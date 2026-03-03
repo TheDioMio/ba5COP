@@ -55,11 +55,22 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
+    public function beforeAction($action) {
+        //Isto executa a lógica padrão do Controller
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        //Lógica para passar o utilizador para o Layout
+        //Usamos Yii::$app->user->identity que já é seguro (retorna null se não houver login)
+        $userLogado = Yii::$app->user->identity;
+
+        //Define uma variável global do Layout, neste caso com o utilizador logado (View Params)
+        //Como é impossível um guest aceder à Dashboard, não há necessidade de tratar do null que isto pode devolver.
+        $this->view->params['userLogado'] = $userLogado;
+
+        return true;
+    }
     public function actionIndex()
     {
         return $this->render('index');

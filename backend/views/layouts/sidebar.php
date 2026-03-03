@@ -1,13 +1,19 @@
 <?php
 
 use hail812\adminlte\widgets\Menu;
+use yii\helpers\Html;
+
+$userLogado = Yii::$app->user->identity;
 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-        <img src="<?=$assetDir?>/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">AdminLTE 3</span>
+    <a href="#" class="brand-link py-0">
+        <?= Html::img('@web/img/BA5_Brasao', [
+            'alt' => 'Brasao BA5',
+            'class' => 'img-logo-dashboard'
+        ]) ?>
+        <span class="brand-text font-weight-light"><?=Html::encode('Administração')?></span>
     </a>
 
     <!-- Sidebar -->
@@ -18,7 +24,14 @@ use hail812\adminlte\widgets\Menu;
                 <img src="<?=$assetDir?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Alexander Pierce</a>
+                <?= Html::a(
+                    $userLogado->username, //Texto que aparece no botão (nome do dono)
+                    ['user/view', 'id' => $userLogado->id], //A rota para onde vai (backend/user/view)
+                    [
+                        'target' => '_blank',
+                    ]
+                );
+                ?>
             </div>
         </div>
 
@@ -40,24 +53,70 @@ use hail812\adminlte\widgets\Menu;
             <?php
             echo Menu::widget([
                 'items' => [
-                    ['label' => 'Página Inicial', 'url' => ['site/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Branch', 'url' => ['branch/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Incident Type', 'url' => ['incident-type/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Location Type', 'url' => ['location-type/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Lodging Entry', 'url' => ['lodging-entry/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Lodging Site', 'url' => ['lodging-site/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Location', 'url' => ['location/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Task', 'url' => ['task/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Incident', 'url' => ['incident/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Decision Log', 'url' => ['decision-log/index'], 'iconStyle' => 'far'],
-                    ['label' => 'User', 'url' => ['user/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Priority', 'url' => ['priority/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Request', 'url' => ['request/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Entity', 'url' => ['entity/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Entity Type', 'url' => ['entity-type/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Status Type', 'url' => ['status-type/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Entity Update', 'url' => ['entity-update/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'iconStyle' => 'far'],
+                    // DASHBOARD
+                    ['label' => 'Página Inicial', 'url' => ['site/index'], 'icon' => 'home'],
+
+                    //OPERAÇÕES
+                    [
+                        'label' => 'Operações',
+                        'icon' => 'tachometer-alt',
+                        'options' => ['class' => 'nav-item nav-ops'], //Dá a cor
+                        'items' => [
+                            ['label' => 'Incidents', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
+                            ['label' => 'Tasks', 'url' => ['task/index'], 'icon' => 'tasks'],
+                            ['label' => 'Requests', 'url' => ['request/index'], 'icon' => 'inbox'],
+                            ['label' => 'Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
+                        ],
+                    ],
+
+                    // LOCALIZAÇÃO / TERRENO
+                    [
+                        'label' => 'Localização',
+                        'icon' => 'map-marked-alt',
+                        'options' => ['class' => 'nav-item nav-loc'],
+                        'items' => [
+                            ['label' => 'Locations', 'url' => ['location/index'], 'icon' => 'map-marker-alt'],
+                            ['label' => 'Location Types', 'url' => ['location-type/index'], 'icon' => 'tags'],
+                            ['label' => 'Branches', 'url' => ['branch/index'], 'icon' => 'sitemap'],
+                        ],
+                    ],
+
+                    // LOGÍSTICA
+                    [
+                        'label' => 'Logística',
+                        'icon' => 'warehouse',
+                        'options' => ['class' => 'nav-item nav-log'],
+                        'items' => [
+                            ['label' => 'Lodging Sites', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
+                            ['label' => 'Lodging Entries', 'url' => ['lodging-entry/index'], 'icon' => 'clipboard-check'],
+                        ],
+                    ],
+
+                    // ADMINISTRAÇÃO
+                    [
+                        'label' => 'Administração',
+                        'icon' => 'users-cog',
+                        'options' => ['class' => 'nav-item nav-admin'],
+                        'items' => [
+                            ['label' => 'Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
+                            ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'icon' => 'history'],
+                            ['label' => 'Entity Updates', 'url' => ['entity-update/index'], 'icon' => 'exchange-alt'],
+                            ['label' => 'Entities', 'url' => ['entity/index'], 'icon' => 'database'],
+                        ],
+                    ],
+
+                    // CONFIGURAÇÃO
+                    [
+                        'label' => 'Configuração',
+                        'icon' => 'cogs',
+                        'options' => ['class' => 'nav-item nav-config'],
+                        'items' => [
+                            ['label' => 'Priorities', 'url' => ['priority/index'], 'icon' => 'bolt'],
+                            ['label' => 'Status Types', 'url' => ['status-type/index'], 'icon' => 'toggle-on'],
+                            ['label' => 'Incident Types', 'url' => ['incident-type/index'], 'icon' => 'list'],
+                            ['label' => 'Entity Types', 'url' => ['entity-type/index'], 'icon' => 'layer-group'],
+                        ],
+                    ],
                 ],
             ]);
             ?>

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\User;
 use app\models\UserSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -30,20 +31,16 @@ class UserController extends Controller
             ]
         );
     }
-
-    /**
-     * Lists all User models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $userLogado = Yii::$app->user->identity;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'userLogado' => $userLogado,
         ]);
     }
 
