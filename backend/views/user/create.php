@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <?= $this->render('_form', [
                 'model' => $model,
-                //'roles' => $roles,
+                'roles' => $roles,
             ]) ?>
         </div>
     </div>

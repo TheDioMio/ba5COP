@@ -36,9 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'username',
                     'email:email',
                     [
-                        'label' => 'Permissões',
                         'attribute' => 'role_description',
-                        'value' => 'role.description',
+                        'label' => 'Role',
+                        'value' => function ($model) {
+                            $rolesByUser = Yii::$app->authManager->getRolesByUser($model->id);
+                            $role = reset($rolesByUser); // 1 role por user
+                            return $role ? $role->description : 'ERRO: SEM ROLE';
+                        },
+                        'filter' => $roleFilter, // dropdown
                     ],
                     [
                         'label' => 'Status',
@@ -95,7 +100,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 }
                                 return null;
                             },
-                            // Podes fazer o mesmo para 'update' ou 'view' se precisares
                         ],
                     ],
                 ],

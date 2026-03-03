@@ -2,9 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\UserForm;
+use common\models\Role;
 use common\models\User;
 use app\models\UserSearch;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -37,10 +40,14 @@ class UserController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
         $userLogado = Yii::$app->user->identity;
 
+        $roles = Yii::$app->authManager->getRoles();
+        $roleFilter = ArrayHelper::map($roles, 'description', 'description');
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'userLogado' => $userLogado,
+            'roleFilter' => $roleFilter,
         ]);
     }
 
@@ -64,18 +71,16 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        $model = new User();
+        $form = new UserForm();
+        $roles = Yii::$app->authManager->getRoles();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($form->load(Yii::$app->request->post()) && $form->save()) {
+            return $this->redirect(['view', 'id' => $form->id]);
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'model' => $form,
+            'roles' => $roles,
         ]);
     }
 
@@ -88,14 +93,23 @@ class UserController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $user = User::findOne($id);
+        if (!$user) {
+            throw new \yii\web\NotFoundHttpException();
+        }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $form = new UserForm();
+        $form->setUser($user);
+
+        $roles = Yii::$app->authManager->getRoles();
+
+        if ($form->load(Yii::$app->request->post()) && $form->save()) {
+            return $this->redirect(['view', 'id' => $form->id]);
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model' => $form,
+            'roles' => $roles,
         ]);
     }
 
@@ -127,5 +141,22 @@ class UserController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionUpdateStatus($id){
+        $model = $this->findModel($id);
+
+        if ($model->status == User::STATUS_ACTIVE) {
+            $model->status = User::STATUS_INACTIVE;
+            Yii::$app->session->setFlash('warning', 'Utilizador desativado!');
+        } else {
+            $model->status = User::STATUS_ACTIVE;
+            Yii::$app->session->setFlash('success', 'Utilizador ativado!');
+        }
+
+        $model->save(false); //tem que estar false, se não explode
+
+        return $this->redirect(Yii::$app->request->referrer ?: ['index']);
     }
 }

@@ -28,6 +28,8 @@ class User extends ActiveRecord implements IdentityInterface
     public const STATUS_DELETED = 0;
     public const STATUS_INACTIVE = 9;
     public const STATUS_ACTIVE = 10;
+
+    public $password;
     /**
      * {@inheritdoc}
      */
@@ -54,12 +56,21 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            ['password', 'required', 'on' => 'create'], // Password obrigatória ao criar
+            ['password', 'string', 'min' => 6], //Mínimo tamanho de 6
         ];
     }
 
     /**
      * {@inheritdoc}
      */
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['create'] = ['username', 'email', 'password'];
+        return $scenarios;
+    }
     public static function findIdentity($id)
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);

@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,7 +13,19 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'email')->textInput() ?>
+    <?= $form->field($model, 'username')->textInput() ?>
+
+    <?= $form->field($model, 'password')
+        ->passwordInput()?>
+
+    <?= $form->field($model, 'role_name')
+        ->dropDownList(
+            ArrayHelper::map($roles, 'name', 'description'),
+            ['prompt' => 'Selecione o role']
+        ) ?>
+
+    <?= $form->field($model, 'status')->dropDownList([10 => 'Ativo', 9 => 'Inativo']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
