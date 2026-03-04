@@ -51,24 +51,56 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single User model.
-     * @param int $id
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
+    public function actionView($id) {
+        $model = $this->findModel($id);
+
+        $statusLabel = function ($status) {
+            return match ((int)$status) {
+                10 => ['label' => 'Ativo', 'class' => 'bg-success'],
+                9  => ['label' => 'Inativo', 'class' => 'bg-warning text-dark'],
+                0  => ['label' => 'Eliminado', 'class' => 'bg-danger'],   //SOFT DELETE A SER IMPLEMENTADO
+                default => ['label' => 'Desconhecido', 'class' => 'bg-secondary'],
+            };
+        };
+
+        // Description "bonita" da role (RBAC)
+        $getUserRoleDescription = function ($userId) {
+            $auth = Yii::$app->authManager;
+
+            $roles = $auth->getRolesByUser($userId);
+            if (empty($roles)) {
+                return null;
+            }
+
+            $firstRole = reset($roles);
+            $roleObj = $auth->getRole($firstRole->name);
+
+            return $roleObj?->description ?: $firstRole->name;
+        };
+
+        // Role ID (name técnico da role no RBAC)
+        $getUserRoleName = function ($userId) {
+            $auth = Yii::$app->authManager;
+
+            $roles = $auth->getRolesByUser($userId);
+            if (empty($roles)) {
+                return null;
+            }
+
+            $firstRole = reset($roles);
+            return $firstRole->name;
+        };
+
+        $badge = $statusLabel($model->status);
+        $roleDesc = $getUserRoleDescription($model->id);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'badge' => $badge,
+            'roleDesc' => $roleDesc,
         ]);
     }
 
-    /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
         $form = new UserForm();
@@ -84,13 +116,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $user = User::findOne($id);
@@ -113,13 +138,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();

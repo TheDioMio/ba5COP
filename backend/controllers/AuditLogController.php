@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\AuditLog;
 use app\models\AuditLogSearch;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -68,6 +69,8 @@ class AuditLogController extends Controller
     public function actionCreate()
     {
         $model = new AuditLog();
+        $usersArray = User::dropDown();
+
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -79,6 +82,7 @@ class AuditLogController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'usersArray' => $usersArray,
         ]);
     }
 
@@ -92,6 +96,7 @@ class AuditLogController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $usersArray = User::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,6 +104,7 @@ class AuditLogController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'usersArray' => $usersArray,
         ]);
     }
 

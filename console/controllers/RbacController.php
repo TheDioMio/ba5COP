@@ -119,7 +119,7 @@ class RbacController extends Controller
 
         // -------------------- ASSIGNMENTS --------------------
         // Dá admin ao user id=1
-        $auth->assign($admin, 1);
+        $auth->assign($admin, 4);
     }
 
     private function addPermission($auth, string $name, string $description)
