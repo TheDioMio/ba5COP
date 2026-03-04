@@ -1,6 +1,19 @@
 <?php
+use common\assets\CopMapAsset;
+use yii\helpers\Url;
+use yii\web\View;
+
+$featuresIndexUrl = Url::to(['/map-feature/index']); // AINDA TENHO QUE CRIAR O CONTROLLER
+
+$asset = CopMapAsset::register($this);
+$imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
+
+$featuresIndexUrl = Url::to(['/map-feature/index']);
+
+
 $this->title = 'Starter Page';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
+
 ?>
 <div class="container-fluid">
     <div class="row">
@@ -130,5 +143,23 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 'loadingStyle' => true
             ]) ?>
         </div>
+
+        <div id="map" style="height: calc(100vh - 140px); width: 100%;"></div>
     </div>
 </div>
+
+
+<?php
+$this->registerJs(<<<JS
+initCopMap({
+  elId: 'map',
+  mode: 'image',
+  imageUrl: '{$imageUrl}',
+  imageWidth: 1066,
+  imageHeight: 701,
+  minZoom: -2,
+  maxZoom: 4,
+  showCoordsOnClick: true
+});
+JS, View::POS_END);
+?>
