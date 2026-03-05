@@ -13,6 +13,7 @@ class CopMapAsset extends AssetBundle
 
     public $depends = [
         LeafletAsset::class,
+        LeafletDrawAsset::class,
     ];
 
     public $jsOptions = ['position' => \yii\web\View::POS_END];

@@ -1,68 +1,130 @@
-// Inicializador único do mapa (backend e frontend chamam isto)
 window.initCopMap = function (opts) {
     const elId = opts.elId || 'map';
 
-    // ====== MODO IMAGEM (planta) ======
-    if (opts.mode === 'image') {
-        const IMG_W = Number(opts.imageWidth);
-        const IMG_H = Number(opts.imageHeight);
-        const imageUrl = opts.imageUrl;
+    if (opts.mode !== 'image') {
+        throw new Error('Este initCopMap está preparado para mode=image (planta).');
+    }
 
-        const map = L.map(elId, {
-            crs: L.CRS.Simple,
-            minZoom: opts.minZoom ?? -2,
-            maxZoom: opts.maxZoom ?? 4,
-            zoomControl: true,
+    const IMG_W = Number(opts.imageWidth);
+    const IMG_H = Number(opts.imageHeight);
+
+    const map = L.map(elId, {
+        crs: L.CRS.Simple,
+        minZoom: opts.minZoom ?? -2,
+        maxZoom: opts.maxZoom ?? 4,
+        zoomControl: true
+    });
+
+    const bounds = [[0, 0], [IMG_H, IMG_W]];
+    L.imageOverlay(opts.imageUrl, bounds).addTo(map);
+    map.fitBounds(bounds, { animate: false });
+    map.setMaxBounds(bounds);
+
+    setTimeout(() => map.invalidateSize(true), 200);
+
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    const drawControl = new L.Control.Draw({
+        edit: { featureGroup: drawnItems },
+        draw: {
+            marker: true,
+            polyline: true,
+            polygon: true,
+            rectangle: true,
+            circle: false,
+            circlemarker: false,
+        }
+    });
+    map.addControl(drawControl);
+
+    function apiFetch(url, payload) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (opts.csrfToken) headers['X-CSRF-Token'] = opts.csrfToken;
+
+        return fetch(url, {
+            method: 'POST',
+            headers,
+            credentials: 'same-origin',
+            body: payload ? JSON.stringify(payload) : '{}'
+        }).then(async r => {
+            if (!r.ok) throw new Error(await r.text());
+            return r.json();
+        });
+    }
+
+    async function loadLocations() {
+        const res = await fetch(opts.locationsIndexUrl, { credentials: 'same-origin' });
+        const fc = await res.json();
+
+        drawnItems.clearLayers();
+
+        L.geoJSON(fc, {
+            onEachFeature: (feature, layer) => {
+                layer._locationId = feature.id;
+                const name = feature?.properties?.name ?? `Location #${feature.id}`;
+                layer.bindPopup(name);
+            }
+        }).eachLayer(l => drawnItems.addLayer(l));
+    }
+
+    // CREATE
+    map.on(L.Draw.Event.CREATED, async (e) => {
+        const layer = e.layer;
+        drawnItems.addLayer(layer);
+
+        const feature = layer.toGeoJSON(); // Feature
+        try {
+            const out = await apiFetch(opts.locationsCreateUrl, {
+                name: 'Novo local',
+                location_type_id: 3,  // POINT
+                status_type_id: 1,    // GREEN
+                geometry: feature.geometry
+            });
+            layer._locationId = out.id;
+        } catch (err) {
+            console.error(err);
+            drawnItems.removeLayer(layer);
+            alert('Erro a guardar location.');
+        }
+    });
+
+    // UPDATE
+    map.on(L.Draw.Event.EDITED, async (e) => {
+        const promises = [];
+        e.layers.eachLayer(layer => {
+            if (!layer._locationId) return;
+            const feature = layer.toGeoJSON();
+            const url = opts.locationsUpdateUrl.replace('__ID__', layer._locationId);
+            promises.push(apiFetch(url, { geometry: feature.geometry }));
         });
 
-        const bounds = [[0, 0], [IMG_H, IMG_W]];
-        L.imageOverlay(imageUrl, bounds).addTo(map);
-        map.fitBounds(bounds, { animate: false });
-        map.setMaxBounds(bounds);
-
-        // AdminLTE/layout: garantir render correto
-        setTimeout(() => map.invalidateSize(true), 200);
-        window.addEventListener('resize', () => map.invalidateSize(true));
-
-        if (opts.showCoordsOnClick) {
-            map.on('click', (e) => {
-                const x = Math.round(e.latlng.lng);
-                const y = Math.round(e.latlng.lat);
-                L.popup()
-                    .setLatLng(e.latlng)
-                    .setContent(`<b>x</b>: ${x} &nbsp; <b>y</b>: ${y}`)
-                    .openOn(map);
-            });
+        try {
+            await Promise.all(promises);
+        } catch (err) {
+            console.error(err);
+            alert('Erro a atualizar. Faz refresh.');
         }
+    });
 
-        const layers = {
-            features: L.layerGroup().addTo(map),
-        };
+    // DELETE
+    map.on(L.Draw.Event.DELETED, async (e) => {
+        const promises = [];
+        e.layers.eachLayer(layer => {
+            if (!layer._locationId) return;
+            const url = opts.locationsDeleteUrl.replace('__ID__', layer._locationId);
+            promises.push(apiFetch(url));
+        });
 
-        return { map, layers, reload: async () => {} };
-    }
+        try {
+            await Promise.all(promises);
+        } catch (err) {
+            console.error(err);
+            alert('Erro a apagar. Faz refresh.');
+        }
+    });
 
-    // ====== MODO OSM (lat/lng) ======
-    const center = opts.center || [38.65, -9.10];
-    const zoom = opts.zoom || 16;
+    loadLocations();
 
-    const map = L.map(elId).setView(center, zoom);
-
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 20,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const layers = { features: L.layerGroup().addTo(map) };
-
-    async function loadFeatures() {
-        if (!opts.featuresIndexUrl) return;
-        const res = await fetch(opts.featuresIndexUrl, { credentials: 'same-origin' });
-        const data = await res.json();
-        layers.features.clearLayers();
-        data.forEach(f => L.geoJSON(f.geojson).addTo(layers.features));
-    }
-
-    loadFeatures();
-    return { map, layers, reload: loadFeatures };
+    return { map, reload: loadLocations };
 };

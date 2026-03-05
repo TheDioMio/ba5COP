@@ -3,13 +3,20 @@ use common\assets\CopMapAsset;
 use yii\helpers\Url;
 use yii\web\View;
 
-$featuresIndexUrl = Url::to(['/map-feature/index']); // AINDA TENHO QUE CRIAR O CONTROLLER
+$featuresIndexUrl = Url::to(['/map-feature/index']);
 
 $asset = CopMapAsset::register($this);
 $imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
 
 $featuresIndexUrl = Url::to(['/map-feature/index']);
 
+// urls
+$idx = Url::to(['/location/map-index']);
+$crt = Url::to(['/location/map-create']);
+$upd = Url::to(['/location/map-update', 'id' => '__ID__']);
+$del = Url::to(['/location/map-delete', 'id' => '__ID__']);
+
+$csrf = Yii::$app->request->csrfToken;
 
 $this->title = 'Starter Page';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
@@ -144,22 +151,29 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             ]) ?>
         </div>
 
-        <div id="map" style="height: calc(100vh - 140px); width: 100%;"></div>
+        <div id="map" style="height: calc(80vh - 220px); min-height: 600px;"></div>
     </div>
 </div>
 
 
 <?php
 $this->registerJs(<<<JS
-initCopMap({
-  elId: 'map',
-  mode: 'image',
-  imageUrl: '{$imageUrl}',
-  imageWidth: 1066,
-  imageHeight: 701,
-  minZoom: -2,
-  maxZoom: 4,
-  showCoordsOnClick: true
+document.addEventListener('DOMContentLoaded', function () {
+  initCopMap({
+    elId: 'map',
+    mode: 'image',
+    imageUrl: '{$imageUrl}',
+    imageWidth: 1066,
+    imageHeight: 701,
+    minZoom: -2,
+    maxZoom: 4,
+
+    csrfToken: '{$csrf}',
+    locationsIndexUrl: '{$idx}',
+    locationsCreateUrl: '{$crt}',
+    locationsUpdateUrl: '{$upd}',
+    locationsDeleteUrl: '{$del}',
+  });
 });
 JS, View::POS_END);
 ?>

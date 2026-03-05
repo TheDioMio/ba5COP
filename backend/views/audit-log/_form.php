@@ -14,14 +14,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'user_id')->dropDownList(
             $usersArray,
-            ['prompt' => 'Selecione o Utilizador...']
+            ['prompt' => 'Selecione o utilizador...']
     )->label('Utilizador') ?>
+
+    <?= $form->field($model, 'entity_id')->dropDownList(
+        $entitiesArray,
+        ['prompt' => 'Selecione a untidade...']
+    )->label('Entidade') ?>
 
     <?= $form->field($model, 'action')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'entity_id')->textInput() ?>
-
-    <?= $form->field($model, 'occurred_at')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
