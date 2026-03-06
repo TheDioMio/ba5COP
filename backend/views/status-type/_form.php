@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'entity_type_id')->textInput() ?>
+    <?= $form->field($model, 'entity_type_id')->dropDownList($arrayEntityTypes)->label('Tipo de Entidade') ?>
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 

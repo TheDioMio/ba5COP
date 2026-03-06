@@ -10,36 +10,48 @@ use yii\grid\GridView;
 /** @var app\models\StatusTypeSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Status Types';
+$this->title = 'Gestão de Tipos de Status';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="status-type-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Status Type', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'entity_type_id',
-            'description',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, StatusType $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+<div class="status-type-index container-fluid">
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header">
+            <div class="card-tools float-right">
+                <?= Html::a('<i class="fas fa-plus-circle"></i>',
+                    ['create'],
+                    [
+                        'class' => 'btn btn-success',
+                        'title' => 'Criar',
+                    ])
+                ?>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'layout' => "{items}\n{summary}\n{pager}",
+                'columns' => [
+                    [
+                        'label' => 'Nome Tipo de Entidade',
+                        'attribute' => 'entity_name',
+                        'value' => 'entityType.name',
+                    ],
+                    [
+                        'label' => 'Nome do Status',
+                        'attribute' => 'status_name',
+                        'value' => 'description',
+                    ],
+                    [
+                        'class' => ActionColumn::className(),
+                        'template' => '{update} {delete}',
+                        'urlCreator' => function ($action, StatusType $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
 </div>

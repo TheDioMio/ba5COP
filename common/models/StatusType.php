@@ -19,8 +19,6 @@ use Yii;
  */
 class StatusType extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -49,8 +47,8 @@ class StatusType extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'entity_type_id' => 'Entity Type ID',
-            'description' => 'Description',
+            'entity_type_id' => 'ID do Tipo de Entidade',
+            'description' => 'Nome',
         ];
     }
 
@@ -103,5 +101,4 @@ class StatusType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Task::class, ['status_type_id' => 'id']);
     }
-
 }

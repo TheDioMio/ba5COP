@@ -10,35 +10,39 @@ use yii\grid\GridView;
 /** @var app\models\EntityTypeSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Entity Types';
+$this->title = 'Gestão do Tipo de Entidades';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="entity-type-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Entity Type', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'name',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, EntityType $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+<div class="entity-type-index container-fluid">
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header">
+            <div class="card-tools float-right">
+                <?= Html::a('<i class="fas fa-plus-circle"></i>',
+                    ['create'],
+                    [
+                        'class' => 'btn btn-success',
+                        'title' => 'Criar',
+                    ])
+                ?>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'layout' => "{items}\n{summary}\n{pager}",
+                'columns' => [
+                    'name',
+                    [
+                        'template' => '{update} {delete}',
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, EntityType $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
 </div>

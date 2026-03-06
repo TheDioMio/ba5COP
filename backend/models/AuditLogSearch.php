@@ -44,6 +44,7 @@ class AuditLogSearch extends AuditLog
         $query = AuditLog::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['entity']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

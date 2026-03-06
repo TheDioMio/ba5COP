@@ -138,4 +138,26 @@ class Entity extends \yii\db\ActiveRecord
 
         return ArrayHelper::map($rows, 'id', 'id');
     }
+
+    /**
+     * Converte de id para nome contreto da entidade
+     * [id => task/incident/request.title]
+     */
+
+    public function getEntityName()
+    {
+        if ($task = Task::find()->where(['entity_id' => $this->id])->one()) {
+            return $task->title;
+        }
+
+        if ($incident = Incident::find()->where(['entity_id' => $this->id])->one()) {
+            return $incident->title;
+        }
+
+        if ($request = Request::find()->where(['entity_id' => $this->id])->one()) {
+            return $request->title;
+        }
+
+        return null;
+    }
 }

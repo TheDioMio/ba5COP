@@ -42,7 +42,7 @@ class IncidentType extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'description' => 'Description',
+            'description' => 'Nome',
         ];
     }
 

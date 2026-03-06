@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "entity_type".
@@ -43,7 +44,7 @@ class EntityType extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Nome',
         ];
     }
 
@@ -56,5 +57,21 @@ class EntityType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(StatusType::class, ['entity_type_id' => 'id']);
     }
+
+    /**
+     * Lista de tipo de entidades para dropdown
+     * [id => name]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'name'])
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'name');
+    }
+
 
 }

@@ -18,8 +18,6 @@ use Yii;
  */
 class AuditLog extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -50,10 +48,10 @@ class AuditLog extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'action' => 'Action',
-            'entity_id' => 'Entity ID',
-            'occurred_at' => 'Occurred At',
+            'user_id' => 'ID do Utilizador',
+            'action' => 'Ação',
+            'entity_id' => 'ID da Entidade',
+            'occurred_at' => 'Ocorreu às',
         ];
     }
 
@@ -76,5 +74,4 @@ class AuditLog extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
-
 }
