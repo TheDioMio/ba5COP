@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $location_type_id
  * @property string $name
+ * @property string|null $notes
  * @property string $geometry
  * @property int $status_type_id
  * @property string $updated_at
@@ -40,11 +41,13 @@ class Location extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['notes'], 'default', 'value' => null],
             [['location_type_id', 'name', 'geometry', 'status_type_id', 'entity_id'], 'required'],
             [['location_type_id', 'status_type_id', 'entity_id'], 'integer'],
             [['geometry'], 'string'],
             [['updated_at'], 'safe'],
             [['name'], 'string', 'max' => 25],
+            [['notes'], 'string', 'max' => 255],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['location_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => LocationType::class, 'targetAttribute' => ['location_type_id' => 'id']],
             [['status_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status_type_id' => 'id']],
@@ -60,6 +63,7 @@ class Location extends \yii\db\ActiveRecord
             'id' => 'ID',
             'location_type_id' => 'Location Type ID',
             'name' => 'Name',
+            'notes' => 'Notes',
             'geometry' => 'Geometry',
             'status_type_id' => 'Status Type ID',
             'updated_at' => 'Updated At',

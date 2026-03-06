@@ -143,22 +143,18 @@ class LocationController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $rows = (new Query())
+        $rows = (new \yii\db\Query())
             ->from('location')
-            ->select(['id','name','location_type_id','status_type_id','geometry'])
+            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
             ->all();
 
         $features = [];
 
         foreach ($rows as $r) {
-            $raw = $r['geometry'];
+            $geom = json_decode($r['geometry'], true);
 
-            // tenta JSON normal
-            $geom = json_decode($raw, true);
-
-            // fallback: JSON escapado tipo {\"type\":...}
-            if (!$geom && is_string($raw)) {
-                $geom = json_decode(stripslashes($raw), true);
+            if (!$geom && is_string($r['geometry'])) {
+                $geom = json_decode(stripslashes($r['geometry']), true);
             }
 
             if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
@@ -170,6 +166,7 @@ class LocationController extends Controller
                 'id' => (int)$r['id'],
                 'properties' => [
                     'name' => $r['name'],
+                    'notes' => $r['notes'],
                     'location_type_id' => (int)$r['location_type_id'],
                     'status_type_id' => (int)$r['status_type_id'],
                 ],
@@ -177,7 +174,10 @@ class LocationController extends Controller
             ];
         }
 
-        return ['type' => 'FeatureCollection', 'features' => $features];
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
     }
 
     public function actionMapCreate()
@@ -185,32 +185,36 @@ class LocationController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $data = json_decode(Yii::$app->request->getRawBody(), true);
-        if (!$data) throw new BadRequestHttpException('JSON inválido.');
+        if (!$data) {
+            throw new \yii\web\BadRequestHttpException('JSON inválido.');
+        }
 
         $name = trim((string)($data['name'] ?? 'Novo local'));
-        $locationTypeId = (int)($data['location_type_id'] ?? 3); // POINT
-        $statusTypeId = (int)($data['status_type_id'] ?? 1);     // GREEN
+        $notes = trim((string)($data['notes'] ?? '')) ?: null;
+        $locationTypeId = (int)($data['location_type_id'] ?? 3);
+        $statusTypeId = (int)($data['status_type_id'] ?? 1);
         $geometry = $data['geometry'] ?? null;
 
         if (!$geometry || !is_array($geometry)) {
-            throw new BadRequestHttpException('geometry em falta.');
+            throw new \yii\web\BadRequestHttpException('geometry em falta.');
         }
 
-        // guarda JSON limpo (sem escapes)
-        $geomJson = json_encode($geometry, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+        $geomJson = json_encode($geometry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        // entity_id: no modelo, location tem entity_id NOT NULL :contentReference[oaicite:3]{index=3}
-        // Para já, cria entity primeiro (entity_type_id=1 para LOCATION) :contentReference[oaicite:4]{index=4}
-        Yii::$app->db->createCommand()->insert('entity', ['entity_type_id' => 1])->execute();
+        Yii::$app->db->createCommand()->insert('entity', [
+            'entity_type_id' => 1,
+        ])->execute();
+
         $entityId = (int)Yii::$app->db->getLastInsertID();
 
         Yii::$app->db->createCommand()->insert('location', [
             'location_type_id' => $locationTypeId,
             'name' => $name,
+            'notes' => $notes,
             'geometry' => $geomJson,
             'status_type_id' => $statusTypeId,
-            'entity_id' => $entityId,
             'updated_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
+            'entity_id' => $entityId,
         ])->execute();
 
         $id = (int)Yii::$app->db->getLastInsertID();
@@ -220,22 +224,43 @@ class LocationController extends Controller
 
     public function actionMapUpdate($id)
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $data = json_decode(Yii::$app->request->getRawBody(), true);
-        if (!$data) throw new BadRequestHttpException('JSON inválido.');
-
-        $geometry = $data['geometry'] ?? null;
-        if (!$geometry || !is_array($geometry)) {
-            throw new BadRequestHttpException('geometry em falta.');
+        if (!$data) {
+            throw new \yii\web\BadRequestHttpException('JSON inválido.');
         }
 
-        $geomJson = json_encode($geometry, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-
-        Yii::$app->db->createCommand()->update('location', [
-            'geometry' => $geomJson,
+        $update = [
             'updated_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
-        ], ['id' => (int)$id])->execute();
+        ];
+
+        if (array_key_exists('name', $data)) {
+            $update['name'] = trim((string)$data['name']) ?: 'Novo local';
+        }
+
+        if (array_key_exists('notes', $data)) {
+            $update['notes'] = trim((string)$data['notes']) ?: null;
+        }
+
+        if (array_key_exists('location_type_id', $data)) {
+            $update['location_type_id'] = (int)$data['location_type_id'];
+        }
+
+        if (array_key_exists('status_type_id', $data)) {
+            $update['status_type_id'] = (int)$data['status_type_id'];
+        }
+
+        if (array_key_exists('geometry', $data) && is_array($data['geometry'])) {
+            $update['geometry'] = json_encode(
+                $data['geometry'],
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            );
+        }
+
+        Yii::$app->db->createCommand()
+            ->update('location', $update, ['id' => (int)$id])
+            ->execute();
 
         return ['ok' => true];
     }
@@ -244,8 +269,9 @@ class LocationController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Como não tem is_deleted em location, apaga mesmo. POSSIVELMENTE ADICIONAR PARA SOFT-DELETE?
-        Yii::$app->db->createCommand()->delete('location', ['id' => (int)$id])->execute();
+        Yii::$app->db->createCommand()
+            ->delete('location', ['id' => (int)$id])
+            ->execute();
 
         return ['ok' => true];
     }

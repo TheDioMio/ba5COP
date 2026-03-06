@@ -3,12 +3,9 @@ use common\assets\CopMapAsset;
 use yii\helpers\Url;
 use yii\web\View;
 
-$featuresIndexUrl = Url::to(['/map-feature/index']);
-
 $asset = CopMapAsset::register($this);
 $imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
 
-$featuresIndexUrl = Url::to(['/map-feature/index']);
 
 // urls
 $idx = Url::to(['/location/map-index']);
@@ -152,6 +149,54 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
 
         <div id="map" style="height: calc(80vh - 220px); min-height: 600px;"></div>
+
+        <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Localização</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="loc-id">
+
+                        <div class="mb-3">
+                            <label for="loc-name" class="form-label">Nome</label>
+                            <input type="text" id="loc-name" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loc-type" class="form-label">Tipo</label>
+                            <select id="loc-type" class="form-select">
+                                <option value="1">BUILDING</option>
+                                <option value="2">AREA</option>
+                                <option value="3">POINT</option>
+                                <option value="4">ROAD</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loc-status" class="form-label">Estado</label>
+                            <select id="loc-status" class="form-select">
+                                <option value="1">GREEN</option>
+                                <option value="2">YELLOW</option>
+                                <option value="3">RED</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loc-notes" class="form-label">Notas</label>
+                            <textarea id="loc-notes" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="cancelLocationBtn" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" id="saveLocationBtn" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -159,21 +204,21 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 <?php
 $this->registerJs(<<<JS
 document.addEventListener('DOMContentLoaded', function () {
-  initCopMap({
-    elId: 'map',
-    mode: 'image',
-    imageUrl: '{$imageUrl}',
-    imageWidth: 1066,
-    imageHeight: 701,
-    minZoom: -2,
-    maxZoom: 4,
+    initCopMap({
+        elId: 'map',
+        mode: 'image',
+        imageUrl: '{$imageUrl}',
+        imageWidth: 1066,
+        imageHeight: 701,
+        minZoom: -2,
+        maxZoom: 4,
 
-    csrfToken: '{$csrf}',
-    locationsIndexUrl: '{$idx}',
-    locationsCreateUrl: '{$crt}',
-    locationsUpdateUrl: '{$upd}',
-    locationsDeleteUrl: '{$del}',
-  });
+        csrfToken: '{$csrf}',
+        locationsIndexUrl: '{$idx}',
+        locationsCreateUrl: '{$crt}',
+        locationsUpdateUrl: '{$upd}',
+        locationsDeleteUrl: '{$del}',
+    });
 });
 JS, View::POS_END);
 ?>

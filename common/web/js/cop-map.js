@@ -25,32 +25,108 @@ window.initCopMap = function (opts) {
     const drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
 
-    const drawControl = new L.Control.Draw({
-        edit: { featureGroup: drawnItems },
-        draw: {
-            marker: true,
-            polyline: true,
-            polygon: true,
-            rectangle: true,
-            circle: false,
-            circlemarker: false,
-        }
+    // Geoman toolbar, configurar a toolbar
+    map.pm.addControls({
+        position: 'topleft',
+        drawMarker: true,
+        drawPolyline: true,
+        drawRectangle: true,
+        drawPolygon: true,
+        drawCircle: true,
+        drawCircleMarker: true,
+        drawText: true,
+        editMode: true,
+        dragMode: true,
+        cutPolygon: true,
+        removalMode: true,
     });
-    map.addControl(drawControl);
 
-    function apiFetch(url, payload) {
+    map.pm.setGlobalOptions({
+        snappable: true,
+        snapDistance: 20,
+        layerGroup: drawnItems,
+    });
+
+    let pendingLayer = null;
+    let editLayer = null;
+
+    const modalEl = document.getElementById('locationModal');
+    const modal = new bootstrap.Modal(modalEl);
+
+    const locIdInput = document.getElementById('loc-id');
+    const locNameInput = document.getElementById('loc-name');
+    const locTypeInput = document.getElementById('loc-type');
+    const locStatusInput = document.getElementById('loc-status');
+    const locNotesInput = document.getElementById('loc-notes');
+    const saveBtn = document.getElementById('saveLocationBtn');
+    const cancelBtn = document.getElementById('cancelLocationBtn');
+
+    function guessLocationType(geometryType) {
+        if (geometryType === 'Point') return 3;
+        if (geometryType === 'LineString') return 4;
+        if (geometryType === 'Polygon') return 2;
+        return 3;
+    }
+
+    function resetForm() {
+        locIdInput.value = '';
+        locNameInput.value = '';
+        locTypeInput.value = '3';
+        locStatusInput.value = '1';
+        locNotesInput.value = '';
+    }
+
+    function fillFormFromLayer(layer) {
+        const geo = layer.toGeoJSON();
+        locIdInput.value = layer._locationId || '';
+        locNameInput.value = layer._locationName || '';
+        locTypeInput.value = String(layer._locationTypeId || guessLocationType(geo.geometry.type));
+        locStatusInput.value = String(layer._locationStatusId || 1);
+        locNotesInput.value = layer._locationNotes || '';
+    }
+
+    function setLayerMeta(layer, item) {
+        layer._locationId = item.id;
+        layer._locationName = item.name;
+        layer._locationTypeId = item.location_type_id;
+        layer._locationStatusId = item.status_type_id;
+        layer._locationNotes = item.notes;
+
+        const popupHtml = `
+            <strong>${item.name ?? 'Sem nome'}</strong><br>
+            Tipo: ${item.location_type_id}<br>
+            Estado: ${item.status_type_id}<br>
+            ${item.notes ? `Notas: ${item.notes}` : ''}
+        `;
+        layer.bindPopup(popupHtml);
+
+        layer.off('click');
+        layer.on('click', function () {
+            editLayer = layer;
+            pendingLayer = null;
+            fillFormFromLayer(layer);
+            modal.show();
+        });
+    }
+
+    async function apiFetch(url, payload = null) {
         const headers = { 'Content-Type': 'application/json' };
-        if (opts.csrfToken) headers['X-CSRF-Token'] = opts.csrfToken;
+        if (opts.csrfToken) {
+            headers['X-CSRF-Token'] = opts.csrfToken;
+        }
 
-        return fetch(url, {
+        const res = await fetch(url, {
             method: 'POST',
             headers,
             credentials: 'same-origin',
             body: payload ? JSON.stringify(payload) : '{}'
-        }).then(async r => {
-            if (!r.ok) throw new Error(await r.text());
-            return r.json();
         });
+
+        if (!res.ok) {
+            throw new Error(await res.text());
+        }
+
+        return res.json();
     }
 
     async function loadLocations() {
@@ -61,67 +137,143 @@ window.initCopMap = function (opts) {
 
         L.geoJSON(fc, {
             onEachFeature: (feature, layer) => {
-                layer._locationId = feature.id;
-                const name = feature?.properties?.name ?? `Location #${feature.id}`;
-                layer.bindPopup(name);
+                const props = feature.properties || {};
+
+                setLayerMeta(layer, {
+                    id: feature.id,
+                    name: props.name ?? '',
+                    location_type_id: props.location_type_id ?? 3,
+                    status_type_id: props.status_type_id ?? 1,
+                    notes: props.notes ?? ''
+                });
+
+                drawnItems.addLayer(layer);
             }
-        }).eachLayer(l => drawnItems.addLayer(l));
+        });
     }
 
     // CREATE
-    map.on(L.Draw.Event.CREATED, async (e) => {
-        const layer = e.layer;
-        drawnItems.addLayer(layer);
+    map.on('pm:create', (e) => {
+        pendingLayer = e.layer;
+        editLayer = null;
 
-        const feature = layer.toGeoJSON(); // Feature
+        resetForm();
+        locTypeInput.value = String(guessLocationType(pendingLayer.toGeoJSON().geometry.type));
+        modal.show();
+    });
+
+    // GEOMETRY UPDATE (edit/drag)
+    map.on('pm:edit', async (e) => {
+        const layer = e.layer;
+        if (!layer || !layer._locationId) return;
+
         try {
-            const out = await apiFetch(opts.locationsCreateUrl, {
-                name: 'Novo local',
-                location_type_id: 3,  // POINT
-                status_type_id: 1,    // GREEN
-                geometry: feature.geometry
+            const url = opts.locationsUpdateUrl.replace('__ID__', layer._locationId);
+            await apiFetch(url, {
+                geometry: layer.toGeoJSON().geometry
             });
-            layer._locationId = out.id;
         } catch (err) {
             console.error(err);
-            drawnItems.removeLayer(layer);
-            alert('Erro a guardar location.');
+            alert('Erro a atualizar geometria.');
         }
     });
 
-    // UPDATE
-    map.on(L.Draw.Event.EDITED, async (e) => {
-        const promises = [];
-        e.layers.eachLayer(layer => {
-            if (!layer._locationId) return;
-            const feature = layer.toGeoJSON();
-            const url = opts.locationsUpdateUrl.replace('__ID__', layer._locationId);
-            promises.push(apiFetch(url, { geometry: feature.geometry }));
-        });
+    map.on('pm:dragend', async (e) => {
+        const layer = e.layer;
+        if (!layer || !layer._locationId) return;
 
         try {
-            await Promise.all(promises);
+            const url = opts.locationsUpdateUrl.replace('__ID__', layer._locationId);
+            await apiFetch(url, {
+                geometry: layer.toGeoJSON().geometry
+            });
         } catch (err) {
             console.error(err);
-            alert('Erro a atualizar. Faz refresh.');
+            alert('Erro a mover geometria.');
         }
     });
 
     // DELETE
-    map.on(L.Draw.Event.DELETED, async (e) => {
-        const promises = [];
-        e.layers.eachLayer(layer => {
-            if (!layer._locationId) return;
-            const url = opts.locationsDeleteUrl.replace('__ID__', layer._locationId);
-            promises.push(apiFetch(url));
-        });
+    map.on('pm:remove', async (e) => {
+        const layer = e.layer;
+        if (!layer || !layer._locationId) return;
 
         try {
-            await Promise.all(promises);
+            const url = opts.locationsDeleteUrl.replace('__ID__', layer._locationId);
+            await apiFetch(url);
         } catch (err) {
             console.error(err);
-            alert('Erro a apagar. Faz refresh.');
+            alert('Erro a apagar.');
         }
+    });
+
+    saveBtn.addEventListener('click', async () => {
+        const payload = {
+            name: locNameInput.value.trim() || 'Novo local',
+            location_type_id: parseInt(locTypeInput.value, 10),
+            status_type_id: parseInt(locStatusInput.value, 10),
+            notes: locNotesInput.value.trim() || null,
+        };
+
+        try {
+            // CREATE
+            if (pendingLayer) {
+                payload.geometry = pendingLayer.toGeoJSON().geometry;
+
+                const out = await apiFetch(opts.locationsCreateUrl, payload);
+
+                setLayerMeta(pendingLayer, {
+                    id: out.id,
+                    name: payload.name,
+                    location_type_id: payload.location_type_id,
+                    status_type_id: payload.status_type_id,
+                    notes: payload.notes
+                });
+
+                pendingLayer = null;
+            }
+            // UPDATE ATTRIBUTES
+            else if (editLayer) {
+                const url = opts.locationsUpdateUrl.replace('__ID__', editLayer._locationId);
+
+                await apiFetch(url, payload);
+
+                setLayerMeta(editLayer, {
+                    id: editLayer._locationId,
+                    name: payload.name,
+                    location_type_id: payload.location_type_id,
+                    status_type_id: payload.status_type_id,
+                    notes: payload.notes
+                });
+
+                editLayer = null;
+            }
+
+            modal.hide();
+            resetForm();
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao guardar.');
+        }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        // se foi um create cancelado, remove a layer desenhada
+        if (pendingLayer && !pendingLayer._locationId) {
+            drawnItems.removeLayer(pendingLayer);
+        }
+        pendingLayer = null;
+        editLayer = null;
+        resetForm();
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', () => {
+        if (pendingLayer && !pendingLayer._locationId) {
+            drawnItems.removeLayer(pendingLayer);
+        }
+        pendingLayer = null;
+        editLayer = null;
+        resetForm();
     });
 
     loadLocations();
