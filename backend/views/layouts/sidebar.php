@@ -88,7 +88,6 @@ $userLogado = Yii::$app->user->identity;
                         'options' => ['class' => 'nav-item nav-log'],
                         'items' => [
                             ['label' => 'Lodging Sites', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
-                            ['label' => 'Lodging Entries', 'url' => ['lodging-entry/index'], 'icon' => 'clipboard-check'],
                         ],
                     ],
 

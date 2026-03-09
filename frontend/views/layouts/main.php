@@ -3,8 +3,8 @@
 /** @var \yii\web\View $this */
 /** @var string $content */
 
-use common\widgets\Alert;
 use frontend\assets\AppAsset;
+use common\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
@@ -27,11 +27,17 @@ $currentRoute = Yii::$app->controller->route;
     <?php $this->beginBody() ?>
 
     <header>
+
         <?php
         NavBar::begin([
-            'brandLabel' => '<span class="brand-mark"></span><span class="brand-text">BA5 COP</span>',
+            'brandLabel' => Html::img('@web/img/BA5_Brasao.png', [
+                    'alt' => 'BA5_brasao',
+                    'class' => 'ba5-logo'
+                ]) . '<span class="brand-text">COP</span>',
             'brandUrl' => Yii::$app->homeUrl,
-            'brandOptions' => ['class' => 'navbar-brand d-flex align-items-center gap-2'],
+            'brandOptions' => [
+                'class' => 'navbar-brand d-flex align-items-center'
+            ],
             'options' => [
                 'class' => 'navbar navbar-expand-lg navbar-dark ba5-navbar fixed-top',
             ],

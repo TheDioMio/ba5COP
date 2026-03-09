@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use app\models\LodgingSiteSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,8 +57,20 @@ class LodgingSiteController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
+        $entriesDataProvider = new ActiveDataProvider([
+            'query' => LodgingEntry::find()
+                ->where(['lodging_site_id' => $model->id])
+                ->orderBy(['id' => SORT_DESC]),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'entriesDataProvider' => $entriesDataProvider,
         ]);
     }
 

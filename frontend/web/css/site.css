@@ -426,6 +426,25 @@ main > .container-fluid {
     color: var(--ba5-accent);
 }
 
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ba5-logo {
+    height: 42px;
+    width: auto;
+    max-height: 42px;
+    display: block;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+
+
+
+
 @media (max-width: 1199px) {
     .hero-panel,
     .content-grid,

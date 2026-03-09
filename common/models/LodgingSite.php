@@ -50,11 +50,11 @@ class LodgingSite extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'location_id' => 'Location ID',
-            'name' => 'Name',
-            'capacity_total' => 'Capacity Total',
-            'capacity_available' => 'Capacity Available',
-            'notes' => 'Notes',
+            'location_id' => 'ID da Localização',
+            'name' => 'Nome',
+            'capacity_total' => 'Capacidade Total',
+            'capacity_available' => 'Capacidade Disponível',
+            'notes' => 'Notas',
         ];
     }
 
