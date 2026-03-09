@@ -5,16 +5,28 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Priority $model */
 
-$this->title = 'Create Priority';
+$this->title = 'Gestão de Tipos de Prioridades';
 $this->params['breadcrumbs'][] = ['label' => 'Priorities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="priority-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="priority-create container-fluid">
+    <div class="card card-outline card-success shadow-sm">
+        <div class="card-header">
+            <div class="card-tools">
+                <?= Html::a('<i class="fas fa-arrow-left"></i>',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-outline-secondary mr-1',
+                        'title' => 'Voltar',
+                    ],
+                )
+                ?>
+            </div>
+        </div>
+        <div class="card-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+            ]) ?>
+        </div>
+    </div>
 </div>

@@ -123,6 +123,15 @@ class Entity extends \yii\db\ActiveRecord
         return $this->hasMany(Task::class, ['entity_id' => 'id']);
     }
 
+    /**
+     * Gets query for [[EntityType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntityType()
+    {
+        return $this->hasOne(EntityType::class, ['id' => 'entity_type_id']);
+    }
 
     /**
      * Lista de entidades para dropdown
@@ -143,7 +152,6 @@ class Entity extends \yii\db\ActiveRecord
      * Converte de id para nome contreto da entidade
      * [id => task/incident/request.title]
      */
-
     public function getEntityName()
     {
         if ($task = Task::find()->where(['entity_id' => $this->id])->one()) {
@@ -155,7 +163,11 @@ class Entity extends \yii\db\ActiveRecord
         }
 
         if ($request = Request::find()->where(['entity_id' => $this->id])->one()) {
-            return $request->title;
+            return $request->origin;
+        }
+
+        if ($location = Location::find()->where(['entity_id' => $this->id])->one()) {
+            return $location->name;
         }
 
         return null;
