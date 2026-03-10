@@ -37,8 +37,11 @@ $tasks = [
             </p>
 
             <div class="hero-actions">
-                <?= Html::a('Abrir COP', ['/site/cop'], ['class' => 'btn btn-ba5-primary btn-lg']) ?>
-                <?= Html::a('Entrar no sistema', ['/site/login'], ['class' => 'btn btn-ba5-secondary btn-lg']) ?>
+                <?php
+                    if(!Yii::$app->user->isGuest){
+                        Html::a('Entrar no sistema', ['/site/login'], ['class' => 'btn btn-ba5-secondary btn-lg']);
+                    }
+                ?>
             </div>
 
             <div class="hero-tags">

@@ -37,9 +37,10 @@ class LodgingEntry extends \yii\db\ActiveRecord
     {
         return [
             [['notes'], 'default', 'value' => null],
-            [['lodging_site_id', 'branch_id', 'people_count', 'checkin_at', 'checkout_at'], 'required'],
+            [['lodging_site_id', 'branch_id', 'people_count', 'checkin_at'], 'required'],
             [['lodging_site_id', 'branch_id', 'people_count'], 'integer'],
             [['checkin_at', 'checkout_at'], 'safe'],
+            [['checkout_at'], 'default', 'value' => null],
             [['notes'], 'string', 'max' => 30],
             [['branch_id'], 'exist', 'skipOnError' => true, 'targetClass' => Branch::class, 'targetAttribute' => ['branch_id' => 'id']],
             [['lodging_site_id'], 'exist', 'skipOnError' => true, 'targetClass' => LodgingSite::class, 'targetAttribute' => ['lodging_site_id' => 'id']],
@@ -53,11 +54,11 @@ class LodgingEntry extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lodging_site_id' => 'Lodging Site ID',
-            'branch_id' => 'Branch ID',
-            'people_count' => 'People Count',
-            'checkin_at' => 'Checkin At',
-            'checkout_at' => 'Checkout At',
+            'lodging_site_id' => 'ID do Alojamento',
+            'branch_id' => 'ID do Ramo',
+            'people_count' => 'N.º de Pessoas',
+            'checkin_at' => 'Data Checkin',
+            'checkout_at' => 'Data Checkout',
             'notes' => 'Notes',
         ];
     }

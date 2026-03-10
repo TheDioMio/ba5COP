@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Branch;
 use common\models\LodgingEntry;
 use app\models\LodgingEntrySearch;
 use yii\web\Controller;
@@ -53,8 +54,7 @@ class LodgingEntryController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -65,9 +65,10 @@ class LodgingEntryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
+    public function actionCreate($lodging_site_id) {
         $model = new LodgingEntry();
+        $model->lodging_site_id = $lodging_site_id;
+        $branchArray = Branch::dropDown();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -79,6 +80,7 @@ class LodgingEntryController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'branchArray' => $branchArray,
         ]);
     }
 
@@ -92,6 +94,7 @@ class LodgingEntryController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $branchArray = Branch::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,6 +102,7 @@ class LodgingEntryController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'branchArray' => $branchArray,
         ]);
     }
 

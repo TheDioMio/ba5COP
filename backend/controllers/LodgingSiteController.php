@@ -6,6 +6,7 @@ use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use app\models\LodgingSiteSearch;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

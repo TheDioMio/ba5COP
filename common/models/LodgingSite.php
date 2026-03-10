@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "lodging_site".
@@ -76,6 +77,21 @@ class LodgingSite extends \yii\db\ActiveRecord
     public function getLodgingEntries()
     {
         return $this->hasMany(LodgingEntry::class, ['lodging_site_id' => 'id']);
+    }
+
+    /**
+     * Lista de localizações para dropdown
+     * [id => name]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'name'])
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'name');
     }
 
 }

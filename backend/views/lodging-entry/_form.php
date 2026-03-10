@@ -12,15 +12,13 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'lodging_site_id')->textInput() ?>
+    <?= $form->field($model, 'lodging_site_id')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'branch_id')->textInput() ?>
+    <?= $form->field($model, 'branch_id')->dropDownList($branchArray)->label('Ramo') ?>
 
-    <?= $form->field($model, 'people_count')->textInput() ?>
+    <?= $form->field($model, 'people_count')->input('number', ['min' => 1]) ?>
 
-    <?= $form->field($model, 'checkin_at')->textInput() ?>
-
-    <?= $form->field($model, 'checkout_at')->textInput() ?>
+    <?= $form->field($model, 'checkin_at')->input('date') ?>
 
     <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
 
