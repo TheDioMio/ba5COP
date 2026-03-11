@@ -12,10 +12,14 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'location_type_id')->textInput() ?>
+    <?= $form->field($model, 'location_type_id')
+        ->dropDownList($locationTypeArray, ['prompt' => '-- TIPO DE LOCALIZAÇÃO--'])
+        ->label('Tipo de Localização') ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
+
+<!--    Inserir aqui mapa para o user escolher-->
     <?= $form->field($model, 'geometry')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'status_type_id')->textInput() ?>

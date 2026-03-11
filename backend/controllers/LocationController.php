@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Location;
 use app\models\LocationSearch;
+use common\models\LocationType;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -75,6 +76,7 @@ class LocationController extends Controller
     public function actionCreate()
     {
         $model = new Location();
+        $locationTypeArray = LocationType::dropDown();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -86,6 +88,7 @@ class LocationController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'locationTypeArray' => $locationTypeArray,
         ]);
     }
 
@@ -99,6 +102,7 @@ class LocationController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $locationTypeArray = LocationType::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -106,6 +110,7 @@ class LocationController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'locationTypeArray' => $locationTypeArray,
         ]);
     }
 

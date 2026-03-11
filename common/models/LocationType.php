@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "location_type".
@@ -42,7 +43,7 @@ class LocationType extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'description' => 'Description',
+            'description' => 'Nome',
         ];
     }
 
@@ -55,5 +56,22 @@ class LocationType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Location::class, ['location_type_id' => 'id']);
     }
+
+    /**
+     * Lista de tipos de localizações para dropdown
+     * [id => description]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'description'])
+            ->orderBy(['description' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'description');
+    }
+
+
 
 }

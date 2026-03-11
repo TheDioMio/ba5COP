@@ -62,13 +62,13 @@ class Location extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'location_type_id' => 'Location Type ID',
-            'name' => 'Name',
-            'notes' => 'Notes',
-            'geometry' => 'Geometry',
-            'status_type_id' => 'Status Type ID',
-            'updated_at' => 'Updated At',
-            'entity_id' => 'Entity ID',
+            'location_type_id' => 'ID do Tipo de Localização',
+            'name' => 'Nome',
+            'notes' => 'OBS.',
+            'geometry' => 'Data Geometria Mapa',
+            'status_type_id' => 'ID do Status',
+            'updated_at' => 'Atualizado às',
+            'entity_id' => 'ID do Tipo de Entidade',
         ];
     }
 

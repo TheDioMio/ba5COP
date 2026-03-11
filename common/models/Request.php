@@ -56,13 +56,13 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'is_external' => 'Is External',
-            'origin' => 'Origin',
-            'details' => 'Details',
-            'priority_id' => 'Priority ID',
+            'is_external' => 'Externo?',
+            'origin' => 'Origem',
+            'details' => 'Detalhes',
+            'priority_id' => 'ID da Prioridade',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'entity_id' => 'Entity ID',
+            'created_at' => 'Criado às',
+            'entity_id' => 'ID da Entidade',
         ];
     }
 
