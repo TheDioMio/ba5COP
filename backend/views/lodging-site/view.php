@@ -8,12 +8,11 @@ use yii\widgets\DetailView;
 /** @var common\models\LodgingSite $model */
 /** @var yii\data\ActiveDataProvider $entriesDataProvider */
 
-$this->title = '';
+$this->title = 'Gestão de Alojamentos';
 $breadcrumbsTitle = 'Alojamento: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Alojamentos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $breadcrumbsTitle;
 
-$occupied = max(0, (int)$model->capacity_total - (int)$model->capacity_available);
 $locationLabel = $model->location ? $model->location->name : ('#' . $model->location_id);
 ?>
 
@@ -26,10 +25,7 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
             </h1>
 
             <p class="text-muted mb-0">
-                <?= 'Alojamento #' . $model->id ?> |
-                <span class="badge bg-secondary">
-                    <?= Html::encode($locationLabel) ?>
-                </span>
+                <?= 'Alojamento #' . $model->id ?>
             </p>
         </div>
 
@@ -75,17 +71,14 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                             [
-                                'label' => 'Capacidade Total',
-                                'attribute' => 'capacity_total',
+                                'label' => 'OBS.',
+                                'attribute' => 'notes',
+                                'format' => 'ntext',
+                                'value' => $model->notes ?: 'Não definido',
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                             [
-                                'label' => 'Capacidade Disponível',
-                                'attribute' => 'capacity_available',
-                                'contentOptions' => ['class' => 'align-middle'],
-                            ],
-                            [
-                                'label' => 'Notas',
+                                'label' => 'Galeria de fotos',
                                 'attribute' => 'notes',
                                 'format' => 'ntext',
                                 'value' => $model->notes ?: 'Não definido',
@@ -129,10 +122,10 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                             <span class="fw-semibold"><?= Html::encode($model->capacity_total) ?></span>
                         </div>
                         <div class="col-4">
-                            <span class="fw-semibold"><?= Html::encode($model->capacity_available) ?></span>
+                            <span class="fw-semibold"><?= Html::encode($model->getCurrentCapacity(false)) ?></span>
                         </div>
                         <div class="col-4">
-                            <span class="fw-semibold"><?= Html::encode($occupied) ?></span>
+                            <span class="fw-semibold"><?= Html::encode($model->occupancy() ?? 0) ?></span>
                         </div>
                     </div>
                 </div>
@@ -174,27 +167,59 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                     [
                         'attribute' => 'checkin_at',
                         'label' => 'Check-in',
-                        'format' => ['datetime', 'php:d/m/Y H:i'],
+                        'format' => ['datetime', 'php:d/m/Y'],
                     ],
                     [
                         'attribute' => 'checkout_at',
                         'label' => 'Check-out',
-                        'format' => ['datetime', 'php:d/m/Y H:i'],
                         'value' => function ($entry) {
-                            return $entry->checkout_at ?: null;
+                            return $entry->checkout_at
+                                ? Yii::$app->formatter->asDate($entry->checkout_at, 'php:d/m/Y')
+                                : 'N/A';
                         },
                     ],
                     [
+                        'label' => 'Checkout',
+                        'attribute' => 'checkout_at',
+                        'format' => 'raw', //Tem que ser raw, para os botões serem renderizados (Botões HTML)
+                        'value' => function ($model) {
+                            if($model->checkout_at == null) {
+                                //Se a data de checkout estiver NULL, ou seja, ainda não estiver feita.
+                                return Html::a('CHECKOUT', ['/lodging-entry/checkout', 'id' => $model->id], [
+                                    'class' => 'btn btn-xs btn-danger btn-block',
+                                    'data' => [
+                                        'method' => 'post',
+                                    ],
+                                ]);
+                            }
+                            if ($model->checkout_at != null) {
+                                //Se a data de checkout não estiver NULL quer dizer que o checkout já foi feito.
+                                return Html::a('FEITO!', ['#'], [
+                                    'class' => 'btn btn-xs btn-success btn-block disabled',
+                                    'data' => [
+                                        'method' => 'post',
+                                        'onclick' => 'return false;', // Para não fazer nada se clicar
+                                        'style' => 'opacity: 0.7;'
+                                    ],
+                                ]);
+                            }
+                        },
+                        'filter' => [
+                            null => 'Por fazer',
+                            !null  => 'Feito',
+                        ],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                    ],
+                    [
                         'attribute' => 'notes',
-                        'label' => 'Notas',
+                        'label' => 'OBS.',
                         'value' => function ($entry) {
-                            return $entry->notes ?: '—';
+                            return $entry->notes ?: 'N/A';
                         },
                     ],
                     [
                         'class' => yii\grid\ActionColumn::class,
-                        'header' => 'Ações',
-                        'template' => '{view} {update} {delete}',
+                        'template' => '{delete}',
                         'urlCreator' => function ($action, $entry) {
                             return ['/lodging-entry/' . $action, 'id' => $entry->id];
                         },

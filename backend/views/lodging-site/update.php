@@ -5,17 +5,26 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\LodgingSite $model */
 
-$this->title = 'Update Lodging Site: ' . $model->name;
+$this->title = 'Gestão de Alojamentos';
 $this->params['breadcrumbs'][] = ['label' => 'Lodging Sites', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="lodging-site-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="lodging-site-update container-fluid">
+    <div class="card card-outline card-success shadow-sm">
+        <div class="card-header">
+            <div class="card-tools">
+                <?= Html::button('<i class="fas fa-arrow-left"></i>', [
+                    'class' => 'btn btn-default',
+                    'onclick' => 'history.back();',
+                ]) ?>
+            </div>
+        </div>
+        <div class="card-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+                'arraySites' => $arraySites,
+            ]) ?>
+        </div>
+    </div>
 </div>

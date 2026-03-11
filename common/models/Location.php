@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "location".
@@ -131,4 +132,18 @@ class Location extends \yii\db\ActiveRecord
         return $this->hasMany(Task::class, ['location_id' => 'id']);
     }
 
+    /**
+     * Lista de localizações para dropdown
+     * [id => name]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'name'])
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'name');
+    }
 }

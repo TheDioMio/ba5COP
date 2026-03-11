@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,13 +13,14 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'location_id')->textInput() ?>
+    <?= $form->field($model, 'location_id')->dropDownList(
+        $arraySites,
+        ['prompt' => '-- LOCALIZAÇÕES --']
+    )->label('Localização') ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'capacity_total')->textInput() ?>
-
-    <?= $form->field($model, 'capacity_available')->textInput() ?>
+    <?= $form->field($model, 'capacity_total')->input('number', ['min' => 1]) ?>
 
     <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
 

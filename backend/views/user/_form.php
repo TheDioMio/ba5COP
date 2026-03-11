@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'role_name')
         ->dropDownList(
             ArrayHelper::map($roles, 'name', 'description'),
-            ['prompt' => 'Selecione o role']
+            ['prompt' => '-- ROLE --']
         ) ?>
 
     <?= $form->field($model, 'status')->dropDownList([10 => 'Ativo', 9 => 'Inativo']) ?>

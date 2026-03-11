@@ -55,7 +55,7 @@ class LodgingSite extends \yii\db\ActiveRecord
             'name' => 'Nome',
             'capacity_total' => 'Capacidade Total',
             'capacity_available' => 'Capacidade Disponível',
-            'notes' => 'Notas',
+            'notes' => 'OBS.',
         ];
     }
 
@@ -80,7 +80,7 @@ class LodgingSite extends \yii\db\ActiveRecord
     }
 
     /**
-     * Lista de localizações para dropdown
+     * Lista de alojamentos para dropdown
      * [id => name]
      */
     public static function dropDown(): array
@@ -94,4 +94,52 @@ class LodgingSite extends \yii\db\ActiveRecord
         return ArrayHelper::map($rows, 'id', 'name');
     }
 
+    /**d
+     *  Devolve o número de camas ocupadas
+     *  Query à BD.
+     */
+
+    public function occupancy() {
+        $occupancy = LodgingEntry::find()
+            ->where(['lodging_site_id' => $this->id])
+            ->andWhere(['checkout_at' => null]) // só pessoas ainda alojadas
+            ->sum('people_count');
+
+        return $occupancy;
+    }
+
+    /**
+     * Devolve o número de capacidade atual do alojamento, com uma cor associada.
+     * (Capacidade total - capacidade ocupada)
+     *
+     * O $badge é boolean, e determina se manda o número só em int, ou já com formatação de cores.
+     */
+    public function getCurrentCapacity($badge) {
+        $totalCapacity = $this->capacity_total;
+
+        $occupancy = $this->occupancy();
+
+        $currentCapacity = $totalCapacity - $occupancy ?? 0;
+
+        if($badge == true) {
+            //Isto aqui evita a divisão por 0, o que daria erro. Ex. 0/300 = Erro, 1/300 = 300.
+            if($occupancy == 0){
+                $occupancy = 1;
+            }
+
+            $percentage = ($totalCapacity / $occupancy) * 100;
+
+            if ($percentage == 0) {
+                $color = 'red';
+            } elseif ($percentage < 20) {
+                $color = 'orange';
+            } else {
+                $color = 'green';
+            }
+
+            return "<span style='color:$color;font-weight:bold;'>$currentCapacity</span>";
+        } else {
+            return $currentCapacity;
+        }
+    }
 }

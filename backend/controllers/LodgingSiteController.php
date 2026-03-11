@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Location;
 use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use app\models\LodgingSiteSearch;
@@ -83,17 +84,27 @@ class LodgingSiteController extends Controller
     public function actionCreate()
     {
         $model = new LodgingSite();
+        $arraySites = Location::dropDown();
 
+
+        //Isto aqui é mudado de forma a conseguir-se ir buscar dados ao form, antes de gravar o model.
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $model->load($this->request->post());
+
+            //Campo na BD que é not null, depois logo se vê se se tira isto ou não.
+            $model->capacity_available = $model->capacity_total;
+
+            if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-        } else {
+        }
+        else {
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'arraySites' => $arraySites,
         ]);
     }
 
@@ -107,6 +118,7 @@ class LodgingSiteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $arraySites = Location::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -114,6 +126,7 @@ class LodgingSiteController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'arraySites' => $arraySites,
         ]);
     }
 

@@ -36,31 +36,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'location_id',
                     'name',
                     [
-                        'label' => 'Capacidade',
+                        'label' => 'Disponibilidade',
                         'format' => 'raw',
-                        'contentOptions' => ['class' => 'text-center'],
-                        'headerOptions' => ['class' => 'text-center'],
                         'value' => function ($model) {
-
-                            $total = (int)$model->capacity_total;
-                            $available = (int)$model->capacity_available;
-                            $occupied = $total - $available;
-
-                            if ($total === 0) {
-                                return '-';
-                            }
-
-                            $percent = ($occupied / $total) * 100;
-
-                            if ($percent >= 100) {
-                                $class = 'bg-danger';
-                            } elseif ($percent >= 80) {
-                                $class = 'bg-warning text-dark';
-                            } else {
-                                $class = 'bg-success';
-                            }
-
-                            return "<span class='badge {$class}'>{$occupied}</span> / {$total}";
+                            return $model->getCurrentCapacity(true);
                         },
                     ],
                     //'notes',

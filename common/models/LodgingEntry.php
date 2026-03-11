@@ -59,7 +59,7 @@ class LodgingEntry extends \yii\db\ActiveRecord
             'people_count' => 'N.º de Pessoas',
             'checkin_at' => 'Data Checkin',
             'checkout_at' => 'Data Checkout',
-            'notes' => 'Notes',
+            'notes' => 'OBS.',
         ];
     }
 

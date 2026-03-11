@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\models\Branch;
 use common\models\LodgingEntry;
 use app\models\LodgingEntrySearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,8 +56,12 @@ class LodgingEntryController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id) {
+        $model = $this->findModel($id);
+
+
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -68,11 +73,14 @@ class LodgingEntryController extends Controller
     public function actionCreate($lodging_site_id) {
         $model = new LodgingEntry();
         $model->lodging_site_id = $lodging_site_id;
+
+        //Valor default de current_timestamp.
+        $model->checkin_at = date('Y-m-d');
         $branchArray = Branch::dropDown();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -97,7 +105,7 @@ class LodgingEntryController extends Controller
         $branchArray = Branch::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
         }
 
         return $this->render('update', [
@@ -107,17 +115,21 @@ class LodgingEntryController extends Controller
     }
 
     /**
-     * Deletes an existing LodgingEntry model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Apaga um registo entry existente.
+     * Caso seja apagado com sucesso, redireciona para a página de view do lodging-site em questão.
      * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
+        //Guarda o lodging_site_id antes do registo ser apagado, já que é necessário para o redirecionamento correto.
+        $model = $this->findModel($id);
+        $viewId = $model->lodging_site_id;
+
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['lodging-site/view', 'id' => $viewId]);
     }
 
     /**
@@ -134,5 +146,24 @@ class LodgingEntryController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    /**
+     * Faz o checkout de uma entrada no Lodging-entry.
+     * Esta função é invocada a partir do view de cada lodging-site.
+     */
+    public function actionCheckout($id){
+        $model = $this->findModel($id);
+
+        if ($model->checkout_at == null) {
+            $model->checkout_at = date('Y-m-d');
+        } else {
+            Yii::$app->session->setFlash('warning', 'Checkout já foi feito.');
+        }
+
+        $model->save(false); //tem que estar false, se não explode
+
+        return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
     }
 }
