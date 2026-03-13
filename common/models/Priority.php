@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "priority".
@@ -76,6 +77,21 @@ class Priority extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Task::class, ['priority_id' => 'id']);
+    }
+
+    /**
+     * Lista de prioridades para dropdown
+     * [id => description]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'description'])
+            ->orderBy(['description' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'description');
     }
 
 }

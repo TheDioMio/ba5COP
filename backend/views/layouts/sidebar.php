@@ -64,7 +64,7 @@ $userLogado = Yii::$app->user->identity;
                         'items' => [
                             ['label' => 'Incidents', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
                             ['label' => 'Tasks', 'url' => ['task/index'], 'icon' => 'tasks'],
-                            ['label' => 'Requests', 'url' => ['request/index'], 'icon' => 'inbox'],
+                            ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
                             ['label' => 'Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
                         ],
                     ],
@@ -87,7 +87,7 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'warehouse',
                         'options' => ['class' => 'nav-item nav-log'],
                         'items' => [
-                            ['label' => 'Lodging Sites', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
+                            ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
                         ],
                     ],
 

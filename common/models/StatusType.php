@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "status_type".
@@ -100,5 +101,18 @@ class StatusType extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Task::class, ['status_type_id' => 'id']);
+    }
+
+
+    /**
+     * Vai buscar o tipo de status, dependendo da entidade que é pedida e passa para dropdown.
+     * [id => description] 560 218
+     */
+    public function getStatusDropdown($entity)
+    {
+        $dropDown = StatusType::find()->select(['id', 'description'])->where(['entity_type_id' => $entity])
+            ->orderBy(['id'=> SORT_ASC])->asArray()->all();
+
+        return ArrayHelper::map($dropDown, 'id', 'description');
     }
 }

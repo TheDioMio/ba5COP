@@ -21,6 +21,10 @@ use yii\helpers\ArrayHelper;
  */
 class Entity extends \yii\db\ActiveRecord
 {
+    const LOCATION_ID = 1;
+    const INCIDENT_ID = 2;
+    const TASK_ID = 3;
+    const REQUEST_ID = 4;
 
 
     /**
@@ -171,5 +175,35 @@ class Entity extends \yii\db\ActiveRecord
         }
 
         return null;
+    }
+
+
+    /**
+     * Atribui ID's de identidade automaticamente, dependendo de que entidade se trata.
+     * EX: Nova REQUEST é criada (começado pelo ID 4XXXX), atribui o próximo ID disponível.
+     * [id => task/incident/request.title]
+     */
+
+    public static function createEntity(int $entityType): ?self
+    {
+        $start = match ($entityType) {
+            self::LOCATION_ID => 10000,
+            self::INCIDENT_ID => 20000,
+            self::TASK_ID => 30000,
+            self::REQUEST_ID => 40000,
+            default => null,
+        };
+
+        $end = $start + 9999;
+
+        $max = self::find()
+            ->where(['between', 'id', $start, $end])
+            ->max('id');
+
+        $entity = new self();
+        $entity->id = $max ? ((int)$max + 1) : $start;
+        $entity->entity_type_id = $entityType;
+
+        return $entity->save(false) ? $entity : null;
     }
 }

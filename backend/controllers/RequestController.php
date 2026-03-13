@@ -2,8 +2,13 @@
 
 namespace backend\controllers;
 
+use common\models\Entity;
+use common\models\Priority;
 use common\models\Request;
 use app\models\RequestSearch;
+use common\models\StatusType;
+use Yii;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -36,14 +41,69 @@ class RequestController extends Controller
      *
      * @return string
      */
+
     public function actionIndex()
     {
-        $searchModel = new RequestSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $status = Yii::$app->request->get('status');
+        $priorityInternal = Yii::$app->request->get('priority_internal');
+        $priorityExternal = Yii::$app->request->get('priority_external');
+
+        $queryInternos = Request::find()->where(['is_external' => 0]);
+        $queryExternos = Request::find()->where(['is_external' => 1]);
+
+        // filtro global por status (REQUEST = entity_type_id 4)
+        if (!empty($status)) {
+            $queryInternos->andWhere(['status' => $status]);
+            $queryExternos->andWhere(['status' => $status]);
+        }
+
+        // filtro de prioridade só para internos
+        if (!empty($priorityInternal)) {
+            $queryInternos->andWhere(['priority_id' => $priorityInternal]);
+        }
+
+        // filtro de prioridade só para externos
+        if (!empty($priorityExternal)) {
+            $queryExternos->andWhere(['priority_id' => $priorityExternal]);
+        }
+
+        $dataProviderInternos = new ActiveDataProvider([
+            'query' => $queryInternos,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
+        $dataProviderExternos = new ActiveDataProvider([
+            'query' => $queryExternos,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+
+        $statuses = StatusType::find()
+            ->where(['entity_type_id' => 4])
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
+
+        $priorities = Priority::find()
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProviderInternos' => $dataProviderInternos,
+            'dataProviderExternos' => $dataProviderExternos,
+            'statuses' => $statuses,
+            'priorities' => $priorities,
+            'status' => $status,
+            'priorityInternal' => $priorityInternal,
+            'priorityExternal' => $priorityExternal,
         ]);
     }
 
@@ -69,9 +129,21 @@ class RequestController extends Controller
     {
         $model = new Request();
 
+        $statusType = new StatusType();
+        $prioritiesArray = Priority::dropDown();
+        $statusArray = $statusType->getStatusDropdown(Entity::REQUEST_ID);
+
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->load($this->request->post());
+
+            $entity = Entity::createEntity(Entity::REQUEST_ID);
+
+            if ($entity !== null) {
+                $model->entity_id = $entity->id;
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -79,6 +151,8 @@ class RequestController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'prioritiesArray' => $prioritiesArray,
+            'statusArray' => $statusArray,
         ]);
     }
 
@@ -92,6 +166,7 @@ class RequestController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $prioritiesArray = Priority::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,6 +174,7 @@ class RequestController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'prioritiesArray' => $prioritiesArray,
         ]);
     }
 

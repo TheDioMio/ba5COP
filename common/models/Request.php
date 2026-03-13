@@ -22,7 +22,8 @@ use Yii;
  */
 class Request extends \yii\db\ActiveRecord
 {
-
+    const EXTERNAL_REQUEST = 1;
+    const NOT_EXTERNAL_REQUEST = 0;
 
     /**
      * {@inheritdoc}
@@ -91,7 +92,7 @@ class Request extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus0()
+    public function getStatus()
     {
         return $this->hasOne(StatusType::class, ['id' => 'status']);
     }
