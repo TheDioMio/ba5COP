@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Location;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -75,7 +76,9 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->render('index', [
+            'featureCollection' => $this->buildLocationFeatureCollection(),
+        ]);
     }
 
     /**
@@ -255,5 +258,95 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    public function actionCop()
+    {
+        return $this->render('cop', [
+            'featureCollection' => $this->buildLocationFeatureCollection(),
+        ]);
+    }
+
+    private function buildLocationFeatureCollection(): array
+    {
+        $rows = (new \yii\db\Query())
+            ->from('location')
+            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
+            ->all();
+
+        $features = [];
+
+        foreach ($rows as $r) {
+            $geom = json_decode($r['geometry'], true);
+
+            if (!$geom && is_string($r['geometry'])) {
+                $geom = json_decode(stripslashes($r['geometry']), true);
+            }
+
+            if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
+                continue;
+            }
+
+            $features[] = [
+                'type' => 'Feature',
+                'id' => (int)$r['id'],
+                'properties' => [
+                    'name' => $r['name'],
+                    'notes' => $r['notes'],
+                    'location_type_id' => (int)$r['location_type_id'],
+                    'status_type_id' => (int)$r['status_type_id'],
+                ],
+                'geometry' => $geom,
+            ];
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+    }
+
+
+
+
+    public function actionCopData()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $rows = (new \yii\db\Query())
+            ->from('location')
+            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
+            ->all();
+
+        $features = [];
+
+        foreach ($rows as $r) {
+            $geom = json_decode($r['geometry'], true);
+
+            if (!$geom && is_string($r['geometry'])) {
+                $geom = json_decode(stripslashes($r['geometry']), true);
+            }
+
+            if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
+                continue;
+            }
+
+            $features[] = [
+                'type' => 'Feature',
+                'properties' => [
+                    'id' => (int)$r['id'],
+                    'name' => $r['name'],
+                    'notes' => $r['notes'],
+                    'location_type_id' => (int)$r['location_type_id'],
+                    'status_type_id' => (int)$r['status_type_id'],
+                ],
+                'geometry' => $geom,
+            ];
+        }
+
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
     }
 }

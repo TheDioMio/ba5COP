@@ -1,45 +1,52 @@
 <?php
 
-/** @var yii\web\View $this */
-
-use yii\bootstrap5\Html;
+use common\assets\CopMapReadOnlyAsset;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\helpers\Json;
 
 $this->title = 'COP';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'] = [];
+$this->params['bodyClass'] = 'cop-page-body';
+
+$asset = CopMapReadOnlyAsset::register($this);
+$imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
+
+$copMapOptions = [
+    'elId' => 'cop-map',
+    'mode' => 'image',
+    'imageUrl' => $imageUrl,
+    'imageWidth' => 1066,
+    'imageHeight' => 701,
+    'minZoom' => -2,
+    'maxZoom' => 4,
+    'scrollWheelZoom' => true,
+    'locationsIndexUrl' => Url::to(['/site/cop-data']),
+];
 ?>
 
-<div class="cop-page">
-    <div class="cop-header">
-        <div>
-            <span class="mini-label">Vista operacional</span>
-            <h1>Common Operational Picture</h1>
-            <p>Esta página fica pronta para receber o teu mapa Leaflet real, overlays, layers e widgets vivos.</p>
-        </div>
-        <?= Html::a('Voltar ao início', ['/site/index'], ['class' => 'btn btn-ba5-secondary']) ?>
-    </div>
-
-    <div class="cop-shell">
-        <aside class="cop-sidebar info-card">
-            <h3>Painel lateral</h3>
-            <p>Zona reservada para filtros, layers, incidentes, pedidos, equipas e detalhe de seleção.</p>
-            <ul class="cop-feature-list">
-                <li>Camadas do mapa</li>
-                <li>Ocorrências ativas</li>
-                <li>Pedidos recentes</li>
-                <li>Detalhe do objeto selecionado</li>
-            </ul>
-        </aside>
-
-        <section class="cop-map-stage info-card">
-            <div class="cop-map-placeholder">
-                <div class="map-grid"></div>
-                <div class="map-overlay map-overlay-a"></div>
-                <div class="map-overlay map-overlay-b"></div>
-                <div class="map-marker marker-1">Hangar</div>
-                <div class="map-marker marker-2">Torre</div>
-                <div class="map-marker marker-3">Bloco B</div>
-                <div class="map-marker marker-4">Portão Sul</div>
+    <div class="cop-screen">
+        <div class="cop-floating-bar">
+            <div class="cop-floating-info">
+                <span class="cop-kicker">COMMON OPERATIONAL PICTURE</span>
+                <h1>Mapa Operacional</h1>
+                <p>Visualização em modo leitura da Base Aérea N.º 5.</p>
             </div>
-        </section>
+
+            <div class="cop-floating-actions">
+                <?= Html::a(
+                    '<i class="fa-solid fa-house"></i><span>Início</span>',
+                    ['/site/index'],
+                    ['class' => 'btn btn-ba5-secondary cop-floating-btn']
+                ) ?>
+            </div>
+        </div>
+
+        <div id="cop-map" class="cop-map-canvas"></div>
     </div>
-</div>
+
+<?php
+$this->registerJs(
+    'initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');'
+);
+?>

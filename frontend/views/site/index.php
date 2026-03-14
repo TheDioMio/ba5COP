@@ -3,8 +3,27 @@
 /** @var yii\web\View $this */
 
 use yii\bootstrap5\Html;
+use yii\helpers\Json;
+use common\assets\CopMapReadOnlyAsset;
+use yii\helpers\Url;
 
 $this->title = 'BA5 COP';
+
+
+$asset = CopMapReadOnlyAsset::register($this);
+$imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
+
+$homeMapOptions = [
+    'elId' => 'home-map',
+    'mode' => 'image',
+    'imageUrl' => $imageUrl,
+    'imageWidth' => 1066,
+    'imageHeight' => 701,
+    'minZoom' => -1.5,
+    'maxZoom' => 2,
+    'scrollWheelZoom' => false,
+    'locationsIndexUrl' => Url::to(['/site/cop-data']),
+];
 ?>
 
 <div class="ba5-home">
@@ -49,26 +68,7 @@ $this->title = 'BA5 COP';
             ) ?>
         </div>
 
-        <div class="map-preview map-preview-large">
-            <div class="map-grid"></div>
-            <div class="map-overlay map-overlay-a"></div>
-            <div class="map-overlay map-overlay-b"></div>
-            <div class="map-marker marker-1">Hangar</div>
-            <div class="map-marker marker-2">Torre</div>
-            <div class="map-marker marker-3">Bloco B</div>
-            <div class="map-marker marker-4">Portão Sul</div>
-        </div>
-
-<!--        <div class="map-card-footer">-->
-<!--            <div>-->
-<!--                <span class="mini-label">Modo atual</span>-->
-<!--                <strong>Visualização pública do mapa</strong>-->
-<!--            </div>-->
-<!--            <div>-->
-<!--                <span class="mini-label">Preparado para</span>-->
-<!--                <strong>Leaflet com camadas dinâmicas</strong>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div id="home-map" class="cop-leaflet-map"></div>
     </section>
 
     <section class="content-grid content-grid-login">
@@ -148,3 +148,9 @@ $this->title = 'BA5 COP';
     </section>
 
 </div>
+
+<?php
+$this->registerJs(
+    'initCopMapReadOnly(' . Json::htmlEncode($homeMapOptions) . ');'
+);
+?>

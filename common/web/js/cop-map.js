@@ -152,6 +152,9 @@ window.initCopMap = function (opts) {
         });
     }
 
+
+
+
     // CREATE
     map.on('pm:create', (e) => {
         pendingLayer = e.layer;
