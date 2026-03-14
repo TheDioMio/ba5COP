@@ -5,156 +5,146 @@
 use yii\bootstrap5\Html;
 
 $this->title = 'BA5 COP';
-
-$kpis = [
-    ['label' => 'Ocorrências ativas', 'value' => '03', 'meta' => '2 operacionais · 1 logística'],
-    ['label' => 'Pedidos em curso', 'value' => '11', 'meta' => '4 com prioridade elevada'],
-    ['label' => 'Equipas destacadas', 'value' => '06', 'meta' => 'ECSI · Infra · Segurança'],
-    ['label' => 'Estado da base', 'value' => 'Estável', 'meta' => 'Sem constrangimentos críticos'],
-];
-
-$alerts = [
-    ['time' => 'Agora', 'title' => 'Fuga de água assinalada', 'text' => 'Bloco B com intervenção em curso e isolamento parcial do setor.'],
-    ['time' => 'Há 12 min', 'title' => 'Pedido validado pela cadeia de comando', 'text' => 'Substituição de equipamento de rede encaminhada para execução.'],
-    ['time' => 'Há 27 min', 'title' => 'Atualização de perímetro', 'text' => 'Patrulha concluída sem anomalias no setor sul.'],
-];
-
-$tasks = [
-    ['title' => 'Reparar fuga no Bloco B', 'owner' => 'Infraestruturas', 'priority' => 'Alta', 'state' => 'Em execução'],
-    ['title' => 'Validar switch de redundância', 'owner' => 'ECSI', 'priority' => 'Alta', 'state' => 'Aguarda janela técnica'],
-    ['title' => 'Inspecionar acesso secundário', 'owner' => 'Segurança', 'priority' => 'Média', 'state' => 'Planeado'],
-];
 ?>
 
 <div class="ba5-home">
-    <section class="hero-panel">
+
+    <div class="hero-card">
+
         <div class="hero-copy">
-            <span class="hero-eyebrow">Common Operational Picture</span>
-            <h1>Consciência situacional centralizada para a BA5.</h1>
+            <span class="hero-eyebrow">COMMON OPERATIONAL PICTURE</span>
+
+            <h1>Bem-vindo ao COP</h1>
+
             <p class="hero-text">
-                Um frontend pensado para concentrar mapa, incidentes, pedidos, equipas e estado operacional
-                numa vista clara, rápida e preparada para evolução no Yii2.
+                A plataforma de apoio à gestão operacional da Base Aérea N.º 5,
+                permitindo visualizar e acompanhar informação relevante da unidade através
+                de uma representação cartográfica centralizada da base, proporcionando uma
+                visão clara e organizada dos principais elementos e atividades da unidade.
             </p>
-
-            <div class="hero-actions">
-                <?php
-                    if(!Yii::$app->user->isGuest){
-                        Html::a('Entrar no sistema', ['/site/login'], ['class' => 'btn btn-ba5-secondary btn-lg']);
-                    }
-                ?>
-            </div>
-
-            <div class="hero-tags">
-                <span>Mapa central</span>
-                <span>Incidentes e pedidos</span>
-                <span>Fluxo operacional</span>
-                <span>Yii2 + Leaflet</span>
-            </div>
         </div>
 
-        <div class="hero-map-card">
-            <div class="map-card-top">
-                <div>
-                    <p class="mini-label">Vista principal</p>
-                    <h2>Pré-visualização COP</h2>
-                </div>
-                <span class="status-pill">Online</span>
-            </div>
-
-            <div class="map-preview">
-                <div class="map-grid"></div>
-                <div class="map-overlay map-overlay-a"></div>
-                <div class="map-overlay map-overlay-b"></div>
-                <div class="map-marker marker-1">Hangar</div>
-                <div class="map-marker marker-2">Torre</div>
-                <div class="map-marker marker-3">Bloco B</div>
-                <div class="map-marker marker-4">Portão Sul</div>
-            </div>
-
-            <div class="map-card-footer">
-                <div>
-                    <span class="mini-label">Modo atual</span>
-                    <strong>Planta operacional</strong>
-                </div>
-                <div>
-                    <span class="mini-label">Pronto para</span>
-                    <strong>Leaflet + camadas dinâmicas</strong>
-                </div>
-            </div>
+        <div class="hero-image">
+            <?= Html::img('@web/img/f16.jpg', [
+                'class' => 'f16-hero',
+                'alt' => 'F-16'
+            ]) ?>
         </div>
+
+    </div>
+
+    <section class="info-card panel-card">
+        <div class="panel-head">
+            <div>
+                <span class="mini-label">Mapa operacional</span>
+                <h2>Vista geral da base</h2>
+            </div>
+            <?= Html::a(
+                '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>',
+                ['/site/cop'],
+                [
+                    'class' => 'btn btn-ba5-primary',
+                    'title' => 'Abrir mapa em ecrã inteiro'
+                ]
+            ) ?>
+        </div>
+
+        <div class="map-preview map-preview-large">
+            <div class="map-grid"></div>
+            <div class="map-overlay map-overlay-a"></div>
+            <div class="map-overlay map-overlay-b"></div>
+            <div class="map-marker marker-1">Hangar</div>
+            <div class="map-marker marker-2">Torre</div>
+            <div class="map-marker marker-3">Bloco B</div>
+            <div class="map-marker marker-4">Portão Sul</div>
+        </div>
+
+<!--        <div class="map-card-footer">-->
+<!--            <div>-->
+<!--                <span class="mini-label">Modo atual</span>-->
+<!--                <strong>Visualização pública do mapa</strong>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <span class="mini-label">Preparado para</span>-->
+<!--                <strong>Leaflet com camadas dinâmicas</strong>-->
+<!--            </div>-->
+<!--        </div>-->
     </section>
 
-    <section class="kpi-grid">
-        <?php foreach ($kpis as $item): ?>
-            <article class="info-card kpi-card">
-                <span class="mini-label"><?= Html::encode($item['label']) ?></span>
-                <div class="kpi-value"><?= Html::encode($item['value']) ?></div>
-                <p><?= Html::encode($item['meta']) ?></p>
-            </article>
-        <?php endforeach; ?>
-    </section>
-
-    <section class="content-grid">
+    <section class="content-grid content-grid-login">
         <article class="info-card panel-card panel-card-wide">
             <div class="panel-head">
                 <div>
-                    <span class="mini-label">Feed operacional</span>
-                    <h3>Últimas atualizações</h3>
+                    <span class="mini-label">Sobre a plataforma</span>
+                    <h3>Introdução rápida</h3>
                 </div>
-                <?= Html::a('Ver COP', ['/site/cop'], ['class' => 'panel-link']) ?>
             </div>
 
             <div class="timeline-list">
-                <?php foreach ($alerts as $alert): ?>
-                    <div class="timeline-item">
-                        <div class="timeline-time"><?= Html::encode($alert['time']) ?></div>
-                        <div class="timeline-body">
-                            <strong><?= Html::encode($alert['title']) ?></strong>
-                            <p><?= Html::encode($alert['text']) ?></p>
-                        </div>
+                <div class="timeline-item">
+                    <div class="timeline-time"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="timeline-body">
+                        <strong>Consciência situacional da unidade</strong>
+                        <p>
+                            A plataforma COP pretende fornecer uma visão clara e centralizada da Base Aérea N.º 5,
+                            permitindo acompanhar informação relevante da unidade através de uma representação
+                            cartográfica da base e de elementos associados às suas infraestruturas.
+                        </p>
                     </div>
-                <?php endforeach; ?>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-time"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <div class="timeline-body">
+                        <strong>Apoio à gestão operacional</strong>
+                        <p>
+                            O sistema foi desenvolvido para apoiar a gestão operacional da base, facilitando
+                            a consulta de informação importante e permitindo uma visão organizada do estado
+                            geral da unidade.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-time"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="timeline-body">
+                        <strong>Centralização da informação</strong>
+                        <p>
+                            A plataforma reúne diferentes elementos informativos num único ponto de acesso,
+                            contribuindo para uma consulta mais rápida e estruturada da informação associada
+                            à Base Aérea N.º 5.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <?= Html::a('Sobre Nós', ['/site/about'], ['class' => 'btn btn-ba5-primary w-100']) ?>
+                </div>
             </div>
         </article>
 
-        <article class="info-card panel-card">
-            <div class="panel-head">
-                <div>
-                    <span class="mini-label">Quick actions</span>
-                    <h3>Acessos rápidos</h3>
-                </div>
+        <article class="info-card panel-card login-panel text-center ba5-identity-card">
+
+            <video autoplay muted loop playsinline class="ba5-bg-video">
+                <source src="<?= Yii::getAlias('@web') ?>/video/ba5Cacas.mp4" type="video/mp4">
+            </video>
+
+            <div class="ba5-identity-content">
+
+                <?= Html::img('@web/img/BA5_Brasao.png', [
+                    'alt' => 'Base Aérea Nº5',
+                    'class' => 'ba5-badge-large'
+                ]) ?>
+
+                <span class="mini-label mt-3">Base Aérea N.º 5</span>
+
+                <p class="ba5-motto">
+                    "Alcança quem não cansa"
+                </p>
+
             </div>
 
-            <div class="quick-actions">
-                <?= Html::a('Abrir mapa operacional', ['/site/cop'], ['class' => 'quick-action']) ?>
-                <?= Html::a('Consultar contacto', ['/site/contact'], ['class' => 'quick-action']) ?>
-                <?= Html::a('Sobre o sistema', ['/site/about'], ['class' => 'quick-action']) ?>
-                <?= Html::a('Autenticação', ['/site/login'], ['class' => 'quick-action']) ?>
-            </div>
-        </article>
-
-        <article class="info-card panel-card panel-card-wide">
-            <div class="panel-head">
-                <div>
-                    <span class="mini-label">Execução</span>
-                    <h3>Tarefas prioritárias</h3>
-                </div>
-            </div>
-
-            <div class="task-list">
-                <?php foreach ($tasks as $task): ?>
-                    <div class="task-row">
-                        <div>
-                            <strong><?= Html::encode($task['title']) ?></strong>
-                            <p><?= Html::encode($task['owner']) ?></p>
-                        </div>
-                        <div class="task-badges">
-                            <span><?= Html::encode($task['priority']) ?></span>
-                            <span><?= Html::encode($task['state']) ?></span>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
         </article>
     </section>
+
 </div>

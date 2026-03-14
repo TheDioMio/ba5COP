@@ -23,14 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div>
                     <?= Html::a(
                         'Todos',
-                        [
-                            'index',
-                            'priority_internal' => $priorityInternal,
-                            'priority_external' => $priorityExternal,
-                        ],
-                        [
-                            'class' => 'btn btn-sm ' . (empty($status) ? 'btn-primary' : 'btn-outline-primary')
-                        ]
+                        ['index'],
+                        ['class' => 'btn btn-sm ' . (empty($status) ? 'btn-primary' : 'btn-outline-primary')]
                     ) ?>
 
                     <?php foreach ($statuses as $s): ?>
@@ -39,8 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'index',
                                 'status' => $s->id,
-                                'priority_internal' => $priorityInternal,
-                                'priority_external' => $priorityExternal,
+                                'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
+                                'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
                             ],
                             [
                                 'class' => 'btn btn-sm ' . ((string)$status === (string)$s->id ? 'btn-primary' : 'btn-outline-primary')
@@ -50,63 +44,51 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
                 <div class="card-tools">
-                    <?= Html::a('<i class="fas fa-plus-circle"></i>',
-                        ['create'],
-                        [
-                            'class' => 'btn btn-success',
-                            'title' => 'Criar',
-                        ])
-                    ?>
+                    <?= Html::a('<i class="fas fa-plus-circle"></i>', ['create'], [
+                        'class' => 'btn btn-success',
+                        'title' => 'Criar',
+                    ]) ?>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="card card-outline card-primary shadow-sm mb-4">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <span>Pedidos Internos</span>
-
-                <form method="get" class="mb-0">
-                    <input type="hidden" name="status" value="<?= Html::encode($status) ?>">
-                    <input type="hidden" name="priority_external" value="<?= Html::encode($priorityExternal) ?>">
-
-                    <select name="priority_internal" class="form-control form-control-sm" onchange="this.form.submit()">
-                        <option value="">Todas as prioridades</option>
-                        <?php foreach ($priorities as $priority): ?>
-                            <option value="<?= $priority->id ?>" <?= ((string)$priorityInternal === (string)$priority->id) ? 'selected' : '' ?>>
-                                <?= Html::encode($priority->description) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
-            </div>
-        </div>
-
         <div class="card-body p-0">
+            <h6 class="px-3 pt-3 mb-2">Pedidos Internos</h6>
+
             <?= GridView::widget([
                 'dataProvider' => $dataProviderInternos,
-                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'filterModel' => $searchModelInternos,
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm mb-0'],
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
-                    'origin',
-                    'details',
+                    [
+                        'attribute' => 'origin',
+                        'filter' => false,
+                    ],
+                    [
+                        'attribute' => 'details',
+                        'filter' => false,
+                    ],
                     [
                         'attribute' => 'priority_id',
                         'label' => 'Prioridade',
                         'value' => function ($model) {
-                            return $model->priority ? $model->priority->description : null;
+                            return $model->priority?->description;
                         },
+                        'filter' => $priorityList,
                     ],
                     [
                         'attribute' => 'status',
                         'label' => 'Estado',
                         'value' => function ($model) {
-                            return $model->status ? $model->status->description : null;
+                            return $model->statusType?->description;
                         },
+                        'filter' => false,
                     ],
                     [
-                        'class' => ActionColumn::className(),
+                        'class' => ActionColumn::class,
                         'urlCreator' => function ($action, Request $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);
                         }
@@ -118,50 +100,41 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="card card-outline card-secondary shadow-sm">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <span>Pedidos Externos</span>
-
-                <form method="get" class="mb-0">
-                    <input type="hidden" name="status" value="<?= Html::encode($status) ?>">
-                    <input type="hidden" name="priority_internal" value="<?= Html::encode($priorityInternal) ?>">
-
-                    <select name="priority_external" class="form-control form-control-sm" onchange="this.form.submit()">
-                        <option value="">Todas as prioridades</option>
-                        <?php foreach ($priorities as $priority): ?>
-                            <option value="<?= $priority->id ?>" <?= ((string)$priorityExternal === (string)$priority->id) ? 'selected' : '' ?>>
-                                <?= Html::encode($priority->description) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
-            </div>
-        </div>
-
         <div class="card-body p-0">
+            <h6 class="px-3 pt-3 mb-2">Pedidos Externos</h6>
+
             <?= GridView::widget([
                 'dataProvider' => $dataProviderExternos,
-                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'filterModel' => $searchModelExternos,
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm mb-0'],
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
-                    'origin',
-                    'details',
+                    [
+                        'attribute' => 'origin',
+                        'filter' => false,
+                    ],
+                    [
+                        'attribute' => 'details',
+                        'filter' => false,
+                    ],
                     [
                         'attribute' => 'priority_id',
                         'label' => 'Prioridade',
                         'value' => function ($model) {
-                            return $model->priority ? $model->priority->description : null;
+                            return $model->priority?->description;
                         },
+                        'filter' => $priorityList,
                     ],
                     [
                         'attribute' => 'status',
                         'label' => 'Estado',
                         'value' => function ($model) {
-                            return $model->statusType ? $model->statusType->description : null;
+                            return $model->statusType?->description;
                         },
+                        'filter' => false,
                     ],
                     [
-                        'class' => ActionColumn::className(),
+                        'class' => ActionColumn::class,
                         'urlCreator' => function ($action, Request $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);
                         }

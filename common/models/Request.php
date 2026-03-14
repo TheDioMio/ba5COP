@@ -92,7 +92,7 @@ class Request extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus()
+    public function getStatusType()
     {
         return $this->hasOne(StatusType::class, ['id' => 'status']);
     }

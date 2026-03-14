@@ -55,6 +55,9 @@ $userLogado = Yii::$app->user->identity;
                 'items' => [
                     // DASHBOARD
                     ['label' => 'Página Inicial', 'url' => ['site/index'], 'icon' => 'home'],
+                    ['label' => 'Gestão de Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
+                    ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
+                    ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
 
                     //OPERAÇÕES
                     [
@@ -64,7 +67,7 @@ $userLogado = Yii::$app->user->identity;
                         'items' => [
                             ['label' => 'Incidents', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
                             ['label' => 'Tasks', 'url' => ['task/index'], 'icon' => 'tasks'],
-                            ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
+
                             ['label' => 'Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
                         ],
                     ],
@@ -87,7 +90,7 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'warehouse',
                         'options' => ['class' => 'nav-item nav-log'],
                         'items' => [
-                            ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
+
                         ],
                     ],
 
@@ -97,7 +100,6 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'users-cog',
                         'options' => ['class' => 'nav-item nav-admin'],
                         'items' => [
-                            ['label' => 'Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
                             ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'icon' => 'history'],
                             ['label' => 'Entity Updates', 'url' => ['entity-update/index'], 'icon' => 'exchange-alt'],
                             ['label' => 'Entities', 'url' => ['entity/index'], 'icon' => 'database'],

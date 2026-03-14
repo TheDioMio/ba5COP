@@ -441,7 +441,129 @@ main > .container-fluid {
     flex-shrink: 0;
 }
 
+.hero-panel-single {
+    grid-template-columns: 1fr;
+}
 
+.map-preview-large {
+    min-height: 520px;
+}
+
+.content-grid-login {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+}
+
+.login-panel {
+    align-self: stretch;
+}
+
+.login-panel .quick-actions {
+    display: grid;
+    gap: 12px;
+}
+
+@media (max-width: 1199px) {
+    .content-grid-login {
+        grid-template-columns: 1fr;
+    }
+
+    .map-preview-large {
+        min-height: 380px;
+    }
+}
+
+.hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    padding: 48px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(20, 31, 46, 0.96) 0%, rgba(14, 24, 36, 0.96) 100%);
+    border: 1px solid var(--ba5-border);
+    box-shadow: var(--ba5-shadow);
+}
+
+.hero-copy {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.hero-image {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 0;
+}
+
+.f16-hero {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    display: block;
+}
+
+.timeline-time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /*centraliza os ícones*/
+    width: 100px;
+    min-width: 100px;
+
+    font-size: 30px; /* tamanho do ícone */
+    color: var(--ba5-accent-2);
+}
+
+.timeline-time i {
+    font-size: 22px;
+}
+
+.ba5-badge-large{
+    width: 260px;
+    max-width: 90%;
+    height: auto;
+    margin: auto;
+    display: block;
+}
+
+.ba5-motto{
+    margin-top: 10px;
+    font-style: italic;
+    color: var(--ba5-muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+}
+
+.ba5-identity-card{
+    position: relative;
+    overflow: hidden;
+}
+
+.ba5-bg-video{
+    position: absolute;
+
+    bottom: 20px;
+    left: 20px;
+
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+
+    object-fit: cover;
+
+    border-radius: 16px;
+
+    opacity: 0.25;
+}
+
+.ba5-identity-content{
+    position: relative;
+    z-index: 2;
+}
 
 
 

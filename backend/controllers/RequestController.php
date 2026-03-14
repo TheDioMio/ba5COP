@@ -45,65 +45,38 @@ class RequestController extends Controller
     public function actionIndex()
     {
         $status = Yii::$app->request->get('status');
-        $priorityInternal = Yii::$app->request->get('priority_internal');
-        $priorityExternal = Yii::$app->request->get('priority_external');
 
-        $queryInternos = Request::find()->where(['is_external' => 0]);
-        $queryExternos = Request::find()->where(['is_external' => 1]);
+        $searchModelInternos = new RequestSearch();
+        $searchModelInternos->fixedIsExternal = 0;
+        $searchModelInternos->customFormName = 'RequestSearchInternos';
 
-        // filtro global por status (REQUEST = entity_type_id 4)
+        $searchModelExternos = new RequestSearch();
+        $searchModelExternos->fixedIsExternal = 1;
+        $searchModelExternos->customFormName = 'RequestSearchExternos';
+
+        $dataProviderInternos = $searchModelInternos->search(Yii::$app->request->queryParams);
+        $dataProviderExternos = $searchModelExternos->search(Yii::$app->request->queryParams);
+
         if (!empty($status)) {
-            $queryInternos->andWhere(['status' => $status]);
-            $queryExternos->andWhere(['status' => $status]);
+            $dataProviderInternos->query->andWhere(['status' => $status]);
+            $dataProviderExternos->query->andWhere(['status' => $status]);
         }
-
-        // filtro de prioridade só para internos
-        if (!empty($priorityInternal)) {
-            $queryInternos->andWhere(['priority_id' => $priorityInternal]);
-        }
-
-        // filtro de prioridade só para externos
-        if (!empty($priorityExternal)) {
-            $queryExternos->andWhere(['priority_id' => $priorityExternal]);
-        }
-
-        $dataProviderInternos = new ActiveDataProvider([
-            'query' => $queryInternos,
-            'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC],
-            ],
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-        ]);
-
-        $dataProviderExternos = new ActiveDataProvider([
-            'query' => $queryExternos,
-            'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC],
-            ],
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-        ]);
 
         $statuses = StatusType::find()
-            ->where(['entity_type_id' => 4])
+            ->where(['entity_type_id' => Entity::REQUEST_ID])
             ->orderBy(['id' => SORT_ASC])
             ->all();
 
-        $priorities = Priority::find()
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
+        $priorityList = Priority::dropDown();
 
         return $this->render('index', [
+            'searchModelInternos' => $searchModelInternos,
+            'searchModelExternos' => $searchModelExternos,
             'dataProviderInternos' => $dataProviderInternos,
             'dataProviderExternos' => $dataProviderExternos,
+            'priorityList' => $priorityList,
             'statuses' => $statuses,
-            'priorities' => $priorities,
             'status' => $status,
-            'priorityInternal' => $priorityInternal,
-            'priorityExternal' => $priorityExternal,
         ]);
     }
 

@@ -11,6 +11,9 @@ use common\models\Request;
  */
 class RequestSearch extends Request
 {
+    public ?int $fixedIsExternal = null;
+    public ?string $customFormName = null;
+
     /**
      * {@inheritdoc}
      */
@@ -41,9 +44,13 @@ class RequestSearch extends Request
      */
     public function search($params, $formName = null)
     {
-        $query = Request::find();
+        $query = Request::find()->with(['priority', 'statusType']);
 
         // add conditions that should always apply here
+
+        if ($this->fixedIsExternal !== null) {
+            $query->andWhere(['is_external' => $this->fixedIsExternal]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
