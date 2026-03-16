@@ -48,7 +48,7 @@ $currentRoute = Yii::$app->controller->route;
         ]);
 
         $menuItems = [
-            ['label' => 'Início', 'url' => ['/site/index'], 'active' => $currentRoute === 'site/index'],
+            ['label' => 'Dashboard', 'url' => ['/dashboard/index'], 'active' => $currentRoute === 'site/cop'],
             ['label' => 'COP', 'url' => ['/site/cop'], 'active' => $currentRoute === 'site/cop'],
             ['label' => 'Sobre', 'url' => ['/site/about'], 'active' => $currentRoute === 'site/about'],
             ['label' => 'Contacto', 'url' => ['/site/contact'], 'active' => $currentRoute === 'site/contact'],
@@ -81,8 +81,12 @@ $currentRoute = Yii::$app->controller->route;
     </header>
 
     <main role="main" class="flex-shrink-0">
-        <?php $isHome = $currentRoute === 'site/index'; ?>
-        <div class="<?= $isHome ? 'container-fluid px-3 px-lg-4' : 'container' ?>">
+        <?php
+        $isHome = $currentRoute === 'site/index';
+        $isDashboard = $currentRoute === 'dashboard/index';
+        $isFluid = $isHome || $isDashboard;
+        ?>
+        <div class="<?= $isFluid ? 'container-fluid px-3 px-lg-4' : 'container' ?>">
             <?php if (!$isHome): ?>
                 <?= Breadcrumbs::widget([
                     'links' => $this->params['breadcrumbs'] ?? [],
