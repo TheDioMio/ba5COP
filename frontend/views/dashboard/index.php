@@ -310,60 +310,78 @@ $copMapOptions = [
 
         <section class="cop-bottom">
             <article class="cop-card cop-bottom-wide">
+
                 <header class="cop-module-head">
                     <div>
                         <span class="cop-eyebrow">Execução</span>
                         <h3>Top 10 tarefas — WO Tracker</h3>
                     </div>
-                    <span class="cop-badge">17:55</span>
                 </header>
 
-                <table class="cop-table">
-                    <thead>
-                    <tr>
-                        <th>WO</th>
-                        <th>Prioridade</th>
-                        <th>Responsável</th>
-                        <th>Estado</th>
-                        <th>Bloqueio</th>
-                        <th>ETA</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>WO-101</td>
-                        <td>A</td>
-                        <td>Sgt. Matos</td>
-                        <td>Em Exec.</td>
-                        <td>Sem bloqueio</td>
-                        <td>18:20</td>
-                    </tr>
-                    <tr>
-                        <td>WO-102</td>
-                        <td>B</td>
-                        <td>Cb. Silva</td>
-                        <td>Validado</td>
-                        <td>Aguarda acesso</td>
-                        <td>19:00</td>
-                    </tr>
-                    <tr>
-                        <td>WO-103</td>
-                        <td>A</td>
-                        <td>1Sar. Costa</td>
-                        <td>Em Exec.</td>
-                        <td>Material parcial</td>
-                        <td>18:45</td>
-                    </tr>
-                    <tr>
-                        <td>WO-104</td>
-                        <td>C</td>
-                        <td>Eq. Infra</td>
-                        <td>Novo</td>
-                        <td>Sem bloqueio</td>
-                        <td>20:15</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="cop-table-scroll">
+                    <table class="cop-table">
+                        <thead>
+                        <tr>
+                            <th>WO</th>
+                            <th>Prioridade</th>
+                            <th>Responsável</th>
+                            <th>Estado</th>
+                            <th>Bloqueio</th>
+                            <th>ETA</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>WO-101</td>
+                            <td>A</td>
+                            <td>Sgt. Matos</td>
+                            <td>Em Exec.</td>
+                            <td>Sem bloqueio</td>
+                            <td>18:20</td>
+                        </tr>
+                        <tr>
+                            <td>WO-102</td>
+                            <td>B</td>
+                            <td>Cb. Silva</td>
+                            <td>Validado</td>
+                            <td>Aguarda acesso</td>
+                            <td>19:00</td>
+                        </tr>
+                        <tr>
+                            <td>WO-103</td>
+                            <td>A</td>
+                            <td>1Sar. Costa</td>
+                            <td>Em Exec.</td>
+                            <td>Material parcial</td>
+                            <td>18:45</td>
+                        </tr>
+                        <tr>
+                            <td>WO-104</td>
+                            <td>C</td>
+                            <td>Eq. Infra</td>
+                            <td>Novo</td>
+                            <td>Sem bloqueio</td>
+                            <td>20:15</td>
+                        </tr>
+                        <tr>
+                            <td>WO-105</td>
+                            <td>C</td>
+                            <td>Eq. Infra</td>
+                            <td>Novo</td>
+                            <td>Sem bloqueio</td>
+                            <td>20:15</td>
+                        </tr>
+                        <tr>
+                            <td>WO-106</td>
+                            <td>C</td>
+                            <td>Eq. Infra</td>
+                            <td>Novo</td>
+                            <td>Sem bloqueio</td>
+                            <td>20:15</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </article>
 
             <article class="cop-card">
