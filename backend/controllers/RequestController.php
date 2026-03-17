@@ -102,9 +102,8 @@ class RequestController extends Controller
     {
         $model = new Request();
 
-        $statusType = new StatusType();
         $prioritiesArray = Priority::dropDown();
-        $statusArray = $statusType->getStatusDropdown(Entity::REQUEST_ID);
+        $statusArray = StatusType::getStatusDropdown(Entity::REQUEST_ID);
 
         if ($this->request->isPost) {
             $model->load($this->request->post());

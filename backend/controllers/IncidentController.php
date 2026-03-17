@@ -2,8 +2,14 @@
 
 namespace backend\controllers;
 
+use common\models\Entity;
 use common\models\Incident;
 use app\models\IncidentSearch;
+use common\models\IncidentType;
+use common\models\Location;
+use common\models\Priority;
+use common\models\StatusType;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -69,9 +75,23 @@ class IncidentController extends Controller
     {
         $model = new Incident();
 
+        $arrayLocations = Location::dropDown();
+        $arrayIncidentTypes = IncidentType::dropDown();
+        $arrayPriorities = Priority::dropDown();
+        $arrayStatus = StatusType::getStatusDropdown(Entity::INCIDENT_ID);
+        $arrayUsers = User::dropDown();
+
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->load($this->request->post());
+
+            $entity = Entity::createEntity(Entity::INCIDENT_ID);
+
+            if($entity !== null) {
+                $model->entity_id = $entity->id;
+
+                if($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -79,6 +99,11 @@ class IncidentController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'arrayLocations' => $arrayLocations,
+            'arrayIncidentTypes' => $arrayIncidentTypes,
+            'arrayPriorities' => $arrayPriorities,
+            'arrayStatus' => $arrayStatus,
+            'arrayUsers' => $arrayUsers,
         ]);
     }
 
@@ -93,12 +118,15 @@ class IncidentController extends Controller
     {
         $model = $this->findModel($id);
 
+        $arrayLocations = Location::dropDown();
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'arrayLocations' => $arrayLocations,
         ]);
     }
 

@@ -108,7 +108,7 @@ class StatusType extends \yii\db\ActiveRecord
      * Vai buscar o tipo de status, dependendo da entidade que é pedida e passa para dropdown.
      * [id => description] 560 218
      */
-    public function getStatusDropdown($entity)
+    public static function getStatusDropdown($entity)
     {
         $dropDown = StatusType::find()->select(['id', 'description'])->where(['entity_type_id' => $entity])
             ->orderBy(['id'=> SORT_ASC])->asArray()->all();

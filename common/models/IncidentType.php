@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "incident_type".
@@ -54,6 +55,20 @@ class IncidentType extends \yii\db\ActiveRecord
     public function getIncidents()
     {
         return $this->hasMany(Incident::class, ['incident_type_id' => 'id']);
+    }
+
+    /**
+     * Lista de tipos de incidentes para dropdown
+     * [id => description]
+     */
+    public static function dropDown(): array
+    {
+        $rows = self::find()
+            ->select(['id', 'description'])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'description');
     }
 
 }

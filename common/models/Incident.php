@@ -63,14 +63,14 @@ class Incident extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'location_id' => 'Location ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'incident_type_id' => 'Incident Type ID',
-            'priority_id' => 'Priority ID',
-            'status_type_id' => 'Status Type ID',
-            'reported_by' => 'Reported By',
-            'entity_id' => 'Entity ID',
+            'location_id' => 'ID da Localização',
+            'title' => 'Título',
+            'description' => 'Descrição',
+            'incident_type_id' => 'ID do Tipo do Incidente',
+            'priority_id' => 'ID da Prioridade',
+            'status_type_id' => 'ID do tipo de status',
+            'reported_by' => 'Reportado por',
+            'entity_id' => 'ID da Entidade',
         ];
     }
 
@@ -142,6 +142,16 @@ class Incident extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Task::class, ['incident_id' => 'id']);
+    }
+
+
+    /**
+     * Devolve o número total de incidentes de X tipo
+     * EX. Número total de incidentes por fuga de água.
+     */
+
+    public static function incidentTotal($incidentType){
+        return -1;
     }
 
 }
