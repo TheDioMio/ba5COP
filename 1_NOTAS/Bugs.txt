@@ -1,2 +1,0 @@
-1 - No index do lodging-site, na coluna da disponibilidade, não está a funcionar as cores de cada número, aparece sempre verde mesmo se estiver em 0.
-2 - Dá para adicionar mais pessoas a um alojamento do que a capacidade, a disponibilidade vai para os negativos.

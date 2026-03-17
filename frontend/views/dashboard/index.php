@@ -28,7 +28,7 @@ $copMapOptions = [
 ?>
 
     <div class="cop-dashboard">
-
+        <!--Zona KPI's-->
         <section class="cop-topbar">
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Segurança</span>
@@ -62,7 +62,7 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning">72</div>
+                <div class="cop-kpi-value is-warning"><?=$overallAvailability?></div>
                 <p>disponíveis</p>
             </article>
 
@@ -90,6 +90,8 @@ $copMapOptions = [
                 <p>rajadas 70–90 km/h</p>
             </article>
         </section>
+
+        <!-- FIM Zona KPI's-->
 
         <section class="cop-main">
 

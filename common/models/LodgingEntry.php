@@ -83,4 +83,16 @@ class LodgingEntry extends \yii\db\ActiveRecord
         return $this->hasOne(LodgingSite::class, ['id' => 'lodging_site_id']);
     }
 
+    /**
+     * Devolve o número total de camas OCUPADAS em todos os alojamentos.
+     *
+     */
+    public static function getOverallOccupancy(){
+        $takenBeds = self::find()
+            ->where(['checkout_at' => null])
+            ->sum('people_count');
+
+        return $takenBeds;
+    }
+
 }

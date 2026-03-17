@@ -98,7 +98,6 @@ class LodgingSite extends \yii\db\ActiveRecord
      *  Devolve o número de camas ocupadas
      *  Query à BD.
      */
-
     public function occupancy() {
         $occupancy = LodgingEntry::find()
             ->where(['lodging_site_id' => $this->id])
@@ -141,5 +140,25 @@ class LodgingSite extends \yii\db\ActiveRecord
         } else {
             return $currentCapacity;
         }
+    }
+
+    /**
+     * Devolve o número total de camas (capacidade total) em todos os alojamentos.
+     *
+     */
+    public static function getOverallCapacity(){
+        $overallBeds = self::find()
+            ->sum('capacity_total');
+
+        return $overallBeds;
+    }
+
+    public static function getOverallAvailability(){
+        $overallBeds = LodgingSite::getOverallCapacity();
+        $takenBeds = LodgingEntry::getOverallOccupancy();
+
+        $availability = $overallBeds - $takenBeds;
+
+        return $availability;
     }
 }

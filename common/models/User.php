@@ -231,7 +231,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $rows = self::find()
             ->select(['id', 'username', 'email'])
-            ->where(['status' => 10]) // opcional
+            ->where(['status' => 10])
             ->orderBy(['username' => SORT_ASC])
             ->asArray()
             ->all();
