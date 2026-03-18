@@ -32,8 +32,8 @@ $copMapOptions = [
         <section class="cop-topbar">
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Segurança</span>
-                <div class="cop-kpi-value is-warning">3</div>
-                <p>incidentes / near misses 24h</p>
+                <div class="cop-kpi-value is-warning"><?=count($securityIncidents)?></div>
+                <p>incidentes</p>
             </article>
 
             <article class="cop-kpi-card">
@@ -50,7 +50,7 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Água</span>
-                <div class="cop-kpi-value is-warning">2</div>
+                <div class="cop-kpi-value is-warning"><?=count($waterIncidents)?></div>
                 <p>fugas ativas</p>
             </article>
 

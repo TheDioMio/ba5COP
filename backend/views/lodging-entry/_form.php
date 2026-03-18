@@ -14,9 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'lodging_site_id')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'branch_id')
-        ->dropDownList($branchArray, ['prompt' => '-- RAMO --'])
-        ->label('Ramo') ?>
+    <?= $form->field($model, 'unit_id')
+        ->dropDownList($unitArray, ['prompt' => '-- UNIDADE --'])
+        ->label('Unidade') ?>
 
     <?= $form->field($model, 'people_count')->input('number', ['min' => 1]) ?>
 

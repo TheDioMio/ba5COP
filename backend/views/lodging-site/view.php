@@ -154,10 +154,18 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                 'layout' => "{items}\n<div class='p-3'>{summary}\n{pager}</div>",
                 'columns' => [
                     [
-                        'attribute' => 'branch_id',
+                        'attribute' => 'unit_id',
+                        'label' => 'Unidade',
+                        'value' => function ($entry) {
+                            return $entry->unit ? $entry->unit->name : ('#' . $entry->unit_id);
+                        },
+                    ],
+                    [
                         'label' => 'Ramo',
                         'value' => function ($entry) {
-                            return $entry->branch ? $entry->branch->description : ('#' . $entry->branch_id);
+                            return $entry->unit && $entry->unit->branch
+                                ? $entry->unit->branch->description
+                                : null;
                         },
                     ],
                     [

@@ -148,10 +148,18 @@ class Incident extends \yii\db\ActiveRecord
     /**
      * Devolve o número total de incidentes de X tipo
      * EX. Número total de incidentes por fuga de água.
+     *
+     * Devolve -1 se não encontrar nada.
      */
-
     public static function incidentTotal($incidentType){
-        return -1;
+        if(Incident::find()->where(['incident_type_id' => $incidentType]) != null) {
+            $incidentCount = Incident::find()
+                ->where(['incident_type_id' => $incidentType])
+                ->asArray()
+                ->all();
+            return $incidentCount;
+        } else {
+            return -1;
+        }
     }
-
 }

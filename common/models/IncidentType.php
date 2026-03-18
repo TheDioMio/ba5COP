@@ -13,9 +13,10 @@ use yii\helpers\ArrayHelper;
  *
  * @property Incident[] $incidents
  */
-class IncidentType extends \yii\db\ActiveRecord
-{
-
+class IncidentType extends \yii\db\ActiveRecord {
+    const WATER_LEAK = 1;
+    const ELECTRIC_RISK = 2;
+    const SECURITY = 3;
 
     /**
      * {@inheritdoc}

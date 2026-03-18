@@ -42,7 +42,7 @@ class LodgingEntry extends \yii\db\ActiveRecord
             [['checkin_at', 'checkout_at'], 'safe'],
             [['checkout_at'], 'default', 'value' => null],
             [['notes'], 'string', 'max' => 30],
-            [['branch_id'], 'exist', 'skipOnError' => true, 'targetClass' => Branch::class, 'targetAttribute' => ['branch_id' => 'id']],
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'id']],
             [['lodging_site_id'], 'exist', 'skipOnError' => true, 'targetClass' => LodgingSite::class, 'targetAttribute' => ['lodging_site_id' => 'id']],
         ];
     }
@@ -55,7 +55,7 @@ class LodgingEntry extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'lodging_site_id' => 'ID do Alojamento',
-            'branch_id' => 'ID do Ramo',
+            'unit_id' => 'ID da Unidade',
             'people_count' => 'N.º de Pessoas',
             'checkin_at' => 'Data Checkin',
             'checkout_at' => 'Data Checkout',
@@ -64,13 +64,13 @@ class LodgingEntry extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Branch]].
+     * Gets query for [[Unit]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getBranch()
+    public function getUnit()
     {
-        return $this->hasOne(Branch::class, ['id' => 'branch_id']);
+        return $this->hasOne(Unit::class, ['id' => 'unit_id']);
     }
 
     /**
@@ -91,7 +91,6 @@ class LodgingEntry extends \yii\db\ActiveRecord
         $takenBeds = self::find()
             ->where(['checkout_at' => null])
             ->sum('people_count');
-
         return $takenBeds;
     }
 

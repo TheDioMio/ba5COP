@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\models\LodgingEntry $model */
+/** @var common\models\Unit $model */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Lodging Entries', 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Units', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="lodging-entry-view">
+<div class="unit-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,12 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'lodging_site_id',
-            'unit_id',
-            'people_count',
-            'checkin_at',
-            'checkout_at',
-            'notes',
+            'name',
+            'branch_id',
+            'created_at',
         ],
     ]) ?>
 
