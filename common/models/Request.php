@@ -97,4 +97,16 @@ class Request extends \yii\db\ActiveRecord
         return $this->hasOne(StatusType::class, ['id' => 'status']);
     }
 
+    /**
+     * Devolve o número total de pedidos EXTERNOS por tratar/pendentes
+     */
+    public static function getExternalRequests() {
+        $externalRequests = self::find()
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
+            ->asArray()
+            ->all();
+
+        return $externalRequests;
+    }
+
 }

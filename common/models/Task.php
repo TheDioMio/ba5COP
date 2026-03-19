@@ -27,9 +27,8 @@ use Yii;
  * @property Priority $priority
  * @property StatusType $statusType
  */
-class Task extends \yii\db\ActiveRecord
-{
-
+class Task extends \yii\db\ActiveRecord {
+    const MAX_PRIORITY = 1;
 
     /**
      * {@inheritdoc}
@@ -140,4 +139,15 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasOne(StatusType::class, ['id' => 'status_type_id']);
     }
 
+    /**
+     * Devolve o número total de tarefas CRÍTICAS
+     */
+    public static function getCriticalTasks() {
+        $criticalTasks = self::find()
+            ->where(['priority_id' => self::MAX_PRIORITY])
+            ->asArray()
+            ->all();
+
+        return $criticalTasks;
+    }
 }

@@ -9,13 +9,11 @@ use Yii;
  *
  * @property int $id
  * @property int $lodging_site_id
- * @property int $branch_id
  * @property int $people_count
  * @property string $checkin_at
  * @property string $checkout_at
  * @property string|null $notes
  *
- * @property Branch $branch
  * @property LodgingSite $lodgingSite
  */
 class LodgingEntry extends \yii\db\ActiveRecord
@@ -37,8 +35,8 @@ class LodgingEntry extends \yii\db\ActiveRecord
     {
         return [
             [['notes'], 'default', 'value' => null],
-            [['lodging_site_id', 'branch_id', 'people_count', 'checkin_at'], 'required'],
-            [['lodging_site_id', 'branch_id', 'people_count'], 'integer'],
+            [['lodging_site_id', 'people_count', 'checkin_at'], 'required'],
+            [['lodging_site_id', 'people_count'], 'integer'],
             [['checkin_at', 'checkout_at'], 'safe'],
             [['checkout_at'], 'default', 'value' => null],
             [['notes'], 'string', 'max' => 30],
@@ -92,6 +90,19 @@ class LodgingEntry extends \yii\db\ActiveRecord
             ->where(['checkout_at' => null])
             ->sum('people_count');
         return $takenBeds;
+    }
+
+    /**
+     * Devolve o número total de camas OCUPADAS por efetivo EXTERNO
+     */
+    public static function getExternalOccupancy() {
+        $externalOccupancy = self::find()
+            ->joinWith('unit')
+            ->where(['lodging_entry.checkout_at' => null])
+            ->andWhere(['!=', 'unit.branch_id', 1])
+            ->sum('lodging_entry.people_count');
+
+        return $externalOccupancy;
     }
 
 }

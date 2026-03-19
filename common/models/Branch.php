@@ -13,8 +13,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property LodgingEntry[] $lodgingEntries
  */
-class Branch extends \yii\db\ActiveRecord
-{
+class Branch extends \yii\db\ActiveRecord {
 
 
     /**

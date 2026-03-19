@@ -68,20 +68,20 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Efetivos externos</span>
-                <div class="cop-kpi-value is-success">34</div>
-                <p>outras unidades</p>
+                <div class="cop-kpi-value is-success"><?=$externalOccupancy?></div>
+                <p>de outras unidades</p>
             </article>
 
             <article class="cop-kpi-card">
-                <span class="cop-kpi-label">Pedidos backlog</span>
-                <div class="cop-kpi-value is-warning">11</div>
+                <span class="cop-kpi-label">Pedidos externos</span>
+                <div class="cop-kpi-value is-warning"><?=count($externalRequests)?></div>
                 <p>pendentes</p>
             </article>
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">WO críticas</span>
-                <div class="cop-kpi-value is-warning">6/10</div>
-                <p>concluídas vs planeadas</p>
+                <div class="cop-kpi-value is-warning"><?=count($criticalTasks)?></div>
+                <p>planeadas</p>
             </article>
 
             <article class="cop-kpi-card">
