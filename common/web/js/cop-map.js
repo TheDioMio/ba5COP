@@ -60,6 +60,7 @@ window.initCopMap = function (opts) {
     const locNotesInput = document.getElementById('loc-notes');
     const saveBtn = document.getElementById('saveLocationBtn');
     const cancelBtn = document.getElementById('cancelLocationBtn');
+    const locIsCriticalInput = document.getElementById('loc-is-critical');
 
     function guessLocationType(geometryType) {
         if (geometryType === 'Point') return 3;
@@ -74,6 +75,7 @@ window.initCopMap = function (opts) {
         locTypeInput.value = '3';
         locStatusInput.value = '1';
         locNotesInput.value = '';
+        locIsCriticalInput.checked = false;
     }
 
     function fillFormFromLayer(layer) {
@@ -83,6 +85,7 @@ window.initCopMap = function (opts) {
         locTypeInput.value = String(layer._locationTypeId || guessLocationType(geo.geometry.type));
         locStatusInput.value = String(layer._locationStatusId || 1);
         locNotesInput.value = layer._locationNotes || '';
+        locIsCriticalInput.checked = Boolean(layer._locationIsCritical);
     }
 
     function setLayerMeta(layer, item) {
@@ -91,11 +94,13 @@ window.initCopMap = function (opts) {
         layer._locationTypeId = item.location_type_id;
         layer._locationStatusId = item.status_type_id;
         layer._locationNotes = item.notes;
+        layer._locationIsCritical = item.is_critical;
 
         const popupHtml = `
             <strong>${item.name ?? 'Sem nome'}</strong><br>
             Tipo: ${item.location_type_id}<br>
             Estado: ${item.status_type_id}<br>
+            Crítico: ${item.is_critical ? 'Sim' : 'Não'}<br>
             ${item.notes ? `Notas: ${item.notes}` : ''}
         `;
         layer.bindPopup(popupHtml);
@@ -144,7 +149,8 @@ window.initCopMap = function (opts) {
                     name: props.name ?? '',
                     location_type_id: props.location_type_id ?? 3,
                     status_type_id: props.status_type_id ?? 1,
-                    notes: props.notes ?? ''
+                    notes: props.notes ?? '',
+                    is_critical: props.is_critical ?? 0
                 });
 
                 drawnItems.addLayer(layer);
@@ -216,6 +222,7 @@ window.initCopMap = function (opts) {
             location_type_id: parseInt(locTypeInput.value, 10),
             status_type_id: parseInt(locStatusInput.value, 10),
             notes: locNotesInput.value.trim() || null,
+            is_critical: locIsCriticalInput.checked ? 1 : 0,
         };
 
         try {
@@ -230,7 +237,8 @@ window.initCopMap = function (opts) {
                     name: payload.name,
                     location_type_id: payload.location_type_id,
                     status_type_id: payload.status_type_id,
-                    notes: payload.notes
+                    notes: payload.notes,
+                    is_critical: payload.is_critical
                 });
 
                 pendingLayer = null;
@@ -246,7 +254,8 @@ window.initCopMap = function (opts) {
                     name: payload.name,
                     location_type_id: payload.location_type_id,
                     status_type_id: payload.status_type_id,
-                    notes: payload.notes
+                    notes: payload.notes,
+                    is_critical: payload.is_critical
                 });
 
                 editLayer = null;

@@ -22,6 +22,8 @@ class DashboardController extends Controller
         $externalRequests = Request::getExternalRequests();
         $criticalTasks = Task::getCriticalTasks();
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
+        $totalCriticalRoads = Location::getCriticalCorridors();
+        $openCriticalRoads = Location::getCriticalCorridors('GREEN');
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -31,6 +33,8 @@ class DashboardController extends Controller
             'externalRequests' => $externalRequests,
             'criticalTasks' => $criticalTasks,
             'perimeterPercentage' => $perimeterPercentage,
+            'totalCriticalRoads' => $totalCriticalRoads,
+            'openCriticalRoads' => $openCriticalRoads,
         ]);
 
     }

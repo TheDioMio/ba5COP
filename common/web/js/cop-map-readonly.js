@@ -31,11 +31,13 @@ window.initCopMapReadOnly = function (opts) {
         layer._locationTypeId = item.location_type_id;
         layer._locationStatusId = item.status_type_id;
         layer._locationNotes = item.notes;
+        layer._locationIsCritical = item.is_critical;
 
         const popupHtml = `
             <strong>${item.name ?? 'Sem nome'}</strong><br>
             Tipo: ${item.location_type_id}<br>
             Estado: ${item.status_type_id}<br>
+            Crítico: ${item.is_critical ? 'Sim' : 'Não'}<br>
             ${item.notes ? `Notas: ${item.notes}` : ''}
         `;
 
@@ -60,7 +62,8 @@ window.initCopMapReadOnly = function (opts) {
                     name: props.name ?? '',
                     location_type_id: props.location_type_id ?? 3,
                     status_type_id: props.status_type_id ?? 1,
-                    notes: props.notes ?? ''
+                    notes: props.notes ?? '',
+                    is_critical: props.is_critical ?? 0
                 });
 
                 drawnItems.addLayer(layer);

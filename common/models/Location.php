@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property int $status_type_id
  * @property string $updated_at
  * @property int $entity_id
+ * @property int $is_critical
  *
  * @property Entity $entity
  * @property Incident[] $incidents
@@ -44,6 +45,7 @@ class Location extends \yii\db\ActiveRecord
     {
         return [
             [['notes'], 'default', 'value' => null],
+            [['is_critical'], 'default', 'value' => 0],
             [['location_type_id', 'name', 'geometry', 'status_type_id', 'entity_id'], 'required'],
             [['location_type_id', 'status_type_id', 'entity_id'], 'integer'],
             [['geometry'], 'string'],
@@ -70,6 +72,7 @@ class Location extends \yii\db\ActiveRecord
             'status_type_id' => 'ID do Status',
             'updated_at' => 'Atualizado às',
             'entity_id' => 'ID do Tipo de Entidade',
+            'is_critical' => 'Zona Crítica',
         ];
     }
 
@@ -192,4 +195,50 @@ class Location extends \yii\db\ActiveRecord
 
         return (int) round(($green / $total) * 100);
     }
+
+    /**
+     * Total de CORREDORES CRÍTICOS
+     *
+     */
+    public static function getCriticalCorridorsTotal(): int
+    {
+        return (int) (new \yii\db\Query())
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where([
+                'l.is_critical' => 1,
+                'lt.description' => 'ROAD',
+            ])
+            ->count();
+    }
+
+    /**
+     * Total de CORREDORES CRÍTICOS ABERTOS
+     * Se levar parâmetro, devolve os CORREDORES CRÍTICOS por STATUS.
+     *
+     */
+    public static function getCriticalCorridors(?string $status = null): int
+    {
+        $query = (new \yii\db\Query())
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where([
+                'l.is_critical' => 1,
+                'lt.description' => 'ROAD',
+            ]);
+
+        if ($status !== null) {
+            $status = strtoupper($status);
+
+            if (!in_array($status, ['GREEN', 'YELLOW', 'RED'], true)) {
+                return 0;
+            }
+
+            $query->innerJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
+                ->andWhere(['st.description' => $status]);
+        }
+
+        return (int) $query->count();
+    }
+
 }

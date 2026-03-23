@@ -150,7 +150,15 @@ class LocationController extends Controller
 
         $rows = (new \yii\db\Query())
             ->from('location')
-            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
+            ->select([
+                'id',
+                'name',
+                'notes',
+                'location_type_id',
+                'status_type_id',
+                'is_critical',
+                'geometry'
+            ])
             ->all();
 
         $features = [];
@@ -174,6 +182,7 @@ class LocationController extends Controller
                     'notes' => $r['notes'],
                     'location_type_id' => (int)$r['location_type_id'],
                     'status_type_id' => (int)$r['status_type_id'],
+                    'is_critical' => (int)$r['is_critical'],
                 ],
                 'geometry' => $geom,
             ];
@@ -199,6 +208,7 @@ class LocationController extends Controller
         $locationTypeId = (int)($data['location_type_id'] ?? 3);
         $statusTypeId = (int)($data['status_type_id'] ?? 1);
         $geometry = $data['geometry'] ?? null;
+        $isCritical = (int)($data['is_critical'] ?? 0);
 
         if (!$geometry || !is_array($geometry)) {
             throw new \yii\web\BadRequestHttpException('geometry em falta.');
@@ -218,6 +228,7 @@ class LocationController extends Controller
             'notes' => $notes,
             'geometry' => $geomJson,
             'status_type_id' => $statusTypeId,
+            'is_critical' => $isCritical,
             'updated_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
             'entity_id' => $entityId,
         ])->execute();
@@ -254,6 +265,10 @@ class LocationController extends Controller
 
         if (array_key_exists('status_type_id', $data)) {
             $update['status_type_id'] = (int)$data['status_type_id'];
+        }
+
+        if (array_key_exists('is_critical', $data)) {
+            $update['is_critical'] = (int)$data['is_critical'];
         }
 
         if (array_key_exists('geometry', $data) && is_array($data['geometry'])) {

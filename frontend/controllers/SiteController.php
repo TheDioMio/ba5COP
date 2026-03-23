@@ -220,8 +220,8 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @throws BadRequestHttpException
      * @return yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
     {
@@ -271,7 +271,15 @@ class SiteController extends Controller
     {
         $rows = (new \yii\db\Query())
             ->from('location')
-            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
+            ->select([
+                'id',
+                'name',
+                'notes',
+                'location_type_id',
+                'status_type_id',
+                'is_critical',
+                'geometry',
+            ])
             ->all();
 
         $features = [];
@@ -295,6 +303,7 @@ class SiteController extends Controller
                     'notes' => $r['notes'],
                     'location_type_id' => (int)$r['location_type_id'],
                     'status_type_id' => (int)$r['status_type_id'],
+                    'is_critical' => (int)$r['is_critical'],
                 ],
                 'geometry' => $geom,
             ];
@@ -307,15 +316,21 @@ class SiteController extends Controller
     }
 
 
-
-
     public function actionCopData()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $rows = (new \yii\db\Query())
             ->from('location')
-            ->select(['id', 'name', 'notes', 'location_type_id', 'status_type_id', 'geometry'])
+            ->select([
+                'id',
+                'name',
+                'notes',
+                'location_type_id',
+                'status_type_id',
+                'is_critical',
+                'geometry',
+            ])
             ->all();
 
         $features = [];
@@ -333,12 +348,13 @@ class SiteController extends Controller
 
             $features[] = [
                 'type' => 'Feature',
+                'id' => (int)$r['id'],
                 'properties' => [
-                    'id' => (int)$r['id'],
                     'name' => $r['name'],
                     'notes' => $r['notes'],
                     'location_type_id' => (int)$r['location_type_id'],
                     'status_type_id' => (int)$r['status_type_id'],
+                    'is_critical' => (int)$r['is_critical'],
                 ],
                 'geometry' => $geom,
             ];

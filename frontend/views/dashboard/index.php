@@ -56,7 +56,7 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Mobilidade</span>
-                <div class="cop-kpi-value is-warning">4/6</div>
+                <div class="cop-kpi-value is-warning"><?=$openCriticalRoads . '/' . $totalCriticalRoads?></div>
                 <p>corredores críticos</p>
             </article>
 

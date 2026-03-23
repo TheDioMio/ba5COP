@@ -184,6 +184,11 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                             </select>
                         </div>
 
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="loc-is-critical" value="1">
+                            <label class="form-check-label" for="loc-is-critical">Local Crítico?</label>
+                        </div>
+
                         <div class="mb-3">
                             <label for="loc-notes" class="form-label">Notas</label>
                             <textarea id="loc-notes" class="form-control" rows="3"></textarea>
