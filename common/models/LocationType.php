@@ -71,7 +71,4 @@ class LocationType extends \yii\db\ActiveRecord
 
         return ArrayHelper::map($rows, 'id', 'description');
     }
-
-
-
 }

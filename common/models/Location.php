@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -145,5 +146,50 @@ class Location extends \yii\db\ActiveRecord
             ->all();
 
         return ArrayHelper::map($rows, 'id', 'name');
+    }
+
+    /**
+     * Lista total de vedações na base
+     * Devolve int (número total)
+     */
+    public static function getPerimeterTotal(): int {
+        return (int) (new Query())
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where(['lt.description' => 'VEDACAO'])
+            ->count();
+    }
+
+    /**
+     * Lista total de vedações na base POR STATUS
+     * Devolve int (número total do status em questão)
+     */
+    public static function getPerimeterTotalByStatus(string $status): int
+    {
+        return (int) (new Query())
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->innerJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
+            ->where([
+                'lt.description' => 'VEDACAO',
+                'st.description' => strtoupper($status),
+            ])
+            ->count();
+    }
+
+    /**
+     * Percentagem do perímetro operacional
+     *
+     */
+    public static function getPerimeterOperationalPercentage(): int
+    {
+        $total = self::getPerimeterTotal();
+        $green = self::getPerimeterTotalByStatus('GREEN');
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        return (int) round(($green / $total) * 100);
     }
 }

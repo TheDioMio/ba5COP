@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\LocationType;
 use common\models\LoginForm;
 use Yii;
 use yii\filters\VerbFilter;
@@ -71,9 +72,13 @@ class SiteController extends Controller
 
         return true;
     }
-    public function actionIndex()
-    {
-        return $this->render('index');
+    public function actionIndex() {
+        $locationTypes = LocationType::dropDown();
+
+        return $this->render(
+            'index', [
+            'locationTypes' => $locationTypes,
+        ]);
     }
 
     /**

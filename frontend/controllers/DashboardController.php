@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\Incident;
 use common\models\IncidentType;
+use common\models\Location;
 use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use common\models\Request;
@@ -20,6 +21,7 @@ class DashboardController extends Controller
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
         $externalRequests = Request::getExternalRequests();
         $criticalTasks = Task::getCriticalTasks();
+        $perimeterPercentage = Location::getPerimeterOperationalPercentage();
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -28,6 +30,7 @@ class DashboardController extends Controller
             'externalOccupancy' => $externalOccupancy,
             'externalRequests' => $externalRequests,
             'criticalTasks' => $criticalTasks,
+            'perimeterPercentage' => $perimeterPercentage,
         ]);
 
     }

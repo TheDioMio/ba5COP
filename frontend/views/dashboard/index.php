@@ -38,7 +38,7 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Perímetro</span>
-                <div class="cop-kpi-value is-success">92%</div>
+                <div class="cop-kpi-value is-success"><?=$perimeterPercentage?>%</div>
                 <p>vedação operacional</p>
             </article>
 

@@ -167,12 +167,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 
                         <div class="mb-3">
                             <label for="loc-type" class="form-label">Tipo</label>
-                            <select id="loc-type" class="form-select">
-                                <option value="1">BUILDING</option>
-                                <option value="2">AREA</option>
-                                <option value="3">POINT</option>
-                                <option value="4">ROAD</option>
-                            </select>
+                            <?= \yii\helpers\Html::dropDownList(
+                                'loc-type',
+                                null,
+                                $locationTypes,
+                                ['id' => 'loc-type', 'class' => 'form-select']
+                            ) ?>
                         </div>
 
                         <div class="mb-3">
