@@ -14,6 +14,7 @@ class DashboardAsset extends AssetBundle
     ];
 
     public $js = [
+        'js/dashboard.js',
     ];
 
     public $depends = [

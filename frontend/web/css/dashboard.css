@@ -377,6 +377,54 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: rgba(232, 238, 245, 0.65);
 }
 
+
+/*
+--------------------------------------------------
+                POP-UPS DOS KPIS
+--------------------------------------------------
+*/
+
+.kpi-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-clickable:hover {
+    transform: translateY(-2px);
+}
+
+.kpi-clickable.is-active {
+    background: linear-gradient(180deg, #2f6fe0 0%, #1e4fb8 100%);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+.kpi-clickable.is-active .cop-kpi-value,
+.kpi-clickable.is-active .cop-kpi-label,
+.kpi-clickable.is-active p {
+    color: #ffffff;
+}
+
+.modal-content {
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.modal-header,
+.modal-footer {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.grid-view table th {
+    font-weight: 600;
+}
+
+/*
+--------------------------------------------------
+                POP-UPS DOS KPIS
+--------------------------------------------------
+*/
+
 @media (max-width: 1800px) {
     .cop-topbar {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -440,4 +488,11 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     .cop-stat-grid {
         grid-template-columns: 1fr;
     }
+
+
+
+
+
+
+
 }

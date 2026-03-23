@@ -18,8 +18,12 @@ use yii\helpers\ArrayHelper;
  * @property Request[] $requests
  * @property Task[] $tasks
  */
-class StatusType extends \yii\db\ActiveRecord
-{
+class StatusType extends \yii\db\ActiveRecord {
+
+    public const STATUS_INCIDENT_OPEN = 4;
+    public const STATUS_INCIDENT_IN_PROGRESS = 5;
+    public const STATUS_INCIDENT_RESOLVED = 6;
+
     /**
      * {@inheritdoc}
      */

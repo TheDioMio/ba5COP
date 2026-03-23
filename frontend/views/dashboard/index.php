@@ -2,6 +2,9 @@
 
 use common\assets\CopMapReadOnlyAsset;
 use frontend\assets\DashboardAsset;
+use yii\bootstrap5\Modal;
+use yii\data\ArrayDataProvider;
+use yii\grid\GridView;
 use yii\helpers\Json;
 use yii\helpers\Url;
 
@@ -30,9 +33,13 @@ $copMapOptions = [
     <div class="cop-dashboard">
         <!--Zona KPI's-->
         <section class="cop-topbar">
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#securityModal">
                 <span class="cop-kpi-label">Segurança</span>
-                <div class="cop-kpi-value is-warning"><?=count($securityIncidents)?></div>
+                <div class="cop-kpi-value is-warning"><?= count($securityIncidents) ?></div>
                 <p>incidentes</p>
             </article>
 
@@ -60,9 +67,13 @@ $copMapOptions = [
                 <p>corredores críticos</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                 role="region"
+                 tabindex="0"
+                 data-bs-toggle="modal"
+                 data-bs-target="#bedsModal">
                 <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning"><?=$overallAvailability?></div>
+                <div class="cop-kpi-value is-warning"><?= $overallAvailability ?></div>
                 <p>disponíveis</p>
             </article>
 
@@ -468,8 +479,101 @@ $copMapOptions = [
                 </table>
             </article>
         </section>
-
     </div>
+
+<!--    POP-UPS DE KPI'S-->
+
+    <div class="modal fade" id="bedsModal" tabindex="-1" aria-labelledby="bedsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bedsModalLabel">Detalhe de Camas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong>Disponíveis:</strong> <?= $overallAvailability ?></p>
+                    <p><strong>Ocupadas:</strong> <?= $occupiedBeds ?? 0 ?></p>
+                    <p><strong>Indisponíveis:</strong> <?= $unavailableBeds ?? 0 ?></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php Modal::begin([
+    'id' => 'securityModal',
+    'title' => 'Situação de Segurança',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade'],
+]); ?>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="cop-stat-box h-100">
+                <span>Incidentes ativos</span>
+                <strong><?= count($activeSecurityIncidents) ?></strong>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="cop-stat-box h-100">
+                <span>Incidentes concluídos</span>
+                <strong><?= count($closedSecurityIncidents) ?></strong>
+            </div>
+        </div>
+    </div>
+
+    <h6 class="mb-3">Incidentes ativos neste momento</h6>
+
+<?php if (!empty($activeSecurityIncidents)): ?>
+    <?= GridView::widget([
+        'dataProvider' => $securityIncidentsProvider,
+        'tableOptions' => ['class' => 'table table-sm align-middle mb-0'],
+        'layout' => '{items}',
+        'summary' => '',
+        'columns' => [
+            [
+                'label' => 'ID',
+                'value' => function ($incident) {
+                    return $incident->identity_id ?? $incident->id ?? '—';
+                },
+            ],
+            [
+                'label' => 'Título',
+                'value' => function ($incident) {
+                    return $incident->title ?? $incident->name ?? 'Sem título';
+                },
+            ],
+            [
+                'label' => 'Local',
+                'value' => function ($incident) {
+                    return $incident->location->name ?? '—';
+                },
+            ],
+            [
+                'label' => 'Prioridade',
+                'value' => 'priority.description',
+            ],
+            [
+                'label' => 'Estado',
+                'value' => 'statusType.description',
+            ],
+        ],
+    ]) ?>
+<?php else: ?>
+    <div class="alert alert-secondary mb-0">
+        Não existem incidentes de segurança ativos neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+
+    <!--  FIM  POP-UPS DE KPI'S-->
 
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');

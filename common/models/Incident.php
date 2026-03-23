@@ -25,8 +25,7 @@ use Yii;
  * @property StatusType $statusType
  * @property Task[] $tasks
  */
-class Incident extends \yii\db\ActiveRecord
-{
+class Incident extends \yii\db\ActiveRecord {
 
 
     /**
@@ -161,5 +160,55 @@ class Incident extends \yii\db\ActiveRecord
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Devolve o número total de incidentes de X tipo PASSADOS
+     * EX. Número total de incidentes por fuga de água que já foram concluídos
+     *
+     * Devolve -1 se não encontrar nada.
+     */
+    public static function incidentDoneTotal($incidentType){
+        if(Incident::find()->where(['incident_type_id' => $incidentType]) != null) {
+            $incidentCount = Incident::find()
+                ->where(['incident_type_id' => $incidentType])
+                ->andWhere(['status_type_id' => StatusType::STATUS_INCIDENT_RESOLVED])
+                ->asArray()
+                ->all();
+            return $incidentCount;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Devolve o número total de incidentes de X tipo ATIVOS
+     * EX. Número total de incidentes por fuga de água que estão OPEN ou IN_PROGRESS
+     *
+     * Devolve -1 se não encontrar nada.
+     */
+    public static function incidentActiveTotal($incidentType){
+        if(Incident::find()->where(['incident_type_id' => $incidentType]) != null) {
+            $incidentCount = Incident::find()
+                ->where(['incident_type_id' => $incidentType])
+                ->andWhere(['status_type_id' => [StatusType::STATUS_INCIDENT_OPEN, StatusType::STATUS_INCIDENT_IN_PROGRESS,]])
+                ->asArray()
+                ->all();
+            return $incidentCount;
+        } else {
+            return -1;
+        }
+    }
+
+    public static function findActiveByType($incidentType) {
+        return self::find()
+            ->where(['incident_type_id' => $incidentType])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_INCIDENT_OPEN,
+                    StatusType::STATUS_INCIDENT_IN_PROGRESS,
+                ]
+            ])
+            ->with('location');
     }
 }
