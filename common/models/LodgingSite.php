@@ -161,4 +161,19 @@ class LodgingSite extends \yii\db\ActiveRecord
 
         return $availability;
     }
+
+    /**
+     * Devolve a lista dos alojdamentos com camas disponíveis
+     *
+     */
+    public static function findWithAvailableBeds(){
+        $sites = self::find()
+            ->with(['location', 'lodgingEntries'])
+            ->all();
+
+        //Isto retorna os sites que só tem camas disponíveis
+        return array_filter($sites, function ($site) {
+            return $site->getCurrentCapacity(false) > 0;
+        });
+    }
 }

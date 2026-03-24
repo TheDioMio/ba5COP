@@ -11,6 +11,7 @@ use common\models\Request;
 use common\models\Task;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 
 class DashboardController extends Controller
@@ -28,22 +29,35 @@ class DashboardController extends Controller
 
 
         //--- INCIDENTES - SEGURANÇA ---
-
         //total de incidentes (geral)
         $securityIncidents = Incident::incidentTotal(IncidentType::SECURITY);
-
         //total de incidentes (que estão abertos)
         $activeSecurityIncidents = Incident::incidentActiveTotal(IncidentType::SECURITY);
-
         //total de incidentes (que estão fechados)
         $closedSecurityIncidents = Incident::incidentDoneTotal(IncidentType::SECURITY);
-
+        //Data provider para o widget do KPI (listagem dos incidentes ativos)
         $securityIncidentsProvider = new ActiveDataProvider([
             'query' => Incident::findActiveByType(IncidentType::SECURITY),
             'pagination' => false,
             'sort' => false,
         ]);
-        //FIM INCIDENTES - SEGURANÇA
+        //--- FIM INCIDENTES - SEGURANÇA ---
+
+
+        //--- CAMAS ---
+        //total de alojamentos que tenham camas disponíveis
+        $availableLodgings = LodgingSite::findWithAvailableBeds();
+        //total de camas ocupadas neste momento
+        $occupiedBeds = LodgingEntry::getOverallOccupancy();
+
+        //Data provider para o widget do KPI (listagem dos alojamentos com camas disponíveis)
+        $availableLodgingsProvider = new ArrayDataProvider([
+            'allModels' => $availableLodgings,
+            'pagination' => false,
+            'sort' => false,
+        ]);
+
+        //--- FIM CAMAS ---
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -58,6 +72,8 @@ class DashboardController extends Controller
             'openCriticalRoads' => $openCriticalRoads,
             'closedSecurityIncidents' => $closedSecurityIncidents,
             'securityIncidentsProvider' => $securityIncidentsProvider,
+            'availableLodgingsProvider' => $availableLodgingsProvider,
+            'occupiedBeds' => $occupiedBeds,
         ]);
 
     }

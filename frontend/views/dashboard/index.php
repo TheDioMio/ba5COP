@@ -481,99 +481,173 @@ $copMapOptions = [
         </section>
     </div>
 
-<!--    POP-UPS DE KPI'S-->
 
-    <div class="modal fade" id="bedsModal" tabindex="-1" aria-labelledby="bedsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bedsModalLabel">Detalhe de Camas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-
-                <div class="modal-body">
-                    <p><strong>Disponíveis:</strong> <?= $overallAvailability ?></p>
-                    <p><strong>Ocupadas:</strong> <?= $occupiedBeds ?? 0 ?></p>
-                    <p><strong>Indisponíveis:</strong> <?= $unavailableBeds ?? 0 ?></p>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<?php Modal::begin([
-    'id' => 'securityModal',
-    'title' => 'Situação de Segurança',
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        MODAL - KPI DAS CAMAS                                                           -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+    <?php Modal::begin([
+    'id' => 'bedsModal',
+    'title' => '<span class="cop-modal-title-text">Situação de Habitabilidade</span>',
     'size' => Modal::SIZE_LARGE,
     'centerVertical' => true,
-    'options' => ['class' => 'fade'],
-]); ?>
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+    'class' => 'btn-close btn-close-white cop-modal-close',
+    'aria-label' => 'Fechar',
+    ],
+    ]); ?>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-6">
-            <div class="cop-stat-box h-100">
-                <span>Incidentes ativos</span>
-                <strong><?= count($activeSecurityIncidents) ?></strong>
-            </div>
+    <div class="cop-modal-summary cop-modal-summary-3">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Camas disponíveis</span>
+            <strong class="cop-modal-kpi-value is-success"><?= $overallAvailability ?></strong>
         </div>
 
-        <div class="col-md-6">
-            <div class="cop-stat-box h-100">
-                <span>Incidentes concluídos</span>
-                <strong><?= count($closedSecurityIncidents) ?></strong>
-            </div>
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Camas ocupadas</span>
+            <strong class="cop-modal-kpi-value"><?=$occupiedBeds?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Camas inoperativas</span>
+            <strong class="cop-modal-kpi-value is-warning"><?= 'STANDBY' ?></strong>
         </div>
     </div>
 
-    <h6 class="mb-3">Incidentes ativos neste momento</h6>
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Habitabilidade</span>
+        <h6>Alojamentos com camas disponíveis</h6>
+    </div>
 
-<?php if (!empty($activeSecurityIncidents)): ?>
-    <?= GridView::widget([
-        'dataProvider' => $securityIncidentsProvider,
-        'tableOptions' => ['class' => 'table table-sm align-middle mb-0'],
-        'layout' => '{items}',
-        'summary' => '',
-        'columns' => [
-            [
-                'label' => 'ID',
-                'value' => function ($incident) {
-                    return $incident->identity_id ?? $incident->id ?? '—';
-                },
+<?php if ($availableLodgingsProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $availableLodgingsProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                [
+                    'label' => 'Alojamento',
+                    'value' => function ($model) {
+                        return $model->name ?? '—';
+                    },
+                ],
+                [
+                    'label' => 'Local',
+                    'value' => function ($model) {
+                        return $model->location->name ?? '—';
+                    },
+                ],
+                [
+                    'label' => 'Capacidade',
+                    'value' => function ($model) {
+                        return $model->capacity_total ?? '—';
+                    },
+                ],
+                [
+                    'label' => 'Ocupadas',
+                    'value' => function ($model) {
+                        return $model->occupancy() ?? 0;
+                    },
+                ],
+                [
+                    'label' => 'Disponíveis',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->getCurrentCapacity(false);
+                    },
+                ],
             ],
-            [
-                'label' => 'Título',
-                'value' => function ($incident) {
-                    return $incident->title ?? $incident->name ?? 'Sem título';
-                },
-            ],
-            [
-                'label' => 'Local',
-                'value' => function ($incident) {
-                    return $incident->location->name ?? '—';
-                },
-            ],
-            [
-                'label' => 'Prioridade',
-                'value' => 'priority.description',
-            ],
-            [
-                'label' => 'Estado',
-                'value' => 'statusType.description',
-            ],
-        ],
-    ]) ?>
+
+        ]) ?>
+    </div>
 <?php else: ?>
-    <div class="alert alert-secondary mb-0">
-        Não existem incidentes de segurança ativos neste momento.
+    <div class="cop-empty-state">
+        Não existem alojamentos com camas disponíveis neste momento.
     </div>
 <?php endif; ?>
 
 <?php Modal::end(); ?>
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                     FIM MODAL - KPI DAS CAMAS                                                          -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'securityModal',
+    'title' => '<span class="cop-modal-title-text">Situação de Segurança</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]); ?>
 
-    <!--  FIM  POP-UPS DE KPI'S-->
+    <div class="cop-modal-summary">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Incidentes ativos</span>
+            <strong class="cop-modal-kpi-value is-warning"><?= count($activeSecurityIncidents) ?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Incidentes concluídos</span>
+            <strong class="cop-modal-kpi-value is-success"><?= count($closedSecurityIncidents) ?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Monitorização</span>
+        <h6>Incidentes ativos neste momento</h6>
+    </div>
+<?php if (!empty($activeSecurityIncidents)): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $securityIncidentsProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                [
+                    'attribute' => 'title',
+                    'label' => 'Título',
+                ],
+                [
+                    'label' => 'Local',
+                    'value' => 'location.name',
+                ],
+                [
+                    'label' => 'Prioridade',
+                    'value' => 'priority.description',
+                    'contentOptions' => ['class' => 'cop-col-priority'],
+                ],
+                [
+                    'label' => 'Estado',
+                    'value' => 'statusType.description',
+                    'contentOptions' => ['class' => 'cop-col-status'],
+                ],
+            ],
+        ]) ?>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem incidentes de segurança ativos neste momento.
+    </div>
+<?php endif; ?>
+<?php Modal::end(); ?>
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        FIM MODAL - KPI DA SEGURANÇA                                                        -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
 
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');
