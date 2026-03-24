@@ -18,7 +18,6 @@ class DashboardController extends Controller
 {
     public function actionIndex(){
         $overallAvailability = LodgingSite::getOverallAvailability();
-        $waterIncidents = Incident::incidentTotal(IncidentType::WATER_LEAK);
 
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
         $externalRequests = Request::getExternalRequests();
@@ -49,15 +48,29 @@ class DashboardController extends Controller
         $availableLodgings = LodgingSite::findWithAvailableBeds();
         //total de camas ocupadas neste momento
         $occupiedBeds = LodgingEntry::getOverallOccupancy();
-
         //Data provider para o widget do KPI (listagem dos alojamentos com camas disponíveis)
         $availableLodgingsProvider = new ArrayDataProvider([
             'allModels' => $availableLodgings,
             'pagination' => false,
             'sort' => false,
         ]);
-
         //--- FIM CAMAS ---
+
+
+        // --- INCIDENTES - ÁGUA ---
+        //total de incidentes relacionados a àgua
+        $waterIncidents = Incident::incidentTotal(IncidentType::WATER_LEAK);
+        //total de incidentes (que estão abertos)
+        $activeWaterIncidents = Incident::incidentActiveTotal(IncidentType::WATER_LEAK);
+        //total de incidentes (que estão fechados)
+        $closedWaterIncidents = Incident::incidentDoneTotal(IncidentType::WATER_LEAK);
+        //Data provider para o widget do KPI (listagem dos incidentes relacionados com àgua)
+        $waterIncidentsProvider = new ActiveDataProvider([
+            'query' => Incident::findActiveByType(IncidentType::WATER_LEAK),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM INCIDENTES - ÁGUA ---
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -74,6 +87,9 @@ class DashboardController extends Controller
             'securityIncidentsProvider' => $securityIncidentsProvider,
             'availableLodgingsProvider' => $availableLodgingsProvider,
             'occupiedBeds' => $occupiedBeds,
+            'activeWaterIncidents' => $activeWaterIncidents,
+            'closedWaterIncidents' => $closedWaterIncidents,
+            'waterIncidentsProvider' => $waterIncidentsProvider,
         ]);
 
     }

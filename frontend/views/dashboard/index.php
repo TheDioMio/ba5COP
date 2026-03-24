@@ -40,7 +40,7 @@ $copMapOptions = [
                      data-bs-target="#securityModal">
                 <span class="cop-kpi-label">Segurança</span>
                 <div class="cop-kpi-value is-warning"><?= count($securityIncidents) ?></div>
-                <p>incidentes</p>
+                <p>incidentes relacionados</p>
             </article>
 
             <article class="cop-kpi-card">
@@ -55,10 +55,14 @@ $copMapOptions = [
                 <p>base energizada</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#waterModal">
                 <span class="cop-kpi-label">Água</span>
-                <div class="cop-kpi-value is-warning"><?=count($waterIncidents)?></div>
-                <p>fugas ativas</p>
+                <div class="cop-kpi-value is-warning"><?= count($waterIncidents) ?></div>
+                <p>incidentes relacionados</p>
             </article>
 
             <article class="cop-kpi-card">
@@ -575,6 +579,13 @@ $copMapOptions = [
 <!---------------------------------------------------------------------------------------------------------------------------->
 <!--                                     FIM MODAL - KPI DAS CAMAS                                                          -->
 <!---------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        MODAL - KPI DA SEGURANÇA                                                        -->
+<!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'securityModal',
     'title' => '<span class="cop-modal-title-text">Situação de Segurança</span>',
@@ -603,8 +614,7 @@ $copMapOptions = [
     </div>
 
     <div class="cop-modal-section-head">
-        <span class="cop-eyebrow">Monitorização</span>
-        <h6>Incidentes ativos neste momento</h6>
+        <span class="cop-eyebrow">Incidentes ativos</span>
     </div>
 <?php if (!empty($activeSecurityIncidents)): ?>
     <div class="cop-modal-table-wrap">
@@ -642,11 +652,85 @@ $copMapOptions = [
 <?php endif; ?>
 <?php Modal::end(); ?>
 <!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        FIM MODAL - KPI DA SEGURANÇA                                                        -->
+<!--                                        FIM MODAL - KPI DA SEGURANÇA                                                    -->
 <!---------------------------------------------------------------------------------------------------------------------------->
 
 
 
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        MODAL - KPI DA ÀGUA                                                             -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+    <?php Modal::begin([
+    'id' => 'waterModal',
+    'title' => '<span class="cop-modal-title-text">Situação de Água</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+    'class' => 'btn-close btn-close-white cop-modal-close',
+    'aria-label' => 'Fechar',
+    ],
+    ]); ?>
+
+    <div class="cop-modal-summary">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Incidentes ativos</span>
+            <strong class="cop-modal-kpi-value is-warning"><?=count($activeWaterIncidents)?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Incidentes concluídos</span>
+            <strong class="cop-modal-kpi-value is-success"><?=count($closedWaterIncidents)?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Incidentes ativos</span>
+    </div>
+
+<?php if ($waterIncidentsProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $waterIncidentsProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                [
+                    'attribute' => 'title',
+                    'label' => 'Título',
+                ],
+                [
+                    'label' => 'Local',
+                    'value' => 'location.name',
+                ],
+                [
+                    'label' => 'Prioridade',
+                    'value' => 'priority.description',
+                ],
+                [
+                    'label' => 'Estado',
+                    'value' => 'statusType.description',
+                ],
+            ],
+        ]) ?>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem incidentes de àgua ativos neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        FIM MODAL - KPI DA ÀGUA                                                         -->
+<!---------------------------------------------------------------------------------------------------------------------------->
 
 
 <?php
