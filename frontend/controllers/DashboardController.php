@@ -20,7 +20,6 @@ class DashboardController extends Controller
         $overallAvailability = LodgingSite::getOverallAvailability();
 
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
-        $externalRequests = Request::getExternalRequests();
         $criticalTasks = Task::getCriticalTasks();
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
         $totalCriticalRoads = Location::getCriticalCorridors();
@@ -72,6 +71,23 @@ class DashboardController extends Controller
         ]);
         // --- FIM INCIDENTES - ÁGUA ---
 
+
+        // --- PEDIDOS EXTERNOS ---
+        //pedidos externos (em todos os estados, done, rejected, in_progress... etc)
+        $externalRequests = Request::getExternalRequests();
+        //pedidos externos que estão ativos
+        $activeExternalRequests = Request::getActiveExternal();
+        //pedidos externos que já estão feitos, ou seja, foram aceites e depois fechados.
+        $closedExternalRequests = Request::getExternalDone();
+        //Data provider para o widget do KPI
+        $externalRequestsProvider = new ActiveDataProvider([
+            'query' => Request::findActiveExternal(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM PEDIDOS EXTERNOS ---
+
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -90,6 +106,9 @@ class DashboardController extends Controller
             'activeWaterIncidents' => $activeWaterIncidents,
             'closedWaterIncidents' => $closedWaterIncidents,
             'waterIncidentsProvider' => $waterIncidentsProvider,
+            'activeExternalRequests' => $activeExternalRequests,
+            'closedExternalRequests' => $closedExternalRequests,
+            'externalRequestsProvider' => $externalRequestsProvider,
         ]);
 
     }

@@ -87,9 +87,13 @@ $copMapOptions = [
                 <p>de outras unidades</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#externalRequestsModal">
                 <span class="cop-kpi-label">Pedidos externos</span>
-                <div class="cop-kpi-value is-warning"><?=count($externalRequests)?></div>
+                <div class="cop-kpi-value is-warning"><?=count($activeExternalRequests)?></div>
                 <p>pendentes</p>
             </article>
 
@@ -489,7 +493,7 @@ $copMapOptions = [
 <!---------------------------------------------------------------------------------------------------------------------------->
 <!--                                        MODAL - KPI DAS CAMAS                                                           -->
 <!---------------------------------------------------------------------------------------------------------------------------->
-    <?php Modal::begin([
+<?php Modal::begin([
     'id' => 'bedsModal',
     'title' => '<span class="cop-modal-title-text">Situação de Habitabilidade</span>',
     'size' => Modal::SIZE_LARGE,
@@ -502,7 +506,8 @@ $copMapOptions = [
     'class' => 'btn-close btn-close-white cop-modal-close',
     'aria-label' => 'Fechar',
     ],
-    ]); ?>
+    ]);
+?>
 
     <div class="cop-modal-summary cop-modal-summary-3">
         <div class="cop-modal-kpi">
@@ -588,7 +593,7 @@ $copMapOptions = [
 <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'securityModal',
-    'title' => '<span class="cop-modal-title-text">Situação de Segurança</span>',
+    'title' => '<span class="cop-modal-title-text">KPI - Incidentes relacionados à segurança</span>',
     'size' => Modal::SIZE_LARGE,
     'centerVertical' => true,
     'options' => ['class' => 'fade cop-modal'],
@@ -599,7 +604,8 @@ $copMapOptions = [
         'class' => 'btn-close btn-close-white cop-modal-close',
         'aria-label' => 'Fechar',
     ],
-]); ?>
+]);
+?>
 
     <div class="cop-modal-summary">
         <div class="cop-modal-kpi">
@@ -662,9 +668,9 @@ $copMapOptions = [
 <!---------------------------------------------------------------------------------------------------------------------------->
 <!--                                        MODAL - KPI DA ÀGUA                                                             -->
 <!---------------------------------------------------------------------------------------------------------------------------->
-    <?php Modal::begin([
+<?php Modal::begin([
     'id' => 'waterModal',
-    'title' => '<span class="cop-modal-title-text">Situação de Água</span>',
+    'title' => '<span class="cop-modal-title-text">KPI - Incidentes relacionados à àgua</span>',
     'size' => Modal::SIZE_LARGE,
     'centerVertical' => true,
     'options' => ['class' => 'fade cop-modal'],
@@ -675,7 +681,8 @@ $copMapOptions = [
     'class' => 'btn-close btn-close-white cop-modal-close',
     'aria-label' => 'Fechar',
     ],
-    ]); ?>
+    ]);
+?>
 
     <div class="cop-modal-summary">
         <div class="cop-modal-kpi">
@@ -732,6 +739,83 @@ $copMapOptions = [
 <!--                                        FIM MODAL - KPI DA ÀGUA                                                         -->
 <!---------------------------------------------------------------------------------------------------------------------------->
 
+
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                        MODAL - KPI PEDIDOS EXTERNOS                                                    -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'externalRequestsModal',
+    'title' => '<span class="cop-modal-title-text">Situação de Pedidos Externos</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+    'class' => 'btn-close btn-close-white cop-modal-close',
+    'aria-label' => 'Fechar',
+    ],
+    ]);
+?>
+
+    <div class="cop-modal-summary">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Pedidos pendentes</span>
+            <strong class="cop-modal-kpi-value is-warning"><?=count($activeExternalRequests)?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Pedidos concluídos</span>
+            <strong class="cop-modal-kpi-value is-success"><?=count($closedExternalRequests)?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Coordenação externa</span>
+        <h6>Pedidos externos ativos neste momento</h6>
+    </div>
+
+<?php if ($externalRequestsProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $externalRequestsProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                [
+                    'label' => 'Origem',
+                    'value' => 'origin'
+                ],
+                [
+                    'label' => 'Detalhes',
+                    'value' => 'details',
+                ],
+                [
+                    'label' => 'Prioridade',
+                    'value' => 'priority.description',
+                ],
+                [
+                    'label' => 'Estado',
+                    'value' => 'statusType.description',
+                ],
+            ],
+        ]) ?>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem pedidos externos ativos neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS                                                    -->
+<!---------------------------------------------------------------------------------------------------------------------------->
 
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');

@@ -98,15 +98,74 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
-     * Devolve o número total de pedidos EXTERNOS por tratar/pendentes
+     * Devolve o número total de pedidos EXTERNOS (todos os estados)
      */
     public static function getExternalRequests() {
         $externalRequests = self::find()
-            ->where(['is_external' => self::EXTERNAL_REQUEST])
+            ->where(['is_external' => Request::EXTERNAL_REQUEST])
             ->asArray()
             ->all();
 
         return $externalRequests;
     }
 
+    /**
+     * Devolve o número total de pedidos EXTERNOS RESOLVIDOS
+     */
+    public static function getExternalDone() {
+        $externalRequests =  self::find()
+            ->where(['is_external' => Request::EXTERNAL_REQUEST])
+            ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+            ->asArray()
+            ->all();
+
+        return $externalRequests;
+    }
+
+    /**
+     * Devolve o número total de pedidos EXTERNOS ATIVOS
+     */
+    public static function getActiveExternal()
+    {
+        return self::find()
+            ->where(['is_external' => 1])
+            ->andWhere([
+                'status' => [
+                    StatusType::STATUS_REQUEST_NEW,
+                    StatusType::STATUS_REQUEST_IN_PROGRESS,
+                ]
+            ])
+            ->with(['priority', 'statusType'])
+            ->asArray()
+            ->all();
+    }
+
+    /**
+     * Devolve o número total de pedidos EXTERNOS REJEITADOS
+     */
+    public static function getExternalRejected() {
+        $externalRequests =  self::find()
+            ->where(['is_external' => Request::EXTERNAL_REQUEST])
+            ->andWhere(['status' => StatusType::STATUS_REQUEST_REJECTED])
+            ->asArray()
+            ->all();
+
+        return $externalRequests;
+    }
+
+    /**
+     * Devolve a query que é usada por dataproviders, neste caso todos os pedidos externos que estão ativos.
+     */
+    public static function findActiveExternal()
+    {
+        return self::find()
+            ->where(['is_external' => 1])
+            ->andWhere([
+                'status' => [
+                    StatusType::STATUS_REQUEST_NEW,
+                    StatusType::STATUS_REQUEST_IN_PROGRESS,
+                ]
+            ])
+            ->with(['priority', 'statusType']);
+    }
 }
