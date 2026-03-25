@@ -20,7 +20,6 @@ class DashboardController extends Controller
         $overallAvailability = LodgingSite::getOverallAvailability();
 
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
-        $criticalTasks = Task::getCriticalTasks();
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
         $totalCriticalRoads = Location::getCriticalCorridors();
         $openCriticalRoads = Location::getCriticalCorridors('GREEN');
@@ -88,6 +87,22 @@ class DashboardController extends Controller
         // --- FIM PEDIDOS EXTERNOS ---
 
 
+        // --- TAREFAS CRÍTICAS ---
+        //tarefas críticas (em todos os estados)
+        $criticalTasks = Task::getCriticalTasks();
+        //tarefas críticas que estejam ativas (new, doing)
+        $activeCriticalTasks = Task::getActiveCriticalTasks();
+        //tarefas críticas que estejam feitas
+        $closedCriticalTasks = Task::getClosedCriticalTasks();
+        //Data provider para o widget do KPI
+        $criticalTasksProvider = new ActiveDataProvider([
+            'query' => Task::findActiveCritical(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM TAREFAS CRÍTICAS ---
+
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -109,6 +124,9 @@ class DashboardController extends Controller
             'activeExternalRequests' => $activeExternalRequests,
             'closedExternalRequests' => $closedExternalRequests,
             'externalRequestsProvider' => $externalRequestsProvider,
+            'activeCriticalTasks' => $activeCriticalTasks,
+            'closedCriticalTasks' => $closedCriticalTasks,
+            'criticalTasksProvider' => $criticalTasksProvider,
         ]);
 
     }

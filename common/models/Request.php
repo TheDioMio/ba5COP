@@ -125,8 +125,7 @@ class Request extends \yii\db\ActiveRecord
     /**
      * Devolve o número total de pedidos EXTERNOS ATIVOS
      */
-    public static function getActiveExternal()
-    {
+    public static function getActiveExternal(){
         return self::find()
             ->where(['is_external' => 1])
             ->andWhere([

@@ -23,11 +23,20 @@ class StatusType extends \yii\db\ActiveRecord {
     public const STATUS_INCIDENT_OPEN = 4;
     public const STATUS_INCIDENT_IN_PROGRESS = 5;
     public const STATUS_INCIDENT_RESOLVED = 6;
+//-----------------------------------------------------\\
     public const STATUS_REQUEST_NEW = 11;
     public const STATUS_REQUEST_APPROVED = 12;
     public const STATUS_REQUEST_REJECTED = 13;
     public const STATUS_REQUEST_IN_PROGRESS = 14;
     public const STATUS_REQUEST_DONE = 15;
+//-----------------------------------------------------\\
+    public const STATUS_TASK_NEW = 7;
+    public const STATUS_TASK_DOING = 8;
+    public const STATUS_TASK_BLOCKED = 9;
+    public const STATUS_TASK_DONE = 10;
+//-----------------------------------------------------\\
+
+
 
     /**
      * {@inheritdoc}

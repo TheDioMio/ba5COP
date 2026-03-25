@@ -65,17 +65,17 @@ class Task extends \yii\db\ActiveRecord {
     {
         return [
             'id' => 'ID',
-            'location_id' => 'Location ID',
-            'incident_id' => 'Incident ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'priority_id' => 'Priority ID',
-            'status_type_id' => 'Status Type ID',
-            'assigned_to' => 'Assigned To',
-            'created_by' => 'Created By',
-            'created_at' => 'Created At',
-            'due_at' => 'Due At',
-            'entity_id' => 'Entity ID',
+            'location_id' => 'ID da Localização',
+            'incident_id' => 'ID do Incidente',
+            'title' => 'Título',
+            'description' => 'Descrição',
+            'priority_id' => 'ID da Prioridade',
+            'status_type_id' => 'ID do Status',
+            'assigned_to' => 'Entregue a',
+            'created_by' => 'Criado por',
+            'created_at' => 'Criado às',
+            'due_at' => 'Deadline',
+            'entity_id' => 'ID da Entidade',
         ];
     }
 
@@ -140,12 +140,64 @@ class Task extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Devolve o número total de tarefas CRÍTICAS
+     * Devolve o número total de tarefas CRÍTICAS, independentemente do estado.
      */
     public static function getCriticalTasks() {
         $criticalTasks = self::find()
             ->where(['priority_id' => self::MAX_PRIORITY])
             ->asArray()
+            ->all();
+
+        return $criticalTasks;
+    }
+
+    /**
+     * Devolve a query que é usada por dataproviders, neste caso todas as tarefas CRÍTICAS ativas
+     */
+    public static function findActiveCritical() {
+        return self::find()
+            ->where(['priority_id' => self::MAX_PRIORITY])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_TASK_NEW,
+                    StatusType::STATUS_TASK_DOING,
+                ]
+            ])
+            ->with(['priority', 'statusType', 'incident', 'location', 'createdBy']);
+    }
+
+    /**
+     * Devolve o array total das tarefas CRÍTICAS ATIVAS
+     */
+    public static function getActiveCriticalTasks() {
+        $criticalTasks =  self::find()
+            ->where(['priority_id' => self::MAX_PRIORITY])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_TASK_NEW,
+                    StatusType::STATUS_TASK_DOING,
+                ]
+            ])
+            ->asArray()
+            ->with(['priority', 'statusType', 'incident', 'location', 'createdBy'])
+            ->all();
+
+        return $criticalTasks;
+    }
+
+    /**
+     * Devolve o array total das tarefas CRÍTICAS FECHADAS
+     */
+    public static function getClosedCriticalTasks() {
+        $criticalTasks =  self::find()
+            ->where(['priority_id' => self::MAX_PRIORITY])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_TASK_DONE
+                ]
+            ])
+            ->asArray()
+            ->with(['priority', 'statusType', 'incident', 'location', 'createdBy'])
             ->all();
 
         return $criticalTasks;

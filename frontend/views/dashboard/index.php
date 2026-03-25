@@ -97,7 +97,11 @@ $copMapOptions = [
                 <p>pendentes</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#criticalTasksModal">
                 <span class="cop-kpi-label">WO críticas</span>
                 <div class="cop-kpi-value is-warning"><?=count($criticalTasks)?></div>
                 <p>planeadas</p>
@@ -747,7 +751,7 @@ $copMapOptions = [
 <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'externalRequestsModal',
-    'title' => '<span class="cop-modal-title-text">Situação de Pedidos Externos</span>',
+    'title' => '<span class="cop-modal-title-text">KPI - Pedidos externos</span>',
     'size' => Modal::SIZE_LARGE,
     'centerVertical' => true,
     'options' => ['class' => 'fade cop-modal'],
@@ -812,9 +816,72 @@ $copMapOptions = [
 <?php endif; ?>
 
 <?php Modal::end(); ?>
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS   #criticalTasksModal                                                 -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
 
 <!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS                                                    -->
+<!--                                    MODAL - KPI WO'S CRÍTICAS                                                           -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'criticalTasksModal',
+    'title' => '<span class="cop-modal-title-text">KPI - Tarefas Críticas</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]);
+?>
+
+    <div class="cop-modal-summary">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Tarefas críticas pendentes</span>
+            <strong class="cop-modal-kpi-value is-warning"><?=count($activeCriticalTasks)?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Tarefas críticas concluídas</span>
+            <strong class="cop-modal-kpi-value is-success"><?=count($closedCriticalTasks)?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Coordenação externa</span>
+        <h6>Tarefas críticas ativas</h6>
+    </div>
+
+<?php if ($externalRequestsProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $criticalTasksProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                'title',
+                'description',
+            ],
+        ]) ?>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem tarefas críticas ativas neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                    FIM MODAL - KPI WO'S CRÍTICAS                                                       -->
 <!---------------------------------------------------------------------------------------------------------------------------->
 
 <?php
