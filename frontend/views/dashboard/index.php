@@ -45,7 +45,7 @@ $copMapOptions = [
 
             <article class="cop-kpi-card">
                 <span class="cop-kpi-label">Perímetro</span>
-                <div class="cop-kpi-value is-success"><?=$perimeterPercentage?>%</div>
+                <div class="cop-kpi-value is-success"><?= $perimeterPercentage ?>%</div>
                 <p>vedação operacional</p>
             </article>
 
@@ -61,23 +61,27 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#waterModal">
                 <span class="cop-kpi-label">Água</span>
-                <div class="cop-kpi-value is-warning"><?=count($waterIncidents)?></div>
+                <div class="cop-kpi-value is-warning"><?= count($waterIncidents) ?></div>
                 <p>incidentes relacionados</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#mobilityModal">
                 <span class="cop-kpi-label">Mobilidade</span>
-                <div class="cop-kpi-value is-warning"><?=$openCriticalRoads . '/' . $totalCriticalRoads?></div>
+                <div class="cop-kpi-value is-warning"><?= $openCriticalRoads . '/' . $totalCriticalRoads ?></div>
                 <p>corredores críticos</p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
-                 role="region"
-                 tabindex="0"
-                 data-bs-toggle="modal"
-                 data-bs-target="#bedsModal">
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#bedsModal">
                 <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning"><?=$overallAvailability?></div>
+                <div class="cop-kpi-value is-warning"><?= $overallAvailability ?></div>
                 <p>disponíveis</p>
             </article>
 
@@ -87,7 +91,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#externalManpower">
                 <span class="cop-kpi-label">Efetivos externos</span>
-                <div class="cop-kpi-value is-warning"><?=$externalOccupancy?></div>
+                <div class="cop-kpi-value is-warning"><?= $externalOccupancy ?></div>
                 <p>ativos</p>
             </article>
 
@@ -97,7 +101,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#externalRequestsModal">
                 <span class="cop-kpi-label">Pedidos externos</span>
-                <div class="cop-kpi-value is-warning"><?=count($activeExternalRequests)?></div>
+                <div class="cop-kpi-value is-warning"><?= count($activeExternalRequests) ?></div>
                 <p>pendentes</p>
             </article>
 
@@ -107,7 +111,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#criticalTasksModal">
                 <span class="cop-kpi-label">WO críticas</span>
-                <div class="cop-kpi-value is-warning"><?=count($criticalTasks)?></div>
+                <div class="cop-kpi-value is-warning"><?= count($criticalTasks) ?></div>
                 <p>planeadas</p>
             </article>
 
@@ -498,9 +502,9 @@ $copMapOptions = [
     </div>
 
 
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        MODAL - KPI DAS CAMAS                                                           -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        MODAL - KPI DAS CAMAS                                                           -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'bedsModal',
     'title' => '<span class="cop-modal-title-text">Situação de Habitabilidade</span>',
@@ -509,12 +513,11 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
-    'class' => 'btn-close btn-close-white cop-modal-close',
-    'aria-label' => 'Fechar',
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
     ],
-    ]);
+]);
 ?>
 
     <div class="cop-modal-summary cop-modal-summary-3">
@@ -525,7 +528,7 @@ $copMapOptions = [
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas ocupadas</span>
-            <strong class="cop-modal-kpi-value"><?=$occupiedBeds?></strong>
+            <strong class="cop-modal-kpi-value"><?= $occupiedBeds ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
@@ -541,46 +544,48 @@ $copMapOptions = [
 
 <?php if ($availableLodgingsProvider->getCount() > 0): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $availableLodgingsProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                [
-                    'label' => 'Alojamento',
-                    'value' => function ($model) {
-                        return $model->name ?? '—';
-                    },
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $availableLodgingsProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    [
+                        'label' => 'Alojamento',
+                        'value' => function ($model) {
+                            return $model->name ?? '—';
+                        },
+                    ],
+                    [
+                        'label' => 'Local',
+                        'value' => function ($model) {
+                            return $model->location->name ?? '—';
+                        },
+                    ],
+                    [
+                        'label' => 'Capacidade',
+                        'value' => function ($model) {
+                            return $model->capacity_total ?? '—';
+                        },
+                    ],
+                    [
+                        'label' => 'Ocupadas',
+                        'value' => function ($model) {
+                            return $model->occupancy() ?? 0;
+                        },
+                    ],
+                    [
+                        'label' => 'Disponíveis',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return $model->getCurrentCapacity(false);
+                        },
+                    ],
                 ],
-                [
-                    'label' => 'Local',
-                    'value' => function ($model) {
-                        return $model->location->name ?? '—';
-                    },
-                ],
-                [
-                    'label' => 'Capacidade',
-                    'value' => function ($model) {
-                        return $model->capacity_total ?? '—';
-                    },
-                ],
-                [
-                    'label' => 'Ocupadas',
-                    'value' => function ($model) {
-                        return $model->occupancy() ?? 0;
-                    },
-                ],
-                [
-                    'label' => 'Disponíveis',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        return $model->getCurrentCapacity(false);
-                    },
-                ],
-            ],
 
-        ]) ?>
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
@@ -589,16 +594,14 @@ $copMapOptions = [
 <?php endif; ?>
 
 <?php Modal::end(); ?>
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                     FIM MODAL - KPI DAS CAMAS                                                          -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                     FIM MODAL - KPI DAS CAMAS                                                          -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
-
-
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        MODAL - KPI DA SEGURANÇA                                                        -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        MODAL - KPI DA SEGURANÇA                                                        -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'securityModal',
     'title' => '<span class="cop-modal-title-text">KPI - Incidentes relacionados à segurança</span>',
@@ -607,7 +610,6 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
         'class' => 'btn-close btn-close-white cop-modal-close',
         'aria-label' => 'Fechar',
@@ -632,32 +634,34 @@ $copMapOptions = [
     </div>
 <?php if (!empty($activeSecurityIncidents)): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $securityIncidentsProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                [
-                    'attribute' => 'title',
-                    'label' => 'Título',
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $securityIncidentsProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    [
+                        'attribute' => 'title',
+                        'label' => 'Título',
+                    ],
+                    [
+                        'label' => 'Local',
+                        'value' => 'location.name',
+                    ],
+                    [
+                        'label' => 'Prioridade',
+                        'value' => 'priority.description',
+                        'contentOptions' => ['class' => 'cop-col-priority'],
+                    ],
+                    [
+                        'label' => 'Estado',
+                        'value' => 'statusType.description',
+                        'contentOptions' => ['class' => 'cop-col-status'],
+                    ],
                 ],
-                [
-                    'label' => 'Local',
-                    'value' => 'location.name',
-                ],
-                [
-                    'label' => 'Prioridade',
-                    'value' => 'priority.description',
-                    'contentOptions' => ['class' => 'cop-col-priority'],
-                ],
-                [
-                    'label' => 'Estado',
-                    'value' => 'statusType.description',
-                    'contentOptions' => ['class' => 'cop-col-status'],
-                ],
-            ],
-        ]) ?>
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
@@ -665,17 +669,14 @@ $copMapOptions = [
     </div>
 <?php endif; ?>
 <?php Modal::end(); ?>
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        FIM MODAL - KPI DA SEGURANÇA                                                    -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        FIM MODAL - KPI DA SEGURANÇA                                                    -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
-
-
-
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        MODAL - KPI DA ÀGUA                                                             -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        MODAL - KPI DA ÀGUA                                                             -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'waterModal',
     'title' => '<span class="cop-modal-title-text">KPI - Incidentes relacionados à àgua</span>',
@@ -684,23 +685,22 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
-    'class' => 'btn-close btn-close-white cop-modal-close',
-    'aria-label' => 'Fechar',
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
     ],
-    ]);
+]);
 ?>
 
     <div class="cop-modal-summary">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Incidentes ativos</span>
-            <strong class="cop-modal-kpi-value is-warning"><?=count($activeWaterIncidents)?></strong>
+            <strong class="cop-modal-kpi-value is-warning"><?= count($activeWaterIncidents) ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Incidentes concluídos</span>
-            <strong class="cop-modal-kpi-value is-success"><?=count($closedWaterIncidents)?></strong>
+            <strong class="cop-modal-kpi-value is-success"><?= count($closedWaterIncidents) ?></strong>
         </div>
     </div>
 
@@ -710,30 +710,32 @@ $copMapOptions = [
 
 <?php if ($waterIncidentsProvider->getCount() > 0): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $waterIncidentsProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                [
-                    'attribute' => 'title',
-                    'label' => 'Título',
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $waterIncidentsProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    [
+                        'attribute' => 'title',
+                        'label' => 'Título',
+                    ],
+                    [
+                        'label' => 'Local',
+                        'value' => 'location.name',
+                    ],
+                    [
+                        'label' => 'Prioridade',
+                        'value' => 'priority.description',
+                    ],
+                    [
+                        'label' => 'Estado',
+                        'value' => 'statusType.description',
+                    ],
                 ],
-                [
-                    'label' => 'Local',
-                    'value' => 'location.name',
-                ],
-                [
-                    'label' => 'Prioridade',
-                    'value' => 'priority.description',
-                ],
-                [
-                    'label' => 'Estado',
-                    'value' => 'statusType.description',
-                ],
-            ],
-        ]) ?>
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
@@ -743,16 +745,14 @@ $copMapOptions = [
 
 <?php Modal::end(); ?>
 
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        FIM MODAL - KPI DA ÀGUA                                                         -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        FIM MODAL - KPI DA ÀGUA                                                         -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
-
-
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                        MODAL - KPI PEDIDOS EXTERNOS                                                    -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        MODAL - KPI PEDIDOS EXTERNOS                                                    -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'externalRequestsModal',
     'title' => '<span class="cop-modal-title-text">KPI - Pedidos externos</span>',
@@ -761,23 +761,22 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
-    'class' => 'btn-close btn-close-white cop-modal-close',
-    'aria-label' => 'Fechar',
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
     ],
-    ]);
+]);
 ?>
 
     <div class="cop-modal-summary">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Pedidos pendentes</span>
-            <strong class="cop-modal-kpi-value is-warning"><?=count($activeExternalRequests)?></strong>
+            <strong class="cop-modal-kpi-value is-warning"><?= count($activeExternalRequests) ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Pedidos concluídos</span>
-            <strong class="cop-modal-kpi-value is-success"><?=count($closedExternalRequests)?></strong>
+            <strong class="cop-modal-kpi-value is-success"><?= count($closedExternalRequests) ?></strong>
         </div>
     </div>
 
@@ -788,30 +787,32 @@ $copMapOptions = [
 
 <?php if ($externalRequestsProvider->getCount() > 0): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $externalRequestsProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                [
-                    'label' => 'Origem',
-                    'value' => 'origin'
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $externalRequestsProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    [
+                        'label' => 'Origem',
+                        'value' => 'origin'
+                    ],
+                    [
+                        'label' => 'Detalhes',
+                        'value' => 'details',
+                    ],
+                    [
+                        'label' => 'Prioridade',
+                        'value' => 'priority.description',
+                    ],
+                    [
+                        'label' => 'Estado',
+                        'value' => 'statusType.description',
+                    ],
                 ],
-                [
-                    'label' => 'Detalhes',
-                    'value' => 'details',
-                ],
-                [
-                    'label' => 'Prioridade',
-                    'value' => 'priority.description',
-                ],
-                [
-                    'label' => 'Estado',
-                    'value' => 'statusType.description',
-                ],
-            ],
-        ]) ?>
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
@@ -820,17 +821,14 @@ $copMapOptions = [
 <?php endif; ?>
 
 <?php Modal::end(); ?>
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS                                                    -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS                                                    -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
-
-
-
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    MODAL - KPI WO'S CRÍTICAS                                                           -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    MODAL - KPI WO'S CRÍTICAS                                                           -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'criticalTasksModal',
     'title' => '<span class="cop-modal-title-text">KPI - Tarefas Críticas</span>',
@@ -839,7 +837,6 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
         'class' => 'btn-close btn-close-white cop-modal-close',
         'aria-label' => 'Fechar',
@@ -850,12 +847,12 @@ $copMapOptions = [
     <div class="cop-modal-summary">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Tarefas críticas pendentes</span>
-            <strong class="cop-modal-kpi-value is-warning"><?=count($activeCriticalTasks)?></strong>
+            <strong class="cop-modal-kpi-value is-warning"><?= count($activeCriticalTasks) ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Tarefas críticas concluídas</span>
-            <strong class="cop-modal-kpi-value is-success"><?=count($closedCriticalTasks)?></strong>
+            <strong class="cop-modal-kpi-value is-success"><?= count($closedCriticalTasks) ?></strong>
         </div>
     </div>
 
@@ -866,16 +863,18 @@ $copMapOptions = [
 
 <?php if ($externalRequestsProvider->getCount() > 0): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $criticalTasksProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                'title',
-                'description',
-            ],
-        ]) ?>
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $criticalTasksProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    'title',
+                    'description',
+                ],
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
@@ -884,17 +883,14 @@ $copMapOptions = [
 <?php endif; ?>
 
 <?php Modal::end(); ?>
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI WO'S CRÍTICAS                                                       -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI WO'S CRÍTICAS                                                       -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
-
-
-
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'externalManpower',
     'title' => '<span class="cop-modal-title-text">KPI - Efetivos externos</span>',
@@ -903,7 +899,6 @@ $copMapOptions = [
     'options' => ['class' => 'fade cop-modal'],
     'headerOptions' => ['class' => 'cop-modal-header'],
     'bodyOptions' => ['class' => 'cop-modal-body'],
-    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
     'closeButton' => [
         'class' => 'btn-close btn-close-white cop-modal-close',
         'aria-label' => 'Fechar',
@@ -914,12 +909,12 @@ $copMapOptions = [
     <div class="cop-modal-summary cop-modal-summary-3">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Efetivos agora</span>
-            <strong class="cop-modal-kpi-value is-success"><?=$externalOccupancy?></strong>
+            <strong class="cop-modal-kpi-value is-success"><?= $externalOccupancy ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Diferença H24</span>
-            <strong class="cop-modal-kpi-value"><?=$externalOccupancyDifference24H?></strong>
+            <strong class="cop-modal-kpi-value"><?= $externalOccupancyDifference24H ?></strong>
         </div>
     </div>
 
@@ -929,38 +924,134 @@ $copMapOptions = [
 
 <?php if ($externalOccupancyProvider->getCount() > 0): ?>
     <div class="cop-modal-table-wrap">
-        <?= GridView::widget([
-            'dataProvider' => $externalOccupancyProvider,
-            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
-            'layout' => '{items}',
-            'summary' => '',
-            'columns' => [
-                [
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $externalOccupancyProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    [
                         'label' => 'Ramo',
-                    'value' => 'unit.branch.description'
+                        'value' => 'unit.branch.description'
+                    ],
+                    [
+                        'label' => 'Unidade',
+                        'value' => 'unit.name'
+                    ],
+                    'people_count',
+                    [
+                        'attribute' => 'checkin_at',
+                        'format' => ['date', 'php:dMy'],
+                    ]
                 ],
-                [
-                    'label' => 'Unidade',
-                    'value' => 'unit.name'
-                ],
-                'people_count',
-                [
-                    'attribute' => 'checkin_at',
-                    'format' => ['date', 'php:dMy'],
-                ]
-            ],
-        ]) ?>
+            ]) ?>
+        </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
-        Não temos efetivos externos neste momento.
+        Não há efetivos externos neste momento.
     </div>
 <?php endif; ?>
 
 <?php Modal::end(); ?>
-<!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
-<!---------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+
+
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    MODAL - KPI MOBILIDADE                                                              -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'mobilityModal',
+    'title' => '<span class="cop-modal-title-text">KPI - Mobilidade</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]);
+?>
+
+    <div class="cop-modal-summary cop-modal-summary-3">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Corredores Críticos</span>
+            <strong class="cop-modal-kpi-value is-success"><?= $openCriticalRoads . '/' . $totalCriticalRoads ?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Estacionamentos Críticos</span>
+            <strong class="cop-modal-kpi-value"><?= $openCriticalParkings . '/' . $totalCriticalParkings ?></strong>
+        </div>
+    </div>
+
+<?php if ($externalOccupancyProvider->getCount() > 0): ?>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="cop-modal-table-wrap">
+                <div class="cop-modal-section-head">
+                    <span class="cop-eyebrow">STATUS DOS CORREDORES</span>
+                </div>
+                <div class="cop-modal-table-scroll">
+                    <?= GridView::widget([
+                        'dataProvider' => $criticalRoadsProvider,
+                        'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                        'layout' => '{items}',
+                        'summary' => '',
+                        'columns' => [
+                            'name',
+                            [
+                                'label' => 'Status',
+                                'value' => 'statusType.description',
+                            ],
+                        ],
+                    ]) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="cop-modal-table-wrap">
+                <div class="cop-modal-section-head">
+                    <span class="cop-eyebrow">STATUS DOS ESTACIONAMENTOS</span>
+                </div>
+                <div class="cop-modal-table-scroll">
+                    <?= GridView::widget([
+                        'dataProvider' => $criticalParkingsProvider,
+                        'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                        'layout' => '{items}',
+                        'summary' => '',
+                        'columns' => [
+                            'name',
+                            [
+                                'label' => 'Status',
+                                'value' => 'statusType.description',
+                            ],
+                        ],
+                    ]) ?>
+                </div>
+            </div>
+        </div>
+
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não há efetivos externos neste momento.
+    </div>
+<?php endif; ?>
+    </div>
+
+
+
+<?php Modal::end(); ?>
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI MOBILIDADE                                                          -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');

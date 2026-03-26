@@ -18,12 +18,7 @@ class DashboardController extends Controller
 {
     public function actionIndex(){
         $overallAvailability = LodgingSite::getOverallAvailability();
-
-
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
-        $totalCriticalRoads = Location::getCriticalCorridors();
-        $openCriticalRoads = Location::getCriticalCorridors('GREEN');
-
 
         //--- INCIDENTES - SEGURANÇA ---
         //total de incidentes (geral)
@@ -118,6 +113,25 @@ class DashboardController extends Controller
         // --- FIM EFETIVOS EXTERNOS ---
 
 
+        // --- MOBILIDADE ---
+        $totalCriticalRoads = Location::getCriticalCorridors();
+        $openCriticalRoads = Location::getCriticalCorridors('GREEN');
+        $totalCriticalParkings = Location::getCriticalParkings();
+        $openCriticalParkings = Location::getCriticalParkings('GREEN');
+        //Data provider para o widget do KPI - ESTRADAS CRÍTICAS
+        $criticalRoadsProvider = new ActiveDataProvider([
+            'query' => Location::findCriticalRoads(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        //Data provider para o widget do KPI - ESTACIONAMENTOS CRÍTICOS
+        $criticalParkingsProvider = new ActiveDataProvider([
+            'query' => Location::findCriticalParkings(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM MOBILIDADE ---
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -143,7 +157,11 @@ class DashboardController extends Controller
             'closedCriticalTasks' => $closedCriticalTasks,
             'criticalTasksProvider' => $criticalTasksProvider,
             'externalOccupancyDifference24H' => $externalOccupancyDifference24H,
-            'externalOccupancyProvider' => $externalOccupancyProvider
+            'externalOccupancyProvider' => $externalOccupancyProvider,
+            'totalCriticalParkings' => $totalCriticalParkings,
+            'openCriticalParkings' => $openCriticalParkings,
+            'criticalRoadsProvider' => $criticalRoadsProvider,
+            'criticalParkingsProvider' => $criticalParkingsProvider,
         ]);
 
     }

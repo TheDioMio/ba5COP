@@ -26,9 +26,13 @@ use yii\helpers\ArrayHelper;
  * @property StatusType $statusType
  * @property Task[] $tasks
  */
-class Location extends \yii\db\ActiveRecord
-{
-
+class Location extends \yii\db\ActiveRecord {
+    const BUILDING = 'BUILDING';
+    const AREA = 'AREA';
+    const POINT = 'POINT';
+    const ROAD = 'ROAD';
+    const VEDACAO = 'VEDACAO';
+    const PARKING = 'PARKING';
 
     /**
      * {@inheritdoc}
@@ -217,14 +221,13 @@ class Location extends \yii\db\ActiveRecord
      * Se levar parâmetro, devolve os CORREDORES CRÍTICOS por STATUS.
      *
      */
-    public static function getCriticalCorridors(?string $status = null): int
-    {
+    public static function getCriticalCorridors(?string $status = null){
         $query = (new \yii\db\Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => 'ROAD',
+                'lt.description' => Location::ROAD,
             ]);
 
         if ($status !== null) {
@@ -239,6 +242,62 @@ class Location extends \yii\db\ActiveRecord
         }
 
         return (int) $query->count();
+    }
+
+    /**
+     * Total de ESTACIONAMENTOS CRÍTICOS ABERTOS
+     * Se levar parâmetro, devolve os ESTACIONAMENTOS CRÍTICOS por STATUS.
+     *
+     */
+    public static function getCriticalParkings(?string $status = null){
+        $query = (new \yii\db\Query())
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where([
+                'l.is_critical' => 1,
+                'lt.description' => Location::PARKING,
+            ]);
+
+        if ($status !== null) {
+            $status = strtoupper($status);
+
+            if (!in_array($status, ['GREEN', 'YELLOW', 'RED'], true)) {
+                return 0;
+            }
+
+            $query->innerJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
+                ->andWhere(['st.description' => $status]);
+        }
+
+        return (int) $query->count();
+    }
+
+    /**
+     * Query de estacionamentos totais que são CRÍTICOS
+     *
+     */
+    public static function findCriticalParkings() {
+        return self::find()
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where([
+                'l.is_critical' => 1,
+                'lt.description' => Location::PARKING,
+            ]);
+    }
+
+    /**
+     * Query de estradas totais que são CRÍTICAS
+     *
+     */
+    public static function findCriticalRoads() {
+        return self::find()
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where([
+                'l.is_critical' => 1,
+                'lt.description' => Location::ROAD,
+            ]);
     }
 
 }
