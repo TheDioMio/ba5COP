@@ -19,7 +19,7 @@ class DashboardController extends Controller
     public function actionIndex(){
         $overallAvailability = LodgingSite::getOverallAvailability();
 
-        $externalOccupancy = LodgingEntry::getExternalOccupancy();
+
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
         $totalCriticalRoads = Location::getCriticalCorridors();
         $openCriticalRoads = Location::getCriticalCorridors('GREEN');
@@ -103,6 +103,21 @@ class DashboardController extends Controller
         // --- FIM TAREFAS CRÍTICAS ---
 
 
+        // --- EFETIVOS EXTERNOS ---
+        //Efetivos externos, devolve um INT.
+        $externalOccupancy = LodgingEntry::getExternalOccupancy();
+        //Diferença de efetivos de hoje para ontem
+        $yesterdayOccupancy = LodgingEntry::getExternalOccupancyAt(date('Y-m-d H:i:s', strtotime('-1 day')));
+        $externalOccupancyDifference24H = $externalOccupancy - $yesterdayOccupancy;
+        //Data provider para o widget do KPI
+        $externalOccupancyProvider = new ActiveDataProvider([
+            'query' => LodgingEntry::findActiveExternalOccupancy(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM EFETIVOS EXTERNOS ---
+
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -127,6 +142,8 @@ class DashboardController extends Controller
             'activeCriticalTasks' => $activeCriticalTasks,
             'closedCriticalTasks' => $closedCriticalTasks,
             'criticalTasksProvider' => $criticalTasksProvider,
+            'externalOccupancyDifference24H' => $externalOccupancyDifference24H,
+            'externalOccupancyProvider' => $externalOccupancyProvider
         ]);
 
     }

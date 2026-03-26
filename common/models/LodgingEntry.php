@@ -105,4 +105,32 @@ class LodgingEntry extends \yii\db\ActiveRecord
         return $externalOccupancy;
     }
 
+    /**
+     * Devolve o número de efetivos externos num X tempo
+     */
+    public static function getExternalOccupancyAt(string $datetime): int
+    {
+        $total = self::find()
+            ->joinWith('unit')
+            ->where(['<=', 'lodging_entry.checkin_at', $datetime])
+            ->andWhere([
+                'or',
+                ['lodging_entry.checkout_at' => null],
+                ['>', 'lodging_entry.checkout_at', $datetime],
+            ])
+            ->andWhere(['!=', 'unit.branch_id', 1])
+            ->sum('lodging_entry.people_count');
+
+        return (int) ($total ?? 0);
+    }
+
+    /**
+     * Devolve a query que é usada por dataproviders, neste caso os efetivos EXTERNOS atuais
+     */
+    public static function findActiveExternalOccupancy() {
+        return self::find()
+            ->joinWith('unit')
+            ->where(['lodging_entry.checkout_at' => null])
+            ->andWhere(['!=', 'unit.branch_id', 1]);
+    }
 }

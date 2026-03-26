@@ -61,7 +61,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#waterModal">
                 <span class="cop-kpi-label">Água</span>
-                <div class="cop-kpi-value is-warning"><?= count($waterIncidents) ?></div>
+                <div class="cop-kpi-value is-warning"><?=count($waterIncidents)?></div>
                 <p>incidentes relacionados</p>
             </article>
 
@@ -77,14 +77,18 @@ $copMapOptions = [
                  data-bs-toggle="modal"
                  data-bs-target="#bedsModal">
                 <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning"><?= $overallAvailability ?></div>
+                <div class="cop-kpi-value is-warning"><?=$overallAvailability?></div>
                 <p>disponíveis</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#externalManpower">
                 <span class="cop-kpi-label">Efetivos externos</span>
-                <div class="cop-kpi-value is-success"><?=$externalOccupancy?></div>
-                <p>de outras unidades</p>
+                <div class="cop-kpi-value is-warning"><?=$externalOccupancy?></div>
+                <p>ativos</p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
@@ -817,7 +821,7 @@ $copMapOptions = [
 
 <?php Modal::end(); ?>
 <!---------------------------------------------------------------------------------------------------------------------------->
-<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS   #criticalTasksModal                                                 -->
+<!--                                    FIM MODAL - KPI PEDIDOS EXTERNOS                                                    -->
 <!---------------------------------------------------------------------------------------------------------------------------->
 
 
@@ -882,6 +886,80 @@ $copMapOptions = [
 <?php Modal::end(); ?>
 <!---------------------------------------------------------------------------------------------------------------------------->
 <!--                                    FIM MODAL - KPI WO'S CRÍTICAS                                                       -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
+<!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'externalManpower',
+    'title' => '<span class="cop-modal-title-text">KPI - Efetivos externos</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>',
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]);
+?>
+
+    <div class="cop-modal-summary cop-modal-summary-3">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Efetivos agora</span>
+            <strong class="cop-modal-kpi-value is-success"><?=$externalOccupancy?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Diferença H24</span>
+            <strong class="cop-modal-kpi-value"><?=$externalOccupancyDifference24H?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">manpower atual</span>
+    </div>
+
+<?php if ($externalOccupancyProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <?= GridView::widget([
+            'dataProvider' => $externalOccupancyProvider,
+            'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+            'layout' => '{items}',
+            'summary' => '',
+            'columns' => [
+                [
+                        'label' => 'Ramo',
+                    'value' => 'unit.branch.description'
+                ],
+                [
+                    'label' => 'Unidade',
+                    'value' => 'unit.name'
+                ],
+                'people_count',
+                [
+                    'attribute' => 'checkin_at',
+                    'format' => ['date', 'php:dMy'],
+                ]
+            ],
+        ]) ?>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não temos efetivos externos neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+<!---------------------------------------------------------------------------------------------------------------------------->
+<!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
 <!---------------------------------------------------------------------------------------------------------------------------->
 
 <?php
