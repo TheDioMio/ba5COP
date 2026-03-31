@@ -18,7 +18,6 @@ class DashboardController extends Controller
 {
     public function actionIndex(){
         $overallAvailability = LodgingSite::getOverallAvailability();
-        $perimeterPercentage = Location::getPerimeterOperationalPercentage();
 
         //--- INCIDENTES - SEGURANÇA ---
         //total de incidentes (geral)
@@ -132,6 +131,17 @@ class DashboardController extends Controller
         ]);
         // --- FIM MOBILIDADE ---
 
+
+        // --- VEDAÇÃO ---
+        //% do perimetro operacional
+        $perimeterPercentage = Location::getPerimeterOperationalPercentage();
+        $inopPerimeterProvider = new ActiveDataProvider([
+            'query' => Location::findPerimeterInop(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+        // --- FIM VEDAÇÃO ---
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -162,6 +172,7 @@ class DashboardController extends Controller
             'openCriticalParkings' => $openCriticalParkings,
             'criticalRoadsProvider' => $criticalRoadsProvider,
             'criticalParkingsProvider' => $criticalParkingsProvider,
+            'inopPerimeterProvider' => $inopPerimeterProvider,
         ]);
 
     }

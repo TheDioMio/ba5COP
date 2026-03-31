@@ -43,9 +43,13 @@ $copMapOptions = [
                 <p>incidentes relacionados</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#perimeterModal">
                 <span class="cop-kpi-label">Perímetro</span>
-                <div class="cop-kpi-value is-success"><?= $perimeterPercentage ?>%</div>
+                <div class="cop-kpi-value is-warning"><?= $perimeterPercentage ?>%</div>
                 <p>vedação operacional</p>
             </article>
 
@@ -1053,6 +1057,68 @@ $copMapOptions = [
     <!--                                    FIM MODAL - KPI MOBILIDADE                                                          -->
     <!---------------------------------------------------------------------------------------------------------------------------->
 
+
+
+
+
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    MODAL - KPI VEDAÇÃO                                                              -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'perimeterModal',
+    'title' => '<span class="cop-modal-title-text">KPI - Vedação</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]);
+?>
+
+    <div class="cop-modal-summary text-center">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">% da vedação operacional</span>
+            <strong class="cop-modal-kpi-value is-warning"><?= $perimeterPercentage . '%' ?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">Incidentes ativos</span>
+    </div>
+
+<?php if ($inopPerimeterProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $inopPerimeterProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                        'name',
+                    [
+                            'label' => 'status',
+                        'value' => 'statusType.description'
+                    ],
+                    'notes'
+                ],
+            ]) ?>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem incidentes de àgua ativos neste momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI VEDAÇÃO                                                          -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');
 ?>

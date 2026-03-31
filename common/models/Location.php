@@ -188,8 +188,7 @@ class Location extends \yii\db\ActiveRecord {
      * Percentagem do perímetro operacional
      *
      */
-    public static function getPerimeterOperationalPercentage(): int
-    {
+    public static function getPerimeterOperationalPercentage() {
         $total = self::getPerimeterTotal();
         $green = self::getPerimeterTotalByStatus('GREEN');
 
@@ -198,6 +197,18 @@ class Location extends \yii\db\ActiveRecord {
         }
 
         return (int) round(($green / $total) * 100);
+    }
+
+    /**
+     * Query dos perímetros INOPs
+     *
+     */
+    public static function findPerimeterInop() {
+        return self::find()
+            ->from(['l' => 'location'])
+            ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->where(['lt.description' => Location::VEDACAO,])
+            ->andWhere(['!=', 'l.status_type_id', 1]);
     }
 
     /**
