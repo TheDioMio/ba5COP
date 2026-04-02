@@ -153,6 +153,38 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
+     * Devolve o número total de pedidos EM ANÁLISE
+     */
+    public static function getExternalInAnalisis(){
+        return self::find()
+            ->where(['is_external' => 1])
+            ->andWhere([
+                'status' => [
+                    StatusType::STATUS_REQUEST_IN_PROGRESS,
+                ]
+            ])
+            ->with(['priority', 'statusType'])
+            ->asArray()
+            ->all();
+    }
+
+    /**
+     * Devolve o número total de pedidos ACEITES
+     */
+    public static function getExternalAccepted(){
+        return self::find()
+            ->where(['is_external' => 1])
+            ->andWhere([
+                'status' => [
+                    StatusType::STATUS_REQUEST_APPROVED,
+                ]
+            ])
+            ->with(['priority', 'statusType'])
+            ->asArray()
+            ->all();
+    }
+
+    /**
      * Devolve a query que é usada por dataproviders, neste caso todos os pedidos externos que estão ativos.
      */
     public static function findActiveExternal()
@@ -166,5 +198,21 @@ class Request extends \yii\db\ActiveRecord
                 ]
             ])
             ->with(['priority', 'statusType']);
+    }
+
+    /**
+     * Devolve o número total de pedidos NOVOS (submetidos nas últimas 24H)
+     * Pedidos que foram submetidos nas últimas 24H e que ainda têm o status "NEW"
+     */
+    public static function getExternalNew(){
+        $datetime = date('Y-m-d H:i:s', strtotime('-24 hours'));
+        $externalRequests = self::find()
+            ->where(['>=', 'created_at', $datetime])
+            ->andWhere(['is_external' => Request::EXTERNAL_REQUEST])
+            ->andWhere(['status' => StatusType::STATUS_REQUEST_NEW])
+            ->asArray()
+            ->all();
+
+        return $externalRequests;
     }
 }

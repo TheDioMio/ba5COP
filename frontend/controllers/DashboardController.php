@@ -72,6 +72,14 @@ class DashboardController extends Controller
         $activeExternalRequests = Request::getActiveExternal();
         //pedidos externos que já estão feitos, ou seja, foram aceites e depois fechados.
         $closedExternalRequests = Request::getExternalDone();
+        //pedidos externos que foram recusados
+        $rejectedExternalRequests = Request::getExternalRejected();
+        //pedidos externos em análise
+        $inAnalisisExternalRequests = Request::getExternalInAnalisis();
+        //pedidos externos aceites
+        $acceptedExternalRequests = Request::getExternalAccepted();
+        //pedidos novos nas ultimas 24h e que ainda estao no status "new"
+        $newExternalRequests = Request::getExternalNew();
         //Data provider para o widget do KPI
         $externalRequestsProvider = new ActiveDataProvider([
             'query' => Request::findActiveExternal(),
@@ -173,6 +181,10 @@ class DashboardController extends Controller
             'criticalRoadsProvider' => $criticalRoadsProvider,
             'criticalParkingsProvider' => $criticalParkingsProvider,
             'inopPerimeterProvider' => $inopPerimeterProvider,
+            'rejectedExternalRequests' => $rejectedExternalRequests,
+            'inAnalisisExternalRequests' => $inAnalisisExternalRequests,
+            'acceptedExternalRequests' => $acceptedExternalRequests,
+            'newExternalRequests' => $newExternalRequests,
         ]);
 
     }

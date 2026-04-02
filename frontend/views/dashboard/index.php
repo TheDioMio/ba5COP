@@ -276,27 +276,29 @@ $copMapOptions = [
                     <header class="cop-module-head">
                         <div>
                             <span class="cop-eyebrow">Pedidos externos</span>
-                            <h3>Apoio solicitado</h3>
                         </div>
                         <span class="cop-badge">11 backlog</span>
                     </header>
 
-                    <div class="cop-note-list">
-                        <div class="cop-note-item">
-                            <strong>REQ-041</strong>
-                            <span>Município · Água · Prioridade A</span>
+                    <div class="cop-request-kpis">
+                        <div class="cop-request-kpi">
+                            <span class="cop-kpi-label">Novos (24h)</span>
+                            <div class="cop-kpi-value"><?=count($newExternalRequests)?></div>
                         </div>
-                        <div class="cop-note-item">
-                            <strong>REQ-042</strong>
-                            <span>ANPC · Alojamento · Prioridade B</span>
+
+                        <div class="cop-request-kpi">
+                            <span class="cop-kpi-label">Em análise</span>
+                            <div class="cop-kpi-value is-warning"><?=count($inAnalisisExternalRequests)?></div>
                         </div>
-                        <div class="cop-note-item">
-                            <strong>REQ-043</strong>
-                            <span>Empresa · Energia · Prioridade A</span>
+
+                        <div class="cop-request-kpi">
+                            <span class="cop-kpi-label">Aprovados</span>
+                            <div class="cop-kpi-value is-success"><?=count($acceptedExternalRequests)?></div>
                         </div>
-                        <div class="cop-note-item">
-                            <strong>REQ-044</strong>
-                            <span>GNR · Logística · Prioridade B</span>
+
+                        <div class="cop-request-kpi">
+                            <span class="cop-kpi-label">Recusados</span>
+                            <div class="cop-kpi-value is-danger"><?=count($rejectedExternalRequests)?></div>
                         </div>
                     </div>
                 </article>
@@ -305,7 +307,6 @@ $copMapOptions = [
                     <header class="cop-module-head">
                         <div>
                             <span class="cop-eyebrow">Apoio prestado</span>
-                            <h3>Output da base</h3>
                         </div>
                         <span class="cop-badge">Hoje</span>
                     </header>

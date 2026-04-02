@@ -664,6 +664,56 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 
 
 
+
+/*
+--------------------------------------------------
+                Painel direito, pedidos externos
+--------------------------------------------------
+*/
+.cop-request-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.cop-request-kpi {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cop-request-kpi.full {
+    grid-column: span 2;
+}
+
+.cop-request-kpi .cop-kpi-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+}
+
+.cop-request-kpi .cop-kpi-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.cop-kpi-value.is-success { color: #22c55e; }
+.cop-kpi-value.is-warning { color: #facc15; }
+.cop-kpi-value.is-danger  { color: #ef4444; }
+/*
+--------------------------------------------------
+           FIM Painel direito, pedidos externos
+--------------------------------------------------
+*/
+
+
 @media (max-width: 991.98px) {
     .cop-modal-summary {
         flex-direction: column;
