@@ -8,6 +8,7 @@ use common\models\Location;
 use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use common\models\Request;
+use common\models\RequestType;
 use common\models\Task;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -35,6 +36,7 @@ class DashboardController extends Controller
         //--- FIM INCIDENTES - SEGURANÇA ---
 
 
+
         //--- CAMAS ---
         //total de alojamentos que tenham camas disponíveis
         $availableLodgings = LodgingSite::findWithAvailableBeds();
@@ -47,6 +49,7 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         //--- FIM CAMAS ---
+
 
 
         // --- INCIDENTES - ÁGUA ---
@@ -65,6 +68,7 @@ class DashboardController extends Controller
         // --- FIM INCIDENTES - ÁGUA ---
 
 
+
         // --- PEDIDOS EXTERNOS ---
         //pedidos externos (em todos os estados, done, rejected, in_progress... etc)
         $externalRequests = Request::getExternalRequests();
@@ -80,6 +84,7 @@ class DashboardController extends Controller
         $acceptedExternalRequests = Request::getExternalAccepted();
         //pedidos novos nas ultimas 24h e que ainda estao no status "new"
         $newExternalRequests = Request::getExternalNew();
+
         //Data provider para o widget do KPI
         $externalRequestsProvider = new ActiveDataProvider([
             'query' => Request::findActiveExternal(),
@@ -87,6 +92,7 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         // --- FIM PEDIDOS EXTERNOS ---
+
 
 
         // --- TAREFAS CRÍTICAS ---
@@ -105,6 +111,7 @@ class DashboardController extends Controller
         // --- FIM TAREFAS CRÍTICAS ---
 
 
+
         // --- EFETIVOS EXTERNOS ---
         //Efetivos externos, devolve um INT.
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
@@ -118,6 +125,7 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         // --- FIM EFETIVOS EXTERNOS ---
+
 
 
         // --- MOBILIDADE ---
@@ -140,6 +148,7 @@ class DashboardController extends Controller
         // --- FIM MOBILIDADE ---
 
 
+
         // --- VEDAÇÃO ---
         //% do perimetro operacional
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
@@ -149,6 +158,23 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         // --- FIM VEDAÇÃO ---
+
+
+
+        // --- APOIOS PRESTADOS ---
+        $quantityBathsGivenAcc = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH);
+        $quantityBathsGivenOnt = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday');
+        $quantityBathsGivenHj = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today');
+
+        $quantityMealsGivenAcc = Request::getAllNumberRequestsOfType(RequestType::TYPE_MEAL);
+        $quantityMealsGivenOnt = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'yesterday');
+        $quantityMealsGivenHj = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'today');
+
+
+        // --- FIM APOIOS PRESTADOS ---
+
+
+
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -185,6 +211,12 @@ class DashboardController extends Controller
             'inAnalisisExternalRequests' => $inAnalisisExternalRequests,
             'acceptedExternalRequests' => $acceptedExternalRequests,
             'newExternalRequests' => $newExternalRequests,
+            'quantityBathsGivenAcc' => $quantityBathsGivenAcc,
+            'quantityMealsGivenAcc' => $quantityMealsGivenAcc,
+            'quantityMealsGivenOnt' => $quantityMealsGivenOnt,
+            'quantityMealsGivenHj' => $quantityMealsGivenHj,
+            'quantityBathsGivenOnt' => $quantityBathsGivenOnt,
+            'quantityBathsGivenHj' => $quantityBathsGivenHj,
         ]);
 
     }

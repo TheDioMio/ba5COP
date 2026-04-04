@@ -303,44 +303,38 @@ $copMapOptions = [
                     </div>
                 </article>
 
-                <article class="cop-card cop-module">
-                    <header class="cop-module-head">
-                        <div>
-                            <span class="cop-eyebrow">Apoio prestado</span>
-                        </div>
-                        <span class="cop-badge">Hoje</span>
-                    </header>
-
-                    <div class="cop-stat-grid cop-stat-grid-2">
-                        <div class="cop-stat-box">
-                            <span>Banhos</span>
-                            <strong>96</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Refeições</span>
-                            <strong>210</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Horas máquina</span>
-                            <strong>14h</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Horas equipa</span>
-                            <strong>22h</strong>
-                        </div>
-                    </div>
-
-                    <div class="cop-note-list">
-                        <div class="cop-note-item">
-                            <strong>Apoio logístico</strong>
-                            <span>12 missões externas concluídas</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Equipas cedidas</strong>
-                            <span>3 equipas destacadas</span>
-                        </div>
-                    </div>
-                </article>
+                <div class="cop-support-table-wrap compact">
+                    <table class="cop-support-table compact">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Hj</th>
+                            <th>Ont</th>
+                            <th>Ac</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th>Banhos</th>
+                            <td><?=$quantityBathsGivenHj?></td>
+                            <td><?=$quantityBathsGivenOnt?></td>
+                            <td class="is-total"><?=$quantityBathsGivenAcc?></td>
+                        </tr>
+                        <tr>
+                            <th>Refeições</th>
+                            <td><?=$quantityMealsGivenHj?></td>
+                            <td><?=$quantityMealsGivenOnt?></td>
+                            <td class="is-total"><?=$quantityMealsGivenAcc?></td>
+                        </tr>
+                        <tr>
+                            <th>H. Equipa</th>
+                            <td>1</td>
+                            <td>1</td>
+                            <td class="is-total">1</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
             </aside>
 

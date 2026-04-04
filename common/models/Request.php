@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use DateTime;
 use Yii;
 
 /**
@@ -39,11 +40,13 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['quantity'], 'default', 'value' => 1],
             [['is_external', 'origin', 'details', 'priority_id', 'status', 'entity_id'], 'required'],
-            [['is_external', 'priority_id', 'status', 'entity_id'], 'integer'],
+            [['is_external', 'priority_id', 'status', 'entity_id', 'request_type_id', 'quantity'], 'integer'],
             [['created_at'], 'safe'],
             [['origin'], 'string', 'max' => 30],
             [['details'], 'string', 'max' => 120],
+            [['request_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => RequestType::class, 'targetAttribute' => ['request_type_id' => 'id']],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['priority_id'], 'exist', 'skipOnError' => true, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
             [['status'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status' => 'id']],
@@ -64,6 +67,8 @@ class Request extends \yii\db\ActiveRecord
             'status' => 'Status',
             'created_at' => 'Criado às',
             'entity_id' => 'ID da Entidade',
+            'request_type_id' => 'ID do Tipo de Pedido',
+            'quantity' => 'Quantidade',
         ];
     }
 
@@ -95,6 +100,16 @@ class Request extends \yii\db\ActiveRecord
     public function getStatusType()
     {
         return $this->hasOne(StatusType::class, ['id' => 'status']);
+    }
+
+    /**
+     * Gets query for [[RequestType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequestType()
+    {
+        return $this->hasOne(RequestType::class, ['id' => 'request_type_id']);
     }
 
     /**
@@ -177,6 +192,7 @@ class Request extends \yii\db\ActiveRecord
             ->andWhere([
                 'status' => [
                     StatusType::STATUS_REQUEST_APPROVED,
+                    StatusType::STATUS_REQUEST_DONE,
                 ]
             ])
             ->with(['priority', 'statusType'])
@@ -209,10 +225,79 @@ class Request extends \yii\db\ActiveRecord
         $externalRequests = self::find()
             ->where(['>=', 'created_at', $datetime])
             ->andWhere(['is_external' => Request::EXTERNAL_REQUEST])
-            ->andWhere(['status' => StatusType::STATUS_REQUEST_NEW])
             ->asArray()
             ->all();
 
         return $externalRequests;
     }
+
+    /**
+     * Devolve os pedidos de "X" tipo de request_type, que estejam já fornecidos
+     *
+     */
+    public static function getNumberRequestsOfType($requestType, $external){
+        if($external) {
+            $is_external = Request::EXTERNAL_REQUEST;
+        } else {
+            $is_external = Request::NOT_EXTERNAL_REQUEST;
+        }
+
+        if (Request::find()->where(['request_type_id' => $requestType]) != null) {
+            $requests = Request::find()
+                ->where(['request_type_id' => $requestType])
+                ->andWhere(['is_external' => $is_external])
+                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+                ->asArray()
+                ->all();
+            return $requests;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Quantidade de ajudas feitas por "X" tipo de pedido
+     * DEVOLVE: int, soma da quantidade de cada registo com esse tipo de pedido
+     *
+     */
+    public static function getAllNumberRequestsOfType($requestType){
+        if (Request::find()->where(['request_type_id' => $requestType]) != null) {
+            $requests = Request::find()
+                ->where(['request_type_id' => $requestType])
+                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+                ->sum('quantity');
+            return $requests;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Quantidade de ajudas feitas por "X" tipo de pedido, durante X tempo.
+     * DEVOLVE: int, soma da quantidade de cada registo com esse tipo de pedido
+     *
+     */
+    public static function getRequestsOfTypeWithin($requestType, $time) {
+
+        switch (strtolower($time)){
+            case 'today':
+                $comp1 = new DateTime('today');
+                $comp2 = new DateTime('tomorrow');
+            break;
+            case 'yesterday':
+                $comp1 = new DateTime('yesterday');
+                $comp2 = new DateTime('today');
+            break;
+            default:
+                return -1;
+        }
+
+        return Request::find()
+            ->where(['request_type_id' => $requestType])
+            ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+            ->andWhere(['>=', 'created_at', $comp1->format('Y-m-d H:i:s')])
+            ->andWhere(['<', 'created_at', $comp2->format('Y-m-d H:i:s')])
+            ->sum('quantity');
+    }
+
 }

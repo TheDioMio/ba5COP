@@ -6,6 +6,7 @@ use common\models\Entity;
 use common\models\Priority;
 use common\models\Request;
 use app\models\RequestSearch;
+use common\models\RequestType;
 use common\models\StatusType;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -104,6 +105,7 @@ class RequestController extends Controller
 
         $prioritiesArray = Priority::dropDown();
         $statusArray = StatusType::getStatusDropdown(Entity::REQUEST_ID);
+        $requestTypeArray = RequestType::dropDown();
 
         if ($this->request->isPost) {
             $model->load($this->request->post());
@@ -125,6 +127,7 @@ class RequestController extends Controller
             'model' => $model,
             'prioritiesArray' => $prioritiesArray,
             'statusArray' => $statusArray,
+            'requestTypeArray' => $requestTypeArray,
         ]);
     }
 
@@ -139,6 +142,8 @@ class RequestController extends Controller
     {
         $model = $this->findModel($id);
         $prioritiesArray = Priority::dropDown();
+        $requestTypeArray = RequestType::dropDown();
+        $statusArray = StatusType::getStatusDropdown(Entity::REQUEST_ID);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -147,6 +152,8 @@ class RequestController extends Controller
         return $this->render('update', [
             'model' => $model,
             'prioritiesArray' => $prioritiesArray,
+            'requestTypeArray' => $requestTypeArray,
+            'statusArray' => $statusArray,
         ]);
     }
 

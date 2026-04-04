@@ -713,6 +713,77 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 --------------------------------------------------
 */
 
+/*
+TABELA APOIO PRESTADO
+*/
+.cop-support-table-wrap.compact {
+    margin-top: 12px;
+    padding: 8px 10px;
+    border-radius: 16px;
+    border: 1px solid var(--cop-line);
+    background: var(--cop-soft);
+    box-shadow: none;
+}
+
+.cop-support-table.compact {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    color: var(--ba5-text);
+}
+
+.cop-support-table.compact thead th {
+    padding: 4px 6px 8px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--ba5-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: transparent;
+}
+
+.cop-support-table.compact thead th:first-child {
+    text-align: left;
+    width: 28%;
+}
+
+.cop-support-table.compact tbody th,
+.cop-support-table.compact tbody td {
+    padding: 10px 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
+}
+
+.cop-support-table.compact tbody tr:last-child th,
+.cop-support-table.compact tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.cop-support-table.compact tbody th {
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ba5-text);
+    white-space: nowrap;
+}
+
+.cop-support-table.compact tbody td {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ba5-text);
+}
+
+.cop-support-table.compact td.is-total {
+    color: #62d4c8;
+}
+/*
+fim tabela apoio prestado
+*/
+
+
 
 @media (max-width: 991.98px) {
     .cop-modal-summary {

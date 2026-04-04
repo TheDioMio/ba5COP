@@ -116,6 +116,7 @@ $userLogado = Yii::$app->user->identity;
                             ['label' => 'Status Types', 'url' => ['status-type/index'], 'icon' => 'toggle-on'],
                             ['label' => 'Incident Types', 'url' => ['incident-type/index'], 'icon' => 'list'],
                             ['label' => 'Entity Types', 'url' => ['entity-type/index'], 'icon' => 'layer-group'],
+                            ['label' => 'Request Types', 'url' => ['request-type/index'], 'icon' => 'layer-group'],
                         ],
                     ],
                 ],

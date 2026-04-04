@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $model,
                 'prioritiesArray' => $prioritiesArray,
                 'statusArray' => $statusArray,
+                'requestTypeArray' => $requestTypeArray,
             ]) ?>
         </div>
     </div>

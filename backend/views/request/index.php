@@ -72,6 +72,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => false,
                     ],
                     [
+                        'label' => 'Tipo de Pedido',
+                        'attribute' => 'requestType.description',
+                        'filter' => false,
+                    ],
+                    [
                         'attribute' => 'priority_id',
                         'label' => 'Prioridade',
                         'value' => function ($model) {
@@ -115,6 +120,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'details',
+                        'filter' => false,
+                    ],
+                    [
+                        'label' => 'Tipo de Pedido',
+                        'attribute' => 'requestType.description',
                         'filter' => false,
                     ],
                     [

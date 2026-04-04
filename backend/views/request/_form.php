@@ -44,6 +44,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'details')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'request_type_id')
+        ->dropDownList($requestTypeArray, ['prompt' => '-- TIPO DE PEDIDO --'])
+        ->label('Tipo de Pedido') ?>
+
     <?= $form->field($model, 'priority_id')
         ->dropDownList($prioritiesArray, ['prompt' => '-- PRIORIDADE --'])
         ->label('Prioridade') ?>
@@ -51,6 +55,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'status')
         ->dropDownList($statusArray, ['prompt' => '-- STATUS --'])
         ->label('Status') ?>
+
+    <?= $form->field($model, 'quantity')->input('number', ['min' => 1]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
