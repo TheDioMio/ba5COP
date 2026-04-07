@@ -13,8 +13,14 @@ use yii\helpers\ArrayHelper;
  *
  * @property Location[] $locations
  */
-class LocationType extends \yii\db\ActiveRecord
-{
+class LocationType extends \yii\db\ActiveRecord {
+    const TYPE_BUILDING = 1;
+    const TYPE_AREA = 2;
+    const TYPE_POINT = 3;
+    const TYPE_ROAD = 4;
+    const TYPE_VEDACAO = 5;
+    const TYPE_PARKING = 6;
+    const TYPE_NAVAIDS = 7;
 
 
     /**

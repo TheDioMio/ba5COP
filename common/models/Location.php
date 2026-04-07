@@ -311,4 +311,16 @@ class Location extends \yii\db\ActiveRecord {
             ]);
     }
 
+
+    /**
+     * Array de todas as localizações com X tipo de location_type_id
+     *
+     */
+    public static function getLocationsOfType($location_type){
+        return Location::find()
+            ->where(['location_type_id' => $location_type])
+            ->with('statusType')
+            ->orderBy(['name' => SORT_ASC])
+            ->all();
+    }
 }

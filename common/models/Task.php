@@ -202,4 +202,17 @@ class Task extends \yii\db\ActiveRecord {
 
         return $criticalTasks;
     }
+
+    /**
+     * Devolve o array total das últimas 10 tarefas
+     */
+    public static function getLatest10Tasks() {
+        return Task::find()
+            ->with(['priority', 'statusType'])
+            ->orderBy([
+                'created_at' => SORT_DESC
+            ])
+            ->limit(10)
+            ->all();
+    }
 }

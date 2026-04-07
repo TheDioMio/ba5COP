@@ -132,6 +132,71 @@ $copMapOptions = [
 
             <aside class="cop-side cop-side-left">
 
+                <article class="cop-card cop-module cop-systems-card">
+                    <header class="cop-module-head">
+                        <div>
+                            <span class="cop-eyebrow">Estado de Sistemas</span>
+                            <h3>NAVAids</h3>
+                        </div>
+                        <div class="cop-systems-meta">
+                            <span class="cop-systems-meta-label">Última atualização</span>
+                            <strong><?= date('Y-m-d H:i') ?></strong>
+                        </div>
+                    </header>
+
+                    <div class="cop-systems-list">
+                        <?php if (!empty($navIDsArray)): ?>
+                            <?php foreach ($navIDsArray as $navAid): ?>
+                                <?php
+                                $statusRaw = $navAid->statusType->description ?? null;
+
+                                // Badge + label
+                                $badgeClass = 'cop-badge-warning';
+                                $statusLabel = '—';
+
+                                switch ($statusRaw) {
+                                    case 'GREEN':
+                                        $badgeClass = 'cop-badge-success';
+                                        $statusLabel = 'OK';
+                                        $defaultText = 'Operacional';
+                                        break;
+
+                                    case 'YELLOW':
+                                        $badgeClass = 'cop-badge-warning';
+                                        $statusLabel = 'ALERTA';
+                                        $defaultText = 'Condicionado';
+                                        break;
+
+                                    case 'RED':
+                                        $badgeClass = 'cop-badge-danger';
+                                        $statusLabel = 'CRÍTICO';
+                                        $defaultText = 'Indisponível';
+                                        break;
+
+                                    default:
+                                        $defaultText = 'Sem informação';
+                                }
+
+                                // Texto final (notes têm prioridade)
+                                $statusText = !empty($navAid->notes) ? $navAid->notes : $defaultText;
+                                ?>
+
+                                <div class="cop-system-row">
+                                    <div class="cop-system-main">
+                                        <span class="cop-system-name"><?= $navAid->name ?></span>
+                                        <small class="cop-system-detail"><?= $statusText ?></small>
+                                    </div>
+                                    <span class="cop-badge <?= $badgeClass ?>"><?= $statusLabel ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="cop-empty-state">
+                                Não existem sistemas NAVAids registados neste momento.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </article>
+
             </aside>
 
             <section class="cop-center">
@@ -236,14 +301,6 @@ $copMapOptions = [
                                         <span><b><?= $bedsGivenAccInternal ?? 0?></b> acumulado</span>
                                     </div>
                                 </div>
-
-<!--                                <div class="cop-support-item">-->
-<!--                                    <strong>Lavandaria</strong>-->
-<!--                                    <div class="cop-support-values">-->
-<!--                                        <span class="cop-text-warning"><b>--><?php //=?><!--</b> pendentes</span>-->
-<!--                                        <span class="cop-text-success"><b>34</b> concluídos</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
                             </div>
                         </div>
 
@@ -276,15 +333,6 @@ $copMapOptions = [
                                         <span><b><?= $bedsGivenAccExternal ?? 0?></b> acumulado</span>
                                     </div>
                                 </div>
-
-<!--                                <div class="cop-support-item">-->
-<!--                                    <strong>Horas de equipa</strong>-->
-<!--                                    <div class="cop-support-values">-->
-<!--                                        <span><b>1</b> hoje</span>-->
-<!--                                        <span><b>1</b> ontem</span>-->
-<!--                                        <span class="cop-text-success"><b>1</b> acumulado</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
                             </div>
                         </div>
 
@@ -317,15 +365,6 @@ $copMapOptions = [
                                         <span><b><?= $bedsGivenAccOverall ?? 0?></b> acumulado</span>
                                     </div>
                                 </div>
-
-<!--                                <div class="cop-support-item">-->
-<!--                                    <strong>Lavandaria / equipa</strong>-->
-<!--                                    <div class="cop-support-values">-->
-<!--                                        <span class="cop-text-warning"><b>12</b> pendentes</span>-->
-<!--                                        <span class="cop-text-success"><b>34</b> concluídos</span>-->
-<!--                                        <span><b>1</b> h. equipa</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
                             </div>
                         </div>
 
@@ -384,54 +423,39 @@ $copMapOptions = [
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>WO-101</td>
-                            <td>A</td>
-                            <td>Sgt. Matos</td>
-                            <td>Em Exec.</td>
-                            <td>Sem bloqueio</td>
-                            <td>18:20</td>
-                        </tr>
-                        <tr>
-                            <td>WO-102</td>
-                            <td>B</td>
-                            <td>Cb. Silva</td>
-                            <td>Validado</td>
-                            <td>Aguarda acesso</td>
-                            <td>19:00</td>
-                        </tr>
-                        <tr>
-                            <td>WO-103</td>
-                            <td>A</td>
-                            <td>1Sar. Costa</td>
-                            <td>Em Exec.</td>
-                            <td>Material parcial</td>
-                            <td>18:45</td>
-                        </tr>
-                        <tr>
-                            <td>WO-104</td>
-                            <td>C</td>
-                            <td>Eq. Infra</td>
-                            <td>Novo</td>
-                            <td>Sem bloqueio</td>
-                            <td>20:15</td>
-                        </tr>
-                        <tr>
-                            <td>WO-105</td>
-                            <td>C</td>
-                            <td>Eq. Infra</td>
-                            <td>Novo</td>
-                            <td>Sem bloqueio</td>
-                            <td>20:15</td>
-                        </tr>
-                        <tr>
-                            <td>WO-106</td>
-                            <td>C</td>
-                            <td>Eq. Infra</td>
-                            <td>Novo</td>
-                            <td>Sem bloqueio</td>
-                            <td>20:15</td>
-                        </tr>
+                        <?php if (!empty($latest10Tasks)): ?>
+                            <?php foreach ($latest10Tasks as $task): ?>
+                                <tr>
+                                    <td><?= $task->id ?? '—' ?></td>
+
+                                    <td>
+                                        <?= $task->priority->description ?? '—' ?>
+                                    </td>
+
+                                    <td>
+                                        <?= $task->assigned_to ?? '—' ?>
+                                    </td>
+
+                                    <td>
+                                        <?= $task->statusType->description ?? '—' ?>
+                                    </td>
+
+                                    <td>
+                                        <?= $task->block_reason ?? 'Sem bloqueio' ?>
+                                    </td>
+                                    <td>
+                                        <?= $task->due_at?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    Não existem tarefas no momento.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
                         </tbody>
                     </table>
                 </div>
@@ -445,37 +469,45 @@ $copMapOptions = [
                     </div>
                     <span class="cop-badge">Últimas 10</span>
                 </header>
+                <div class="cop-table-scroll">
+                    <table class="cop-table">
+                        <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Decisão</th>
+                            <th>Decisor</th>
+                            <th>Impacto</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php if (!empty($latest10Decisions)): ?>
+                            <?php foreach ($latest10Decisions as $decision): ?>
+                                <tr>
+                                    <td><?= $decision->decided_at?></td>
 
-                <table class="cop-table">
-                    <thead>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Decisão</th>
-                        <th>Decisor</th>
-                        <th>Impacto</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>15:40</td>
-                        <td>Interditar setor C</td>
-                        <td>Cmdt BA5</td>
-                        <td>Redução de risco</td>
-                    </tr>
-                    <tr>
-                        <td>16:05</td>
-                        <td>Priorizar reparação PT1</td>
-                        <td>Of. Dia</td>
-                        <td>Recuperação energia</td>
-                    </tr>
-                    <tr>
-                        <td>16:18</td>
-                        <td>Reforçar vigilância norte</td>
-                        <td>Chefe Seg.</td>
-                        <td>Mitigar intrusão</td>
-                    </tr>
-                    </tbody>
-                </table>
+                                    <td>
+                                        <?= $decision->reason?>
+                                    </td>
+
+                                    <td>
+                                        <?= $decision->decided_by->username?>
+                                    </td>
+
+                                    <td>
+                                        'Aaaaaa'
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    Não existem decisões no momento.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </article>
 
             <article class="cop-card">

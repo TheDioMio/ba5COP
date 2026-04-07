@@ -78,4 +78,17 @@ class DecisionLog extends \yii\db\ActiveRecord
         return $this->hasOne(Entity::class, ['id' => 'entity_id']);
     }
 
+
+
+    /**
+     * Devolve o array total das últimas 10 decisões
+     */
+    public static function getLatest10Decisions() {
+        return DecisionLog::find()
+            ->orderBy([
+                'decided_at' => SORT_DESC
+            ])
+            ->limit(10)
+            ->all();
+    }
 }

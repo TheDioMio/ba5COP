@@ -1426,3 +1426,93 @@ Em mobile:
     background: rgba(255, 196, 95, 0.08);
     color: #ffc45f;
 }
+
+/*
+PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
+*/
+
+.cop-systems-card .cop-module-head {
+    align-items: flex-start;
+}
+
+.cop-systems-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 2px;
+    min-width: 150px;
+}
+
+.cop-systems-meta-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(226, 232, 240, 0.62);
+}
+
+.cop-systems-meta strong {
+    font-size: 0.84rem;
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+.cop-systems-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cop-system-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.cop-system-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cop-system-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.2;
+}
+
+.cop-system-detail {
+    margin-top: 4px;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: rgba(226, 232, 240, 0.78);
+}
+
+.cop-badge-success {
+    color: #86efac;
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.cop-badge-warning {
+    color: #fcd34d;
+    border-color: rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.cop-badge-danger {
+    color: #fda4af;
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+
+/*
+FIM PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
+*/

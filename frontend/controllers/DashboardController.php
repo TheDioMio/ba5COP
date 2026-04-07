@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\models\DecisionLog;
 use common\models\Incident;
 use common\models\IncidentType;
 use common\models\Location;
+use common\models\LocationType;
 use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use common\models\Request;
@@ -211,6 +213,21 @@ class DashboardController extends Controller
 
 
 
+        // --- ESTADO DE SISTEMAS NAVids ---
+        $navIDsArray = Location::getLocationsOfType(LocationType::TYPE_NAVAIDS);
+        // --- FIM ESTADO DE SISTEMAS NAVids ---
+
+
+        // --- TOP 10 TAREFAS  ---
+        $latest10Tasks = Task::getLatest10Tasks();
+        // --- FIM TOP 10 TAREFAS  ---
+
+
+        // --- DECISIONS LOG ---
+        $latest10Decisions = DecisionLog::getLatest10Decisions();
+        // --- FIM DECISIONS LOG ---
+
+
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
             'waterIncidents' => $waterIncidents,
@@ -273,6 +290,9 @@ class DashboardController extends Controller
             'bedsGivenAccExternal' => $bedsGivenAccExternal,
             'bedsGivenOntExternal' => $bedsGivenOntExternal,
             'bedsGivenHjExternal' => $bedsGivenHjExternal,
+            'navIDsArray' => $navIDsArray,
+            'latest10Tasks' => $latest10Tasks,
+            'latest10Decisions' => $latest10Decisions,
         ]);
 
     }
