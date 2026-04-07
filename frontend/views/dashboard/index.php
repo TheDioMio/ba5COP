@@ -132,144 +132,15 @@ $copMapOptions = [
 
             <aside class="cop-side cop-side-left">
 
-                <article class="cop-card cop-module">
-                    <header class="cop-module-head">
-                        <div>
-                            <span class="cop-eyebrow">Habitabilidade</span>
-                            <h3>Camas operacionais</h3>
-                        </div>
-                        <span class="cop-badge">24h</span>
-                    </header>
-
-                    <div class="cop-stat-grid">
-                        <div class="cop-stat-box">
-                            <span>Total</span>
-                            <strong>246</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Ocupadas</span>
-                            <strong>118</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Disponíveis</span>
-                            <strong>72</strong>
-                        </div>
-                        <div class="cop-stat-box">
-                            <span>Indisponíveis</span>
-                            <strong>56</strong>
-                        </div>
-                    </div>
-
-                    <div class="cop-note-list">
-                        <div class="cop-note-item">
-                            <strong>Água</strong>
-                            <span>18 camas indisponíveis</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Telhado</strong>
-                            <span>22 camas indisponíveis</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Energia</strong>
-                            <span>16 camas indisponíveis</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="cop-card cop-module">
-                    <header class="cop-module-head">
-                        <div>
-                            <span class="cop-eyebrow">Outras unidades</span>
-                            <h3>Militares alojados</h3>
-                        </div>
-                        <span class="cop-badge">Ativo</span>
-                    </header>
-
-                    <div class="cop-note-list">
-                        <div class="cop-note-item">
-                            <strong>FA</strong>
-                            <span>14 militares · Bloco A</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Exército</strong>
-                            <span>10 militares · Bloco C</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Marinha</strong>
-                            <span>4 militares · Bloco B</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>GNR</strong>
-                            <span>6 militares · Bloco D</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="cop-card cop-module">
-                    <header class="cop-module-head">
-                        <div>
-                            <span class="cop-eyebrow">Apoios internos</span>
-                            <h3>Capacidades essenciais</h3>
-                        </div>
-                        <span class="cop-badge">Base</span>
-                    </header>
-
-                    <div class="cop-note-list">
-                        <div class="cop-note-item">
-                            <strong>Banhos quentes</strong>
-                            <span>96 ontem · 410 acumulado</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Refeições</strong>
-                            <span>210 ontem · 980 acumulado</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Lavandaria</strong>
-                            <span>12 pendentes · 34 concluídos</span>
-                        </div>
-                        <div class="cop-note-item">
-                            <strong>Situação sanitária</strong>
-                            <span>1 avaria crítica no setor sul</span>
-                        </div>
-                    </div>
-                </article>
-
             </aside>
 
             <section class="cop-center">
                 <article class="cop-card cop-map-card">
-
-                    <header class="cop-module-head cop-map-head">
-                        <div>
-                            <span class="cop-eyebrow">Common Operational Picture</span>
-                            <h3>Mapa operacional da unidade</h3>
-                        </div>
-
-                        <div class="cop-map-actions">
-                            <span class="cop-badge">Leitura</span>
-                            <span class="cop-badge">BA5</span>
-                            <span class="cop-badge">Atualização <?= date('H:i') ?></span>
-                        </div>
-                    </header>
-
                     <div class="cop-map-wrap">
-                        <div class="cop-map-overlay cop-map-overlay-left">
-                            <span class="cop-eyebrow">Setor prioritário</span>
-                            <strong>Infraestruturas</strong>
-                            <p>Fuga de água no refeitório e PT2 condicionado.</p>
-                        </div>
-
-                        <div class="cop-map-overlay cop-map-overlay-right">
-                            <span class="cop-eyebrow">Estado geral</span>
-                            <strong>Operação condicionada</strong>
-                            <p>Sem impacto crítico na missão.</p>
-                        </div>
-
                         <div id="cop-map" class="cop-map"></div>
                     </div>
                 </article>
             </section>
-
             <aside class="cop-side cop-side-right">
 
                 <article class="cop-card cop-module">
@@ -283,58 +154,208 @@ $copMapOptions = [
                     <div class="cop-request-kpis">
                         <div class="cop-request-kpi">
                             <span class="cop-kpi-label">Novos (24h)</span>
-                            <div class="cop-kpi-value"><?=count($newExternalRequests)?></div>
+                            <div class="cop-kpi-value"><?= count($newExternalRequests) ?></div>
                         </div>
 
                         <div class="cop-request-kpi">
                             <span class="cop-kpi-label">Em análise</span>
-                            <div class="cop-kpi-value is-warning"><?=count($inAnalisisExternalRequests)?></div>
+                            <div class="cop-kpi-value is-warning"><?= count($inAnalisisExternalRequests) ?></div>
                         </div>
 
                         <div class="cop-request-kpi">
                             <span class="cop-kpi-label">Aprovados</span>
-                            <div class="cop-kpi-value is-success"><?=count($acceptedExternalRequests)?></div>
+                            <div class="cop-kpi-value is-success"><?= count($acceptedExternalRequests) ?></div>
                         </div>
 
                         <div class="cop-request-kpi">
                             <span class="cop-kpi-label">Recusados</span>
-                            <div class="cop-kpi-value is-danger"><?=count($rejectedExternalRequests)?></div>
+                            <div class="cop-kpi-value is-danger"><?= count($rejectedExternalRequests) ?></div>
                         </div>
                     </div>
                 </article>
 
-                <div class="cop-support-table-wrap compact">
-                    <table class="cop-support-table compact">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Hj</th>
-                            <th>Ont</th>
-                            <th>Ac</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Banhos</th>
-                            <td><?=$quantityBathsGivenHj?></td>
-                            <td><?=$quantityBathsGivenOnt?></td>
-                            <td class="is-total"><?=$quantityBathsGivenAcc?></td>
-                        </tr>
-                        <tr>
-                            <th>Refeições</th>
-                            <td><?=$quantityMealsGivenHj?></td>
-                            <td><?=$quantityMealsGivenOnt?></td>
-                            <td class="is-total"><?=$quantityMealsGivenAcc?></td>
-                        </tr>
-                        <tr>
-                            <th>H. Equipa</th>
-                            <td>1</td>
-                            <td>1</td>
-                            <td class="is-total">1</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <article class="cop-card cop-module">
+                    <header class="cop-module-head">
+                        <div>
+                            <span class="cop-eyebrow">Apoios</span>
+                            <h3>Apoios Internos</h3>
+                        </div>
+
+                        <div class="cop-support-switch" role="tablist">
+                            <button type="button"
+                                    class="cop-support-switch-btn is-active"
+                                    data-support-target="internal"
+                                    title="Apoios internos">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                            </button>
+
+                            <button type="button"
+                                    class="cop-support-switch-btn"
+                                    data-support-target="external"
+                                    title="Apoios externos">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </button>
+
+                            <button type="button"
+                                    class="cop-support-switch-btn"
+                                    data-support-target="combined"
+                                    title="Visão geral">
+                                <i class="fa-solid fa-globe"></i>
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="cop-support-panels">
+
+                        <!-- INTERNOS -->
+                        <div class="cop-support-panel is-active" data-support-panel="internal">
+                            <div class="cop-support-grid">
+                                <div class="cop-support-item">
+                                    <strong>Banhos</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?=$bathsGivenOntInternal ?? 0?></b> ontem</span>
+                                        <span><b><?=$bathsGivenHjInternal ?? 0?></b> hoje</span>
+                                        <span><b><?=$bathsGivenAccInternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Refeições</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?=$mealsGivenOntInternal ?? 0?></b> ontem</span>
+                                        <span><b><?=$mealsGivenHjInternal ?? 0?></b> hoje</span>
+                                        <span><b><?=$mealsGivenAccInternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Camas</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?= $bedsGivenOntInternal ?? 0?></b> ontem</span>
+                                        <span><b><?= $bedsGivenHjInternal ?? 0?></b> hoje</span>
+                                        <span><b><?= $bedsGivenAccInternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+<!--                                <div class="cop-support-item">-->
+<!--                                    <strong>Lavandaria</strong>-->
+<!--                                    <div class="cop-support-values">-->
+<!--                                        <span class="cop-text-warning"><b>--><?php //=?><!--</b> pendentes</span>-->
+<!--                                        <span class="cop-text-success"><b>34</b> concluídos</span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+
+                        <!-- EXTERNOS -->
+                        <div class="cop-support-panel" data-support-panel="external">
+                            <div class="cop-support-grid">
+                                <div class="cop-support-item">
+                                    <strong>Banhos</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?=$bathsGivenOntExternal ?? 0?></b> ontem</span>
+                                        <span><b><?=$bathsGivenHjExternal ?? 0?></b> hoje</span>
+                                        <span><b><?=$bathsGivenAccExternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Refeições</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?= $mealsGivenOntExternal ?? 0?></b> ontem</span>
+                                        <span><b><?= $mealsGivenHjExternal ?? 0?></b> hoje</span>
+                                        <span><b><?= $mealsGivenAccExternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Camas</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?= $bedsGivenOntExternal ?? 0?></b> ontem</span>
+                                        <span><b><?= $bedsGivenHjExternal ?? 0?></b> hoje</span>
+                                        <span><b><?= $bedsGivenAccExternal ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+<!--                                <div class="cop-support-item">-->
+<!--                                    <strong>Horas de equipa</strong>-->
+<!--                                    <div class="cop-support-values">-->
+<!--                                        <span><b>1</b> hoje</span>-->
+<!--                                        <span><b>1</b> ontem</span>-->
+<!--                                        <span class="cop-text-success"><b>1</b> acumulado</span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+
+                        <!-- GERAL -->
+                        <div class="cop-support-panel" data-support-panel="combined">
+                            <div class="cop-support-grid">
+                                <div class="cop-support-item">
+                                    <strong>Banhos</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?=$bathsGivenOntOverall ?? 0?></b> ontem</span>
+                                        <span><b><?=$bathsGivenHjOverall ?? 0?></b> hoje</span>
+                                        <span><b><?=$bathsGivenAccOverall ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Refeições</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?=$mealsGivenOntOverall ?? 0?></b> ontem</span>
+                                        <span><b><?=$mealsGivenHjOverall ?? 0?></b> hoje</span>
+                                        <span><b><?=$mealsGivenAccOverall ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+                                <div class="cop-support-item">
+                                    <strong>Camas</strong>
+                                    <div class="cop-support-values">
+                                        <span><b><?= $bedsGivenOntOverall ?? 0?></b> ontem</span>
+                                        <span><b><?= $bedsGivenHjOverall ?? 0?></b> hoje</span>
+                                        <span><b><?= $bedsGivenAccOverall ?? 0?></b> acumulado</span>
+                                    </div>
+                                </div>
+
+<!--                                <div class="cop-support-item">-->
+<!--                                    <strong>Lavandaria / equipa</strong>-->
+<!--                                    <div class="cop-support-values">-->
+<!--                                        <span class="cop-text-warning"><b>12</b> pendentes</span>-->
+<!--                                        <span class="cop-text-success"><b>34</b> concluídos</span>-->
+<!--                                        <span><b>1</b> h. equipa</span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+
+                <article class="cop-card cop-module cop-sanitary-card">
+                    <header class="cop-module-head">
+                        <div>
+                            <span class="cop-eyebrow">Situação sanitária</span>
+                            <h3>Estado sanitário e restrições</h3>
+                        </div>
+                        <span class="cop-badge cop-badge-warning">Atenção</span>
+                    </header>
+
+                    <div class="cop-sanitary-grid">
+
+                        <div class="cop-sanitary-item is-danger">
+                            <span class="cop-sanitary-label">Avarias críticas</span>
+                            <strong class="cop-sanitary-value">1</strong>
+                        </div>
+
+                        <div class="cop-sanitary-item is-warning">
+                            <span class="cop-sanitary-label">Restrições de uso</span>
+                            <strong class="cop-sanitary-value">2</strong>
+                            <small>balneários condicionados</small>
+                        </div>
+
+                    </div>
+                </article>
 
             </aside>
 
@@ -519,26 +540,89 @@ $copMapOptions = [
 ]);
 ?>
 
-    <div class="cop-modal-summary cop-modal-summary-3">
+    <div class="cop-modal-summary-4">
         <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Camas disponíveis</span>
-            <strong class="cop-modal-kpi-value is-success"><?= $overallAvailability ?></strong>
+            <span class="cop-modal-kpi-label">Camas operacionais</span>
+            <strong class="cop-modal-kpi-value">246</strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas ocupadas</span>
-            <strong class="cop-modal-kpi-value"><?= $occupiedBeds ?></strong>
+            <strong class="cop-modal-kpi-value">118</strong>
         </div>
 
         <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Camas inoperativas</span>
-            <strong class="cop-modal-kpi-value is-warning"><?= 'STANDBY' ?></strong>
+            <span class="cop-modal-kpi-label">Camas disponíveis</span>
+            <strong class="cop-modal-kpi-value is-success">128</strong>
         </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Camas indisponíveis</span>
+            <strong class="cop-modal-kpi-value is-warning">56</strong>
+        </div>
+    </div>
+
+    <div class="cop-beds-dual-grid mb-4">
+
+        <div class="cop-modal-section-card cop-beds-panel">
+            <div class="cop-modal-section-head cop-beds-panel-head">
+                <span class="cop-eyebrow">Indisponibilidade</span>
+                <h6>Motivos atuais</h6>
+            </div>
+
+            <div class="cop-breakdown-grid">
+                <div class="cop-breakdown-cell">
+                    <span class="cop-breakdown-label">Telhado aberto</span>
+                    <strong class="cop-breakdown-value">22</strong>
+                    <small>camas</small>
+                </div>
+
+                <div class="cop-breakdown-cell">
+                    <span class="cop-breakdown-label">Falha de água</span>
+                    <strong class="cop-breakdown-value">18</strong>
+                    <small>camas</small>
+                </div>
+
+                <div class="cop-breakdown-cell">
+                    <span class="cop-breakdown-label">Falha elétrica</span>
+                    <strong class="cop-breakdown-value">10</strong>
+                    <small>camas</small>
+                </div>
+
+                <div class="cop-breakdown-cell">
+                    <span class="cop-breakdown-label">Risco estrutural</span>
+                    <strong class="cop-breakdown-value">6</strong>
+                    <small>camas</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="cop-modal-section-card cop-beds-panel">
+            <div class="cop-modal-section-head cop-beds-panel-head">
+                <span class="cop-eyebrow">Tendência 24h</span>
+                <h6>Recuperação / perda provável</h6>
+            </div>
+
+            <div class="cop-trend-grid-modal">
+                <div class="cop-trend-box-modal is-positive">
+                    <span>Camas a recuperar</span>
+                    <strong>+20</strong>
+                    <small>Bloco B após reposição elétrica e limpeza</small>
+                </div>
+
+                <div class="cop-trend-box-modal is-negative">
+                    <span>Camas a perder se chover</span>
+                    <strong>-10</strong>
+                    <small>Bloco D com infiltrações ativas</small>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="cop-modal-section-head">
         <span class="cop-eyebrow">Habitabilidade</span>
-        <h6>Alojamentos com camas disponíveis</h6>
+        <h6>Estado por alojamento</h6>
     </div>
 
 <?php if ($availableLodgingsProvider->getCount() > 0): ?>
@@ -576,13 +660,11 @@ $copMapOptions = [
                     ],
                     [
                         'label' => 'Disponíveis',
-                        'format' => 'raw',
                         'value' => function ($model) {
-                            return $model->getCurrentCapacity(false);
+                            return $model->getCurrentCapacity(false) ?? 0;
                         },
                     ],
                 ],
-
             ]) ?>
         </div>
     </div>
@@ -596,6 +678,9 @@ $copMapOptions = [
     <!---------------------------------------------------------------------------------------------------------------------------->
     <!--                                     FIM MODAL - KPI DAS CAMAS                                                          -->
     <!---------------------------------------------------------------------------------------------------------------------------->
+
+
+
 
 
     <!---------------------------------------------------------------------------------------------------------------------------->
@@ -888,7 +973,7 @@ $copMapOptions = [
 
 
     <!---------------------------------------------------------------------------------------------------------------------------->
-    <!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
+    <!--                                    MODAL - KPI EFETIVOS EXTERNOS                                                         -->
     <!---------------------------------------------------------------------------------------------------------------------------->
 <?php Modal::begin([
     'id' => 'externalManpower',
@@ -905,20 +990,31 @@ $copMapOptions = [
 ]);
 ?>
 
-    <div class="cop-modal-summary cop-modal-summary-3">
+    <div class="cop-modal-summary cop-modal-summary-4">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Efetivos agora</span>
             <strong class="cop-modal-kpi-value is-success"><?= $externalOccupancy ?></strong>
         </div>
 
         <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Entradas totais H24</span>
+            <strong class="cop-modal-kpi-value"><?= $externalEntries24H ?? 0 ?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Saídas totais H24</span>
+            <strong class="cop-modal-kpi-value"><?= $externalExits24H ?? 0 ?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Diferença H24</span>
-            <strong class="cop-modal-kpi-value"><?= $externalOccupancyDifference24H ?></strong>
+            <strong class="cop-modal-kpi-value is-warning"><?= $externalOccupancyDifference24H ?></strong>
         </div>
     </div>
 
     <div class="cop-modal-section-head">
-        <span class="cop-eyebrow">manpower atual</span>
+        <span class="cop-eyebrow">Quadro obrigatório</span>
+        <h6>Militares de outras unidades alojados</h6>
     </div>
 
 <?php if ($externalOccupancyProvider->getCount() > 0): ?>
@@ -932,30 +1028,41 @@ $copMapOptions = [
                 'columns' => [
                     [
                         'label' => 'Ramo',
-                        'value' => 'unit.branch.description'
+                        'value' => function ($model) {
+                            return $model->unit->branch->description ?? '—';
+                        },
                     ],
                     [
-                        'label' => 'Unidade',
-                        'value' => 'unit.name'
+                        'label' => 'Unidade de origem',
+                        'value' => function ($model) {
+                            return $model->unit->name ?? '—';
+                        },
                     ],
-                    'people_count',
                     [
-                        'attribute' => 'checkin_at',
-                        'format' => ['date', 'php:dMy'],
-                    ]
+                        'label' => 'Efetivo alojado',
+                        'value' => function ($model) {
+                            return $model->people_count ?? 0;
+                        },
+                    ],
+                    [
+                        'label' => 'Local de alojamento',
+                        'value' => function ($model) {
+                            return $model->lodgingSite->name ?? '—';
+                        },
+                    ],
                 ],
             ]) ?>
         </div>
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
-        Não há efetivos externos neste momento.
+        Não há efetivos externos alojados neste momento.
     </div>
 <?php endif; ?>
 
 <?php Modal::end(); ?>
     <!---------------------------------------------------------------------------------------------------------------------------->
-    <!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                   -->
+    <!--                                    FIM MODAL - KPI EFETIVOS EXTERNOS                                                     -->
     <!---------------------------------------------------------------------------------------------------------------------------->
 
 
@@ -1116,4 +1223,48 @@ $copMapOptions = [
     <!---------------------------------------------------------------------------------------------------------------------------->
 <?php
 $this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');
+?>
+
+<?php
+$this->registerJs(<<<JS
+document.querySelectorAll('.cop-support-switch').forEach(function (switchEl) {
+    const buttons = switchEl.querySelectorAll('.cop-support-switch-btn');
+    const module = switchEl.closest('.cop-module');
+    if (!module) return;
+
+    const panels = module.querySelectorAll('.cop-support-panel');
+    const titleEl = module.querySelector('h3');
+
+    buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const target = btn.dataset.supportTarget;
+
+            buttons.forEach(function (b) {
+                b.classList.remove('is-active');
+            });
+
+            panels.forEach(function (panel) {
+                panel.classList.remove('is-active');
+            });
+
+            btn.classList.add('is-active');
+
+            const activePanel = module.querySelector('.cop-support-panel[data-support-panel="' + target + '"]');
+            if (activePanel) {
+                activePanel.classList.add('is-active');
+            }
+
+            if (titleEl) {
+                if (target === 'internal') {
+                    titleEl.textContent = 'Apoios Internos';
+                } else if (target === 'external') {
+                    titleEl.textContent = 'Apoios Externos';
+                } else if (target === 'combined') {
+                    titleEl.textContent = 'Visão Geral';
+                }
+            }
+        });
+    });
+});
+JS);
 ?>

@@ -259,16 +259,33 @@ class Request extends \yii\db\ActiveRecord
      * Quantidade de ajudas feitas por "X" tipo de pedido
      * DEVOLVE: int, soma da quantidade de cada registo com esse tipo de pedido
      *
+     * ERROS: -2 em caso de erro no parâmetro $external
      */
-    public static function getAllNumberRequestsOfType($requestType){
-        if (Request::find()->where(['request_type_id' => $requestType]) != null) {
-            $requests = Request::find()
+    public static function getAllNumberRequestsOfType($requestType, $external = null){
+        if($external != null) {
+            switch (strtolower($external)){
+                case 'external':
+                    $query = Request::EXTERNAL_REQUEST;
+                    break;
+                case 'internal':
+                    $query = Request::NOT_EXTERNAL_REQUEST;
+                    break;
+                default:
+                    return -2;
+            }
+        }
+
+        if($external == null) {
+            return Request::find()
                 ->where(['request_type_id' => $requestType])
                 ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
                 ->sum('quantity');
-            return $requests;
         } else {
-            return -1;
+            return Request::find()
+                ->where(['request_type_id' => $requestType])
+                ->andWhere(['is_external' => $query])
+                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+                ->sum('quantity');
         }
     }
 
@@ -276,28 +293,49 @@ class Request extends \yii\db\ActiveRecord
      * Quantidade de ajudas feitas por "X" tipo de pedido, durante X tempo.
      * DEVOLVE: int, soma da quantidade de cada registo com esse tipo de pedido
      *
+     * Parâmetro opcional EXTERNAL, que é boolean e deixa filtrar entre pedidos externos e internos
+     *
+     * Caso dê erro, devolve -1
      */
-    public static function getRequestsOfTypeWithin($requestType, $time) {
-
-        switch (strtolower($time)){
+    public static function getRequestsOfTypeWithin($requestType, $time, $external = null)
+    {
+        switch (strtolower($time)) {
             case 'today':
                 $comp1 = new DateTime('today');
                 $comp2 = new DateTime('tomorrow');
-            break;
+                break;
+
             case 'yesterday':
                 $comp1 = new DateTime('yesterday');
                 $comp2 = new DateTime('today');
-            break;
+                break;
+
             default:
                 return -1;
         }
 
-        return Request::find()
+        $query = self::find()
             ->where(['request_type_id' => $requestType])
             ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
             ->andWhere(['>=', 'created_at', $comp1->format('Y-m-d H:i:s')])
-            ->andWhere(['<', 'created_at', $comp2->format('Y-m-d H:i:s')])
-            ->sum('quantity');
+            ->andWhere(['<', 'created_at', $comp2->format('Y-m-d H:i:s')]);
+
+        if ($external !== null) {
+            switch (strtolower($external)) {
+                case 'external':
+                    $query->andWhere(['is_external' => self::EXTERNAL_REQUEST]);
+                    break;
+
+                case 'internal':
+                    $query->andWhere(['is_external' => self::NOT_EXTERNAL_REQUEST]);
+                    break;
+
+                default:
+                    return -2;
+            }
+        }
+
+        return (int) ($query->sum('quantity') ?? 0);
     }
 
 }

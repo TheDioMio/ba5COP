@@ -6,6 +6,7 @@
 3 - O mapa no dashboard não fica centrado em momento algum, nem no zoom, fica sempre off-centre, muito para baixo
 4 - Na função Entity para criar uma nova entidade, pode acontecer de dar erro no form e não criar a entidade original, mas criar entidade na tabela de entidades.
     EXEMPLO: User cria um novo incidente, mas dá erro e não cria o incidente. Porém, a função para criar uma nova entidade corre, e cria um id na entity table mesmo assim.
+5 - Tabela de WO's criticas no KPI não está a listar as tarefas críticas correspondentes.
 
 
 

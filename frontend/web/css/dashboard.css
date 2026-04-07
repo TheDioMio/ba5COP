@@ -278,12 +278,6 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     bottom: 14px;
 }
 
-.cop-bottom .cop-card {
-    min-height: 0;
-    overflow: hidden;
-    padding: 12px;
-}
-
 .cop-bottom-wide {
     min-width: 0;
 }
@@ -430,27 +424,6 @@ body.dashboard-page-body .frontend-main > .container-fluid {
                 MODAIS COP
 --------------------------------------------------
 */
-
-.kpi-clickable {
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kpi-clickable:hover {
-    transform: translateY(-2px);
-}
-
-.kpi-clickable.is-active {
-    background: linear-gradient(180deg, #2f6fe0 0%, #1e4fb8 100%);
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
-}
-
-.kpi-clickable.is-active .cop-kpi-value,
-.kpi-clickable.is-active .cop-kpi-label,
-.kpi-clickable.is-active p {
-    color: #fff;
-}
 
 .cop-modal .modal-dialog {
     max-width: 980px;
@@ -704,9 +677,6 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: #fff;
 }
 
-.cop-kpi-value.is-success { color: #22c55e; }
-.cop-kpi-value.is-warning { color: #facc15; }
-.cop-kpi-value.is-danger  { color: #ef4444; }
 /*
 --------------------------------------------------
            FIM Painel direito, pedidos externos
@@ -783,7 +753,356 @@ TABELA APOIO PRESTADO
 fim tabela apoio prestado
 */
 
+/*
+--------------------------------------------------
+                MODAL DAS CAMAS
+--------------------------------------------------
+*/
 
+/*
+Resumo superior com os 4 KPI cards:
+Operacionais, Ocupadas, Disponíveis e Indisponíveis
+*/
+.cop-modal-summary-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+/*
+Grid principal com os 2 painéis do meio:
+- esquerda: indisponibilidade
+- direita: tendência 24h
+*/
+.cop-beds-dual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+/*
+Card base de cada um dos 2 painéis centrais.
+Usamos flex column para conseguir empurrar a nota final
+da previsão para baixo e manter tudo alinhado.
+*/
+.cop-modal-section-card.cop-beds-panel {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(10, 18, 29, 0.72);
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+}
+
+/* Espaçamento do cabeçalho interno desses painéis */
+.cop-beds-panel-head {
+    margin-bottom: 14px;
+}
+
+/*
+Grid da zona "Motivos atuais".
+2 colunas, ocupando bem o espaço do card.
+*/
+.cop-breakdown-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-content: stretch;
+}
+
+/*
+Cada célula individual de motivo de indisponibilidade.
+Ficam com altura equilibrada e conteúdo centrado verticalmente.
+*/
+.cop-breakdown-cell {
+    min-height: 118px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.025) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Título pequeno do motivo */
+.cop-breakdown-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9fb3c8;
+    line-height: 1.2;
+}
+
+/* Número grande de camas afetadas */
+.cop-breakdown-value {
+    margin-top: 10px;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #f4f8fc;
+}
+
+/* Texto pequeno "camas" */
+.cop-breakdown-cell small {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: #b7c9d8;
+}
+
+/*
+Zona da tendência 24h.
+Fica em coluna com duas caixas.
+*/
+.cop-trend-grid-modal {
+    display: grid;
+    gap: 12px;
+}
+
+/*
+Cada caixa de tendência:
+- camas a recuperar
+- camas a perder se chover
+*/
+.cop-trend-box-modal {
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.025) 100%);
+}
+
+/* Título pequeno dentro das caixas de tendência */
+.cop-trend-box-modal span {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9fb3c8;
+}
+
+/* Número grande da tendência */
+.cop-trend-box-modal strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Descrição por baixo do número */
+.cop-trend-box-modal small {
+    display: block;
+    margin-top: 8px;
+    color: #b7c9d8;
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+/* Cor para tendência positiva */
+.cop-trend-box-modal.is-positive strong {
+    color: #5fbf8f;
+}
+
+/* Cor para tendência de perda / risco */
+.cop-trend-box-modal.is-negative strong {
+    color: #f2c14e;
+}
+
+/*
+--------------------------------------------------
+                RESPONSIVO
+--------------------------------------------------
+*/
+
+/*
+Em tablet / ecrãs médios:
+- os 4 KPI passam a 2 colunas
+- os 2 painéis do meio passam a 1 por linha
+*/
+@media (max-width: 991.98px) {
+    .cop-modal-summary-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cop-beds-dual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-modal-section-card.cop-beds-panel {
+        min-height: auto;
+    }
+}
+
+/*
+Em mobile:
+- os 4 KPI ficam em 1 coluna
+- os motivos de indisponibilidade também ficam em 1 coluna
+*/
+@media (max-width: 575.98px) {
+    .cop-modal-summary-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/*
+--------------------------------------------------
+            PAINEL ESQUERDO - HABITABILIDADE
+--------------------------------------------------
+*/
+
+.cop-subsection-head {
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.cop-subsection-head-spaced {
+    margin-top: 14px;
+}
+
+.cop-trend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.cop-trend-box {
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--cop-line);
+    background: var(--cop-soft);
+}
+
+.cop-trend-box span {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ba5-muted);
+}
+
+.cop-trend-box strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.cop-trend-box small {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.7rem;
+    line-height: 1.25;
+    color: var(--ba5-muted);
+}
+
+.cop-trend-box.is-positive strong {
+    color: #6fe0a8;
+}
+
+.cop-trend-box.is-negative strong {
+    color: #ff8484;
+}
+
+.cop-text-warning {
+    color: #ffc45f;
+}
+
+.cop-mini-table-wrap {
+    margin-top: 4px;
+    border: 1px solid var(--cop-line);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--cop-soft);
+}
+
+.cop-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.7rem;
+    color: var(--ba5-text);
+}
+
+.cop-mini-table thead th {
+    padding: 8px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--ba5-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: left;
+}
+
+.cop-mini-table tbody td {
+    padding: 9px 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--ba5-text);
+    vertical-align: middle;
+}
+
+.cop-mini-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.cop-inline-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--cop-line);
+    background: var(--cop-soft);
+}
+
+.cop-inline-total span {
+    font-size: 0.76rem;
+    color: var(--ba5-muted);
+}
+
+.cop-inline-total strong {
+    font-size: 0.88rem;
+    color: #62d4c8;
+}
+
+.cop-note-item-stack {
+    align-items: flex-start;
+}
+
+.cop-note-item-stack span {
+    max-width: 58%;
+    line-height: 1.3;
+}
+
+/*
+--------------------------------------------------
+        RESPONSIVO EXTRA DO PAINEL ESQUERDO
+--------------------------------------------------
+*/
+@media (max-width: 768px) {
+    .cop-trend-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-mini-table {
+        font-size: 0.66rem;
+    }
+
+    .cop-note-item-stack span {
+        max-width: 100%;
+    }
+}
 
 @media (max-width: 991.98px) {
     .cop-modal-summary {
@@ -855,6 +1174,255 @@ fim tabela apoio prestado
     .cop-stat-grid {
         grid-template-columns: 1fr;
     }
+}
 
 
+/*
+--------------------------------------------------
+        MODAL - EFETIVOS EXTERNOS
+--------------------------------------------------
+*/
+
+/* Grid dos 2 painéis centrais do modal */
+.cop-manpower-dual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+/* Card base dos painéis centrais */
+.cop-modal-section-card.cop-manpower-panel {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(10, 18, 29, 0.72);
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+}
+
+/* Espaçamento do cabeçalho interno */
+.cop-manpower-panel-head {
+    margin-bottom: 14px;
+}
+
+/*
+--------------------------------------------------
+                RESPONSIVO
+--------------------------------------------------
+*/
+@media (max-width: 991.98px) {
+    .cop-manpower-dual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-modal-section-card.cop-manpower-panel {
+        min-height: auto;
+    }
+}
+
+
+
+
+/*
+--------------------------------------------------
+        APOIOS INTERNOS (MELHORADO)
+--------------------------------------------------
+*/
+
+/* grid principal dos blocos */
+.cop-support-grid {
+    display: grid;
+    gap: 10px;
+}
+
+/* cada linha (banhos, refeições, etc) */
+.cop-support-item {
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--cop-line);
+    background: var(--cop-soft);
+}
+
+/* título */
+.cop-support-item strong {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ba5-text);
+    margin-bottom: 6px;
+}
+
+/* valores */
+.cop-support-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--ba5-muted);
+}
+
+/* cores semânticas (já tens algumas, mas reforço consistência) */
+.cop-text-success {
+    color: #6fe0a8;
+}
+
+.cop-text-warning {
+    color: #ffc45f;
+}
+
+.cop-text-danger {
+    color: #ff8484;
+}
+/*
+--------------------------------------------------
+        SWITCH DE APOIOS (COLUNA DIREITA)
+--------------------------------------------------
+*/
+.cop-support-switch {
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    justify-content: end;
+    align-items: center;
+    gap: 4px;
+
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.cop-support-switch-btn {
+    width: 38px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ba5-muted);
+
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cop-support-switch-btn:hover {
+    color: var(--ba5-text);
+}
+
+.cop-support-switch-btn.is-active {
+    background: linear-gradient(180deg, #2f6fe0 0%, #1e4fb8 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.22);
+}
+
+.cop-support-switch-btn i {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.cop-support-panels {
+    min-height: 0;
+}
+
+.cop-support-panel {
+    display: none;
+}
+
+.cop-support-panel.is-active {
+    display: block;
+}
+
+.cop-side-right .cop-support-grid {
+    gap: 10px;
+}
+
+.cop-side-right .cop-support-item {
+    padding: 11px 12px;
+}
+
+.cop-side-right .cop-support-values {
+    gap: 12px;
+    row-gap: 6px;
+}
+
+@media (max-width: 768px) {
+    .cop-support-switch {
+        justify-content: start;
+    }
+}
+
+/*
+--------------------------------------------------
+        CARD SANITÁRIO SEPARADO
+--------------------------------------------------
+*/
+
+.cop-sanitary-card {
+    margin-top: 0;
+}
+
+.cop-sanitary-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.cop-sanitary-item {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid var(--cop-line);
+    background: var(--cop-soft);
+}
+
+.cop-sanitary-label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ba5-muted);
+}
+
+.cop-sanitary-value {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ba5-text);
+}
+
+.cop-sanitary-item small {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.74rem;
+    color: var(--ba5-muted);
+}
+
+.cop-sanitary-item.is-danger {
+    border-color: rgba(255, 132, 132, 0.25);
+}
+
+.cop-sanitary-item.is-danger .cop-sanitary-value {
+    color: #ff8484;
+}
+
+.cop-sanitary-item.is-warning {
+    border-color: rgba(255, 196, 95, 0.22);
+}
+
+.cop-sanitary-item.is-warning .cop-sanitary-value {
+    color: #ffc45f;
+}
+
+.cop-badge-warning {
+    border-color: rgba(255, 196, 95, 0.22);
+    background: rgba(255, 196, 95, 0.08);
+    color: #ffc45f;
 }

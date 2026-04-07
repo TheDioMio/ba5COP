@@ -161,18 +161,53 @@ class DashboardController extends Controller
 
 
 
-        // --- APOIOS PRESTADOS ---
-        $quantityBathsGivenAcc = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH);
-        $quantityBathsGivenOnt = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday');
-        $quantityBathsGivenHj = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today');
+        // --- APOIOS PRESTADOS  ---
+                //externo e interno
+        $bathsGivenAccOverall = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH);
+        $bathsGivenOntOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday');
+        $bathsGivenHjOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today');
 
-        $quantityMealsGivenAcc = Request::getAllNumberRequestsOfType(RequestType::TYPE_MEAL);
-        $quantityMealsGivenOnt = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'yesterday');
-        $quantityMealsGivenHj = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'today');
+        $mealsGivenAccOverall = Request::getAllNumberRequestsOfType(RequestType::TYPE_MEAL);
+        $mealsGivenOntOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'yesterday');
+        $mealsGivenHjOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'today');
+
+        $bedsGivenAccOverall = Request::getAllNumberRequestsOfType(RequestType::TYPE_BED);
+        $bedsGivenOntOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'yesterday');
+        $bedsGivenHjOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'today');
 
 
+                //interno
+        $bathsGivenAccInternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH, 'internal');
+        $bathsGivenOntInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday', 'internal');
+        $bathsGivenHjInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today', 'internal');
+
+        $mealsGivenAccInternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_MEAL, 'internal');
+        $mealsGivenOntInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'yesterday', 'internal');
+        $mealsGivenHjInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'today', 'internal');
+
+        $bedsGivenAccInternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BED);
+        $bedsGivenOntInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'yesterday');
+        $bedsGivenHjInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'today');
+
+
+                //externo
+        $bathsGivenAccExternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH, 'external');
+        $bathsGivenOntExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday', 'external');
+        $bathsGivenHjExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today', 'external');
+
+        $mealsGivenAccExternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_MEAL, 'external');
+        $mealsGivenOntExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'yesterday', 'external');
+        $mealsGivenHjExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_MEAL, 'today', 'external');
+
+        $bedsGivenAccExternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BED, 'external');
+        $bedsGivenOntExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'yesterday', 'external');
+        $bedsGivenHjExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'today', 'external');
         // --- FIM APOIOS PRESTADOS ---
 
+
+        // --- SITUAÇÃO SANITÁRIA  ---
+
+        // --- FIM SITUAÇÃO SANITÁRIA  ---
 
 
 
@@ -211,12 +246,33 @@ class DashboardController extends Controller
             'inAnalisisExternalRequests' => $inAnalisisExternalRequests,
             'acceptedExternalRequests' => $acceptedExternalRequests,
             'newExternalRequests' => $newExternalRequests,
-            'quantityBathsGivenAcc' => $quantityBathsGivenAcc,
-            'quantityMealsGivenAcc' => $quantityMealsGivenAcc,
-            'quantityMealsGivenOnt' => $quantityMealsGivenOnt,
-            'quantityMealsGivenHj' => $quantityMealsGivenHj,
-            'quantityBathsGivenOnt' => $quantityBathsGivenOnt,
-            'quantityBathsGivenHj' => $quantityBathsGivenHj,
+            'bathsGivenAccOverall' => $bathsGivenAccOverall,
+            'mealsGivenAccOverall' => $mealsGivenAccOverall,
+            'mealsGivenOntOverall' => $mealsGivenOntOverall,
+            'mealsGivenHjOverall' => $mealsGivenHjOverall,
+            'bathsGivenOntOverall' => $bathsGivenOntOverall,
+            'bathsGivenHjOverall' => $bathsGivenHjOverall,
+            'bathsGivenAccInternal' => $bathsGivenAccInternal,
+            'bathsGivenOntInternal' => $bathsGivenOntInternal,
+            'bathsGivenHjInternal' => $bathsGivenHjInternal,
+            'mealsGivenAccInternal' => $mealsGivenAccInternal,
+            'mealsGivenOntInternal' => $mealsGivenOntInternal,
+            'mealsGivenHjInternal' => $mealsGivenHjInternal,
+            'bathsGivenAccExternal' => $bathsGivenAccExternal,
+            'bathsGivenOntExternal' => $bathsGivenOntExternal,
+            'bathsGivenHjExternal' => $bathsGivenHjExternal,
+            'mealsGivenAccExternal' => $mealsGivenAccExternal,
+            'mealsGivenOntExternal' => $mealsGivenOntExternal,
+            'mealsGivenHjExternal' => $mealsGivenHjExternal,
+            'bedsGivenAccOverall' => $bedsGivenAccOverall,
+            'bedsGivenOntOverall' => $bedsGivenOntOverall,
+            'bedsGivenHjOverall' => $bedsGivenHjOverall,
+            'bedsGivenAccInternal' => $bedsGivenAccInternal,
+            'bedsGivenOntInternal' => $bedsGivenOntInternal,
+            'bedsGivenHjInternal' => $bedsGivenHjInternal,
+            'bedsGivenAccExternal' => $bedsGivenAccExternal,
+            'bedsGivenOntExternal' => $bedsGivenOntExternal,
+            'bedsGivenHjExternal' => $bedsGivenHjExternal,
         ]);
 
     }
