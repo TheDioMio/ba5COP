@@ -4,6 +4,7 @@ namespace common\models;
 
 use DateTime;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "incident".
@@ -147,6 +148,20 @@ class Incident extends \yii\db\ActiveRecord {
         return $this->hasMany(Task::class, ['incident_id' => 'id']);
     }
 
+
+    /**
+     * Lista de incidentes para dropdown
+     * [id => title]
+     */
+    public static function dropDown(): array {
+        $rows = self::find()
+            ->select(['id', 'title'])
+            ->orderBy(['title' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($rows, 'id', 'title');
+    }
 
     /**
      * Devolve o número total de incidentes de X tipo

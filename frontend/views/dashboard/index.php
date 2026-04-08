@@ -5,6 +5,7 @@ use frontend\assets\DashboardAsset;
 use yii\bootstrap5\Modal;
 use yii\data\ArrayDataProvider;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
 
@@ -531,26 +532,46 @@ $copMapOptions = [
                     <tbody>
                     <?php if (!empty($dailyRisks)): ?>
                         <?php foreach ($dailyRisks as $risk): ?>
+                            <?php
+                            $taskTitles = [];
+                            $assignedUsers = [];
+
+                            foreach ($risk->tasks as $task) {
+                                $taskTitles[] = $task->title;
+
+                                if ($task->assignedTo) {
+                                    $assignedUsers[] = $task->assignedTo->username;
+                                }
+                            }
+
+                            $taskTitlesText = !empty($taskTitles)
+                                ? implode(', ', $taskTitles)
+                                : '-';
+
+                            $assignedUsersText = !empty($assignedUsers)
+                                ? implode(', ', array_unique($assignedUsers))
+                                : '-';
+                            ?>
                             <tr>
-                                <td><?=$risk->title?></td>
+                                <td><?=Html::encode($risk->title) ?></td>
 
                                 <td>
-                                    aaaaaa
+                                    <?=Html::encode($taskTitlesText) ?>
                                 </td>
 
                                 <td>
-                                    aaaaaa
+                                    <?=Html::encode($assignedUsersText) ?>
                                 </td>
 
                                 <td>
-                                    <?=$risk->statusType->description?>
+                                    <?=Html::encode($risk->statusType->description) ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center">
-                                Não existem tarefas no momento.
+                            <td colspan="4" class="text-center">
+                                Não existem riscos do dia no momento.
                             </td>
                         </tr>
                     <?php endif; ?>

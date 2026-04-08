@@ -99,8 +99,7 @@ class RequestController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new Request();
 
         $prioritiesArray = Priority::dropDown();

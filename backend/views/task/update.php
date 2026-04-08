@@ -16,6 +16,11 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'locationsArray' => $locationsArray,
+        'incidentsArray' => $incidentsArray,
+        'prioritiesArray' => $prioritiesArray,
+        'statusArray' => $statusArray,
+        'usersArray' => $usersArray,
     ]) ?>
 
 </div>

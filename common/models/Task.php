@@ -82,7 +82,7 @@ class Task extends \yii\db\ActiveRecord {
         ];
     }
 
-    
+
     /**
      * Gets query for [[AssignedTo]].
      *
@@ -204,12 +204,9 @@ class Task extends \yii\db\ActiveRecord {
      */
     public static function getClosedCriticalTasks() {
         $criticalTasks =  self::find()
+            ->with(['statusType', 'tasks.assignedToUser'])
             ->where(['priority_id' => self::MAX_PRIORITY])
-            ->andWhere([
-                'status_type_id' => [
-                    StatusType::STATUS_TASK_DONE
-                ]
-            ])
+            ->andWhere(['status_type_id' => [StatusType::STATUS_TASK_DONE]])
             ->asArray()
             ->with(['priority', 'statusType', 'incident', 'location', 'createdBy'])
             ->all();

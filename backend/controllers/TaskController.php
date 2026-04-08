@@ -2,8 +2,14 @@
 
 namespace backend\controllers;
 
+use common\models\Entity;
+use common\models\Incident;
+use common\models\Location;
+use common\models\Priority;
+use common\models\StatusType;
 use common\models\Task;
 use app\models\TaskSearch;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -65,13 +71,24 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new Task();
+        $locationsArray = Location::dropDown();
+        $incidentsArray = Incident::dropDown();
+        $prioritiesArray = Priority::dropDown();
+        $statusArray = StatusType::getStatusDropdown(Entity::TASK_ID);
+        $usersArray = User::dropDown();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->load($this->request->post());
+            $entity = Entity::createEntity(Entity::TASK_ID);
+
+            if ($entity !== null) {
+                $model->entity_id = $entity->id;
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -79,6 +96,11 @@ class TaskController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'locationsArray' => $locationsArray,
+            'incidentsArray' => $incidentsArray,
+            'prioritiesArray' => $prioritiesArray,
+            'statusArray' => $statusArray,
+            'usersArray' => $usersArray,
         ]);
     }
 
@@ -89,9 +111,13 @@ class TaskController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
+        $locationsArray = Location::dropDown();
+        $incidentsArray = Incident::dropDown();
+        $prioritiesArray = Priority::dropDown();
+        $statusArray = StatusType::getStatusDropdown(Entity::TASK_ID);
+        $usersArray = User::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,6 +125,11 @@ class TaskController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'locationsArray' => $locationsArray,
+            'incidentsArray' => $incidentsArray,
+            'prioritiesArray' => $prioritiesArray,
+            'statusArray' => $statusArray,
+            'usersArray' => $usersArray,
         ]);
     }
 
