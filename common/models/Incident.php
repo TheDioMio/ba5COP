@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use DateTime;
 use Yii;
 
 /**
@@ -42,8 +43,10 @@ class Incident extends \yii\db\ActiveRecord {
     public function rules()
     {
         return [
+            [['mitigate_by'], 'default', 'value' => null],
             [['location_id', 'title', 'description', 'incident_type_id', 'priority_id', 'status_type_id', 'reported_by', 'entity_id'], 'required'],
             [['location_id', 'incident_type_id', 'priority_id', 'status_type_id', 'reported_by', 'entity_id'], 'integer'],
+            [['mitigate_by'], 'safe'],
             [['title'], 'string', 'max' => 25],
             [['description'], 'string', 'max' => 120],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
@@ -68,6 +71,7 @@ class Incident extends \yii\db\ActiveRecord {
             'incident_type_id' => 'ID do Tipo do Incidente',
             'priority_id' => 'ID da Prioridade',
             'status_type_id' => 'ID do tipo de status',
+            'mitigate_by' => 'Mitigar até',
             'reported_by' => 'Reportado por',
             'entity_id' => 'ID da Entidade',
         ];
@@ -210,5 +214,19 @@ class Incident extends \yii\db\ActiveRecord {
                 ]
             ])
             ->with('location');
+    }
+
+    /**
+     * Devolve array com os incidentes que têm de ser completos até hoje.
+     *
+     */
+    public static function getToBeCompletedToday() {
+        $comp1 = (new DateTime('today'))->format('Y-m-d H:i:s');
+        $comp2 = (new DateTime('tomorrow'))->format('Y-m-d H:i:s');
+           return Incident::find()
+               ->where(['>=', 'mitigate_by', $comp1])
+               ->andWhere(['<', 'mitigate_by', $comp2])
+               ->andWhere(['!=', 'status_type_id', StatusType::STATUS_INCIDENT_RESOLVED])
+               ->all();
     }
 }

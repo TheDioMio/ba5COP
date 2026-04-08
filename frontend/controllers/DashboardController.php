@@ -227,6 +227,10 @@ class DashboardController extends Controller
         $latest10Decisions = DecisionLog::getLatest10Decisions();
         // --- FIM DECISIONS LOG ---
 
+        // --- RISCOS DO DIA ---
+        $dailyRisks = Incident::getToBeCompletedToday();
+        // --- FIM RISCOS DO DIA ---
+
 
         return $this->render('index', [
             'overallAvailability' => $overallAvailability,
@@ -293,6 +297,7 @@ class DashboardController extends Controller
             'navIDsArray' => $navIDsArray,
             'latest10Tasks' => $latest10Tasks,
             'latest10Decisions' => $latest10Decisions,
+            'dailyRisks' => $dailyRisks,
         ]);
 
     }

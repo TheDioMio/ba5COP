@@ -419,7 +419,7 @@ $copMapOptions = [
                             <th>Responsável</th>
                             <th>Estado</th>
                             <th>Bloqueio</th>
-                            <th>ETA</th>
+                            <th>ETC</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -483,18 +483,18 @@ $copMapOptions = [
                         <?php if (!empty($latest10Decisions)): ?>
                             <?php foreach ($latest10Decisions as $decision): ?>
                                 <tr>
-                                    <td><?= $decision->decided_at?></td>
+                                    <td><?=$decision->decided_at?></td>
 
                                     <td>
-                                        <?= $decision->reason?>
+                                        <?=$decision->reason?>
                                     </td>
 
                                     <td>
-                                        <?= $decision->decided_by->username?>
+                                        <?=$decision->decided_by->username?>
                                     </td>
 
                                     <td>
-                                        'Aaaaaa'
+                                        <?=$decision->impact?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -529,24 +529,32 @@ $copMapOptions = [
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Fuga de água</td>
-                        <td>Isolar setor e reparar</td>
-                        <td>Infra</td>
-                        <td>Ativo</td>
-                    </tr>
-                    <tr>
-                        <td>Rajadas fortes</td>
-                        <td>Restringir zonas expostas</td>
-                        <td>Ops</td>
-                        <td>Monitorizar</td>
-                    </tr>
-                    <tr>
-                        <td>Via norte bloqueada</td>
-                        <td>Desvio logístico</td>
-                        <td>Mov</td>
-                        <td>Crítico</td>
-                    </tr>
+                    <?php if (!empty($dailyRisks)): ?>
+                        <?php foreach ($dailyRisks as $risk): ?>
+                            <tr>
+                                <td><?=$risk->title?></td>
+
+                                <td>
+                                    aaaaaa
+                                </td>
+
+                                <td>
+                                    aaaaaa
+                                </td>
+
+                                <td>
+                                    <?=$risk->statusType->description?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                Não existem tarefas no momento.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+
                     </tbody>
                 </table>
             </article>

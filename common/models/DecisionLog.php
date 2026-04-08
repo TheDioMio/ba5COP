@@ -34,11 +34,11 @@ class DecisionLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['reason'], 'default', 'value' => null],
+            [['reason', 'impact'], 'default', 'value' => null],
             [['decided_at'], 'safe'],
             [['decided_by', 'entity_id'], 'required'],
             [['decided_by', 'entity_id'], 'integer'],
-            [['reason'], 'string', 'max' => 30],
+            [['reason', 'impact'], 'string', 'max' => 50],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['decided_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['decided_by' => 'id']],
         ];
@@ -51,10 +51,11 @@ class DecisionLog extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'reason' => 'Reason',
-            'decided_at' => 'Decided At',
-            'decided_by' => 'Decided By',
-            'entity_id' => 'Entity ID',
+            'reason' => 'Motivo',
+            'impact' => 'Impacto',
+            'decided_at' => 'Decidido às',
+            'decided_by' => 'Decidido por',
+            'entity_id' => 'ID da Entidade',
         ];
     }
 
@@ -77,8 +78,6 @@ class DecisionLog extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Entity::class, ['id' => 'entity_id']);
     }
-
-
 
     /**
      * Devolve o array total das últimas 10 decisões

@@ -44,11 +44,12 @@ class Task extends \yii\db\ActiveRecord {
     public function rules()
     {
         return [
+            [['block_reason'], 'default', 'value' => null],
             [['location_id', 'incident_id', 'title', 'description', 'priority_id', 'status_type_id', 'assigned_to', 'created_by', 'due_at', 'entity_id'], 'required'],
             [['location_id', 'incident_id', 'priority_id', 'status_type_id', 'assigned_to', 'created_by', 'entity_id'], 'integer'],
             [['created_at', 'due_at'], 'safe'],
             [['title'], 'string', 'max' => 20],
-            [['description'], 'string', 'max' => 120],
+            [['description', 'block_reason'], 'string', 'max' => 120],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['incident_id'], 'exist', 'skipOnError' => true, 'targetClass' => Incident::class, 'targetAttribute' => ['incident_id' => 'id']],
             [['location_id'], 'exist', 'skipOnError' => true, 'targetClass' => Location::class, 'targetAttribute' => ['location_id' => 'id']],
@@ -71,6 +72,7 @@ class Task extends \yii\db\ActiveRecord {
             'description' => 'Descrição',
             'priority_id' => 'ID da Prioridade',
             'status_type_id' => 'ID do Status',
+            'block_reason' => 'Bloqueio',
             'assigned_to' => 'Entregue a',
             'created_by' => 'Criado por',
             'created_at' => 'Criado às',
