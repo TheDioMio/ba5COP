@@ -56,6 +56,7 @@ class Task extends \yii\db\ActiveRecord {
             [['priority_id'], 'exist', 'skipOnError' => true, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
             [['status_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status_type_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
+            [['assigned_to'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['assigned_to' => 'id']],
         ];
     }
 
@@ -79,6 +80,17 @@ class Task extends \yii\db\ActiveRecord {
             'due_at' => 'Deadline',
             'entity_id' => 'ID da Entidade',
         ];
+    }
+
+    
+    /**
+     * Gets query for [[AssignedTo]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAssignedTo()
+    {
+        return $this->hasOne(User::class, ['id' => 'assigned_to']);
     }
 
     /**
