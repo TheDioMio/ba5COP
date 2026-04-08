@@ -16,12 +16,3 @@ No modelo LodgingSite, função occupancy() é só um query à BD do modelo Lodg
 Não faz muito sentido os pedidos terem o status "done", basta até ao approved só.
 Melhorar as funções nos requests, aquilo podia ser compactado para umas quantas funções (em vez de ter 6 funções para ir buscar os 6 estados diferentes, podia ser só 1 com parãmetro)
 
-
-
---- MUDANÇAS A SEREM FEITAS NA BD ---
-Tabela Tasks:
-    Colocar um campo novo: bloqueio.
-
-Tabela DecisionLog:
-    Colocar um campo novo: impacto.
-    Alargar o VARCHAR do reason para 50.
