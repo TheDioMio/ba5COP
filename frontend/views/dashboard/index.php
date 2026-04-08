@@ -478,24 +478,31 @@ $copMapOptions = [
                             <th>Decisão</th>
                             <th>Decisor</th>
                             <th>Impacto</th>
+                            <th>Status+</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php if (!empty($latest10Decisions)): ?>
                             <?php foreach ($latest10Decisions as $decision): ?>
                                 <tr>
-                                    <td><?=$decision->decided_at?></td>
+                                    <td>
+                                        <?= strtoupper(date('dMY H:i', strtotime($decision->decided_at))) ?>
+                                    </td>
 
                                     <td>
                                         <?=$decision->reason?>
                                     </td>
 
                                     <td>
-                                        <?=$decision->decided_by->username?>
+                                        <?=$decision->decidedBy->username?>
                                     </td>
 
                                     <td>
                                         <?=$decision->impact?>
+                                    </td>
+
+                                    <td>
+                                        <?=$decision->statusType->description?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

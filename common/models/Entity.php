@@ -26,6 +26,8 @@ class Entity extends \yii\db\ActiveRecord
     const TASK_ID = 3;
     const REQUEST_ID = 4;
 
+    const DECISION_ID = 5;
+
 
     /**
      * {@inheritdoc}
@@ -191,6 +193,7 @@ class Entity extends \yii\db\ActiveRecord
             self::INCIDENT_ID => 20000,
             self::TASK_ID => 30000,
             self::REQUEST_ID => 40000,
+            self::DECISION_ID => 50000,
             default => null,
         };
 

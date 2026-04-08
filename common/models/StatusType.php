@@ -35,7 +35,8 @@ class StatusType extends \yii\db\ActiveRecord {
     public const STATUS_TASK_BLOCKED = 9;
     public const STATUS_TASK_DONE = 10;
 //-----------------------------------------------------\\
-
+    public const STATUS_DECISION_BEING_FOLLOWED = 17;
+    public const STATUS_DECISION_CANCELLED = 18;
 
 
     /**

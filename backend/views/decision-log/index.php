@@ -10,38 +10,41 @@ use yii\grid\GridView;
 /** @var app\models\DecisionLogSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Decision Logs';
+$this->title = 'Gestão do Log de Decisões';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="decision-log-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Decision Log', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'reason',
-            'decided_at',
-            'decided_by',
-            'entity_id',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, DecisionLog $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+<div class="decision-log-index container-fluid">
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header">
+            <div class="card-tools float-right">
+                <?= Html::a('<i class="fas fa-plus-circle"></i>',
+                    ['create'],
+                    [
+                        'class' => 'btn btn-success',
+                        'title' => 'Criar',
+                    ])
+                ?>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'layout' => "{items}\n{summary}\n{pager}",
+                'columns' => [
+                    'reason',
+                    'decided_at',
+                    'decided_by',
+                    'entity_id',
+                    [
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, DecisionLog $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
 </div>

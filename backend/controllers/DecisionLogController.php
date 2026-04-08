@@ -4,6 +4,9 @@ namespace backend\controllers;
 
 use common\models\DecisionLog;
 use app\models\DecisionLogSearch;
+use common\models\Entity;
+use common\models\StatusType;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -36,8 +39,7 @@ class DecisionLogController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new DecisionLogSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -53,8 +55,7 @@ class DecisionLogController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -65,20 +66,29 @@ class DecisionLogController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new DecisionLog();
+        $usersArray = User::dropDown();
+        $statusArray = StatusType::getStatusDropdown(Entity::DECISION_ID);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->load($this->request->post());
+            $entity = Entity::createEntity(Entity::DECISION_ID);
+
+            if ($entity !== null) {
+                $model->entity_id = $entity->id;
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
-
         return $this->render('create', [
             'model' => $model,
+            'usersArray' => $usersArray,
+            'statusArray' => $statusArray,
         ]);
     }
 
@@ -89,9 +99,10 @@ class DecisionLogController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
+        $usersArray = User::dropDown();
+        $statusArray = StatusType::getStatusDropdown(Entity::DECISION_ID);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,6 +110,8 @@ class DecisionLogController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'usersArray' => $usersArray,
+            'statusArray' => $statusArray,
         ]);
     }
 

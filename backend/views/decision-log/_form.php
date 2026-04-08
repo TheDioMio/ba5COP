@@ -14,11 +14,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'reason')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'decided_at')->textInput() ?>
+    <?= $form->field($model, 'impact')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'decided_by')->textInput() ?>
+    <?= $form->field($model, 'decided_at')->input('date')?>
 
-    <?= $form->field($model, 'entity_id')->textInput() ?>
+    <?= $form->field($model, 'decided_by')
+        ->dropDownList($usersArray, ['prompt' => '-- DECIDIDO POR --'])
+        ->label('Decidido por') ?>
+
+    <?= $form->field($model, 'status_type_id')
+        ->dropDownList($statusArray, ['prompt' => '-- STATUS --'])
+        ->label('Status') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

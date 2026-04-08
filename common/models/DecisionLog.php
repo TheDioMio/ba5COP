@@ -38,6 +38,7 @@ class DecisionLog extends \yii\db\ActiveRecord
             [['decided_at'], 'safe'],
             [['decided_by', 'entity_id'], 'required'],
             [['decided_by', 'entity_id'], 'integer'],
+            [['status_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status_type_id' => 'id']],
             [['reason', 'impact'], 'string', 'max' => 50],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['decided_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['decided_by' => 'id']],
@@ -77,6 +78,16 @@ class DecisionLog extends \yii\db\ActiveRecord
     public function getEntity()
     {
         return $this->hasOne(Entity::class, ['id' => 'entity_id']);
+    }
+
+    /**
+     * Gets query for [[StatusType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStatusType()
+    {
+        return $this->hasOne(StatusType::class, ['id' => 'status_type_id']);
     }
 
     /**
