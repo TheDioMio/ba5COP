@@ -1511,8 +1511,35 @@ PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
     border-color: rgba(239, 68, 68, 0.35);
     background: rgba(239, 68, 68, 0.12);
 }
+/*
+FIM PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
+*/
 
 
 /*
-FIM PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
+KPI DA METEO
+*/
+
+.cop-kpi-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cop-kpi-time {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+
+#meteoModalRawOb {
+    display: block;
+    font-size: 2rem;
+    background: rgba(0,0,0,0.15);
+    padding: 10px;
+    border-radius: 6px;
+    font-family: monospace;
+}
+/*
+FIM KPI DA METEO
 */

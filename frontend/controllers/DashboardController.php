@@ -16,6 +16,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
+use yii\web\Response;
 
 class DashboardController extends Controller
 {
@@ -299,6 +300,37 @@ class DashboardController extends Controller
             'latest10Decisions' => $latest10Decisions,
             'dailyRisks' => $dailyRisks,
         ]);
+    }
 
+
+    /**
+     * Esta action serve para ir à API de METEO buscar os dados de monte real.
+     * Ou seja, esta action é usada no JS, o JS faz o pedido a partir do PHP, e trata dos dados para a view HTML em JS.
+     */
+    public function actionMeteo() {
+        //Avisar a action que é para devolver JSON, e não HTMl
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        //endpoint da API com as informações de Monte Real, code LPMR. Atualiza de hora a hora.
+        $url = 'https://aviationweather.gov/api/data/metar?ids=LPMR&format=json';
+
+        //Vai buscar os dados à API
+        $json = file_get_contents($url);
+
+        //Se a API falhar, devolve erro.
+        if ($json === false) {
+            return [
+                'success' => false,
+                'message' => 'Erro ao obter dados da API',
+            ];
+        }
+
+        //Se der para ir buscar, devolve um JSON com "true", a avisar que a resposta foi sucedida e a data.
+        $data = json_decode($json, true);
+
+        return [
+            'success' => true,
+            'data' => $data,
+        ];
     }
 }
