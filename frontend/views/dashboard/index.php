@@ -161,24 +161,24 @@ $copMapOptions = [
                                 $statusRaw = $navAid->statusType->description ?? null;
 
                                 // Badge + label
-                                $badgeClass = 'cop-badge-warning';
+                                $badgeClass = 'is-warning';
                                 $statusLabel = '—';
 
                                 switch ($statusRaw) {
                                     case 'GREEN':
-                                        $badgeClass = 'cop-badge-success';
+                                        $badgeClass = 'is-success';
                                         $statusLabel = 'OK';
                                         $defaultText = 'Operacional';
                                         break;
 
                                     case 'YELLOW':
-                                        $badgeClass = 'cop-badge-warning';
+                                        $badgeClass = 'is-warning';
                                         $statusLabel = 'ALERTA';
                                         $defaultText = 'Condicionado';
                                         break;
 
                                     case 'RED':
-                                        $badgeClass = 'cop-badge-danger';
+                                        $badgeClass = 'is-danger';
                                         $statusLabel = 'CRÍTICO';
                                         $defaultText = 'Indisponível';
                                         break;
@@ -229,7 +229,7 @@ $copMapOptions = [
                     <div class="cop-request-kpis">
                         <div class="cop-request-kpi">
                             <span class="cop-kpi-label">Novos (24h)</span>
-                            <div class="cop-kpi-value"><?= count($newExternalRequests) ?></div>
+                            <div class="cop-kpi-value is-warning"><?= count($newExternalRequests) ?></div>
                         </div>
 
                         <div class="cop-request-kpi">
@@ -590,7 +590,6 @@ $copMapOptions = [
                             </td>
                         </tr>
                     <?php endif; ?>
-
                     </tbody>
                 </table>
             </article>
@@ -680,13 +679,13 @@ $copMapOptions = [
             </div>
 
             <div class="cop-trend-grid-modal">
-                <div class="cop-trend-box-modal is-positive">
+                <div class="cop-trend-box-modal is-success">
                     <span>Camas a recuperar</span>
                     <strong>+20</strong>
                     <small>Bloco B após reposição elétrica e limpeza</small>
                 </div>
 
-                <div class="cop-trend-box-modal is-negative">
+                <div class="cop-trend-box-modal is-danger">
                     <span>Camas a perder se chover</span>
                     <strong>-10</strong>
                     <small>Bloco D com infiltrações ativas</small>
@@ -1530,7 +1529,7 @@ $copMapOptions = [
                     <small id="meteoForecastRiskDetail">--</small>
                 </div>
 
-                <div class="cop-trend-box-modal is-positive">
+                <div class="cop-trend-box-modal is-success">
                     <span>Evolução provável</span>
                     <strong id="meteoForecastTrend">--</strong>
                     <small id="meteoForecastTrendDetail">--</small>

@@ -1,3 +1,98 @@
+/* =========================================================
+   DASHBOARD.CSS
+   ========================================================= */
+
+/* =========================================================
+   TOKENS / DESIGN SYSTEM
+   ========================================================= */
+
+:root {
+    /* Core */
+    --cop-color-primary: #2f6fe0;
+    --cop-color-primary-strong: #1e4fb8;
+    --cop-color-primary-border: rgba(59, 130, 246, 0.35);
+    --cop-color-primary-soft: rgba(59, 130, 246, 0.18);
+    --cop-color-primary-shadow: rgba(59, 130, 246, 0.15);
+
+    /* Semantic */
+    --cop-color-success: #6fe0a8;
+    --cop-color-success-soft: #86efac;
+    --cop-color-success-bg: rgba(34, 197, 94, 0.12);
+    --cop-color-success-border: rgba(34, 197, 94, 0.35);
+
+    --cop-color-warning: #ffc45f;
+    --cop-color-warning-soft: #fcd34d;
+    --cop-color-warning-bg: rgba(245, 158, 11, 0.12);
+    --cop-color-warning-border: rgba(245, 158, 11, 0.35);
+
+    --cop-color-danger: #ff8484;
+    --cop-color-danger-soft: #fda4af;
+    --cop-color-danger-bg: rgba(239, 68, 68, 0.12);
+    --cop-color-danger-border: rgba(239, 68, 68, 0.35);
+
+    /* Accent / info */
+    --cop-color-accent: #62d4c8;
+    --cop-color-accent-soft: #59b8be;
+    --cop-color-accent-muted: #6fc6c7;
+
+    /* Text */
+    --cop-color-text-strong: #f8fafc;
+    --cop-color-text: #f4f8fc;
+    --cop-color-text-mid: #e2e8f0;
+    --cop-color-text-low: #b7c9d8;
+    --cop-color-text-muted: #9fb3c8;
+
+    /* Surfaces */
+    --cop-surface-base: #07111c;
+    --cop-surface-base-2: #091524;
+    --cop-surface-panel: rgba(10, 18, 29, 0.72);
+    --cop-surface-panel-strong: rgba(10, 18, 29, 0.84);
+    --cop-surface-overlay: rgba(8, 16, 26, 0.78);
+    --cop-surface-glass-1: rgba(255, 255, 255, 0.02);
+    --cop-surface-glass-2: rgba(255, 255, 255, 0.03);
+    --cop-surface-glass-3: rgba(255, 255, 255, 0.035);
+    --cop-surface-glass-4: rgba(255, 255, 255, 0.04);
+
+    /* Borders */
+    --cop-line: rgba(255, 255, 255, 0.07);
+    --cop-line-soft: rgba(255, 255, 255, 0.06);
+    --cop-line-softer: rgba(255, 255, 255, 0.05);
+    --cop-line-strong: rgba(255, 255, 255, 0.08);
+    --cop-line-systems: rgba(148, 163, 184, 0.14);
+
+    /* Radius */
+    --cop-radius-sm: 12px;
+    --cop-radius-md: 14px;
+    --cop-radius-lg: 16px;
+    --cop-radius-xl: 18px;
+    --cop-radius-2xl: 22px;
+    --cop-radius-pill: 999px;
+
+    /* Spacing */
+    --cop-gap-xs: 8px;
+    --cop-gap-sm: 10px;
+    --cop-gap: 12px;
+    --cop-gap-md: 16px;
+    --cop-gap-lg: 22px;
+
+    /* Shadow */
+    --cop-shadow-card: 0 14px 28px rgba(0, 0, 0, 0.24);
+    --cop-shadow-overlay: 0 10px 24px rgba(0, 0, 0, 0.18);
+    --cop-shadow-modal:
+            0 24px 60px rgba(0, 0, 0, 0.45),
+            0 0 25px var(--cop-color-primary-shadow);
+
+    /* Backgrounds */
+    --cop-bg-card: linear-gradient(180deg, rgba(16, 28, 42, 0.96) 0%, rgba(10, 19, 30, 0.98) 100%);
+    --cop-bg-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.025) 100%);
+    --cop-bg-modal-card: linear-gradient(180deg, rgba(18, 31, 47, 0.92) 0%, rgba(12, 23, 36, 0.96) 100%);
+    --cop-bg-active: linear-gradient(180deg, var(--cop-color-primary) 0%, var(--cop-color-primary-strong) 100%);
+}
+
+/* =========================================================
+   PAGE / LAYOUT
+   ========================================================= */
+
 body.dashboard-page-body,
 body.dashboard-page-body main.dashboard-layout {
     min-height: 100vh;
@@ -13,13 +108,6 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 }
 
 .cop-dashboard {
-    --cop-gap: 12px;
-    --cop-radius: 18px;
-    --cop-line: rgba(255, 255, 255, 0.07);
-    --cop-soft: rgba(255, 255, 255, 0.035);
-    --cop-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
-    --cop-card-bg: linear-gradient(180deg, rgba(16, 28, 42, 0.96) 0%, rgba(10, 19, 30, 0.98) 100%);
-
     height: calc(100vh - 82px);
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) minmax(220px, 250px);
@@ -29,7 +117,7 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 .cop-topbar {
     display: grid;
     grid-template-columns: repeat(10, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--cop-gap-xs);
 }
 
 .cop-main {
@@ -46,14 +134,32 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     gap: var(--cop-gap);
 }
 
+.cop-side,
+.cop-center,
+.cop-bottom-wide {
+    min-height: 0;
+}
+
+.cop-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cop-gap);
+    overflow: auto;
+    padding-right: 2px;
+}
+
+/* =========================================================
+   BASE COMPONENTS
+   ========================================================= */
+
 .cop-card,
 .cop-kpi-card {
     min-width: 0;
-    background: var(--cop-card-bg);
-    border: 1px solid var(--cop-line);
-    border-radius: var(--cop-radius);
-    box-shadow: var(--cop-shadow);
     color: var(--ba5-text);
+    background: var(--cop-bg-card);
+    border: 1px solid var(--cop-line);
+    border-radius: var(--cop-radius-xl);
+    box-shadow: var(--cop-shadow-card);
     backdrop-filter: blur(10px);
 }
 
@@ -61,14 +167,44 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     padding: 12px 14px;
 }
 
+.cop-module,
+.cop-bottom .cop-card {
+    padding: 12px;
+}
+
+.cop-bottom .cop-card {
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.cop-module-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--cop-gap-sm);
+    margin-bottom: var(--cop-gap-sm);
+}
+
+.cop-module-head h3 {
+    margin: 4px 0 0;
+    font-size: 0.98rem;
+    color: var(--ba5-text);
+}
+
+/* =========================================================
+   TEXT / LABELS / SEMANTICS
+   ========================================================= */
+
 .cop-kpi-label,
 .cop-eyebrow {
     display: inline-block;
     font-size: 0.68rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-weight: 700;
-    color: #62d4c8;
+    color: var(--cop-color-accent);
 }
 
 .cop-kpi-value {
@@ -76,8 +212,8 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     font-size: clamp(1.2rem, 1.3vw, 1.8rem);
     line-height: 1;
     font-weight: 800;
-    color: var(--ba5-text);
     white-space: nowrap;
+    color: var(--ba5-text);
 }
 
 .cop-kpi-card p {
@@ -87,48 +223,28 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: var(--ba5-muted);
 }
 
-.cop-kpi-value.is-success {
-    color: #6fe0a8;
+.cop-modal-kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--cop-color-text);
 }
 
-.cop-kpi-value.is-warning {
-    color: #ffc45f;
+.is-success {
+    color: var(--cop-color-success) !important;
 }
 
-.cop-kpi-value.is-danger {
-    color: #ff8484;
+.is-warning {
+    color: var(--cop-color-warning) !important;
 }
 
-.cop-side,
-.cop-center {
-    min-height: 0;
+.is-danger {
+    color: var(--cop-color-danger) !important;
 }
 
-.cop-side {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow: auto;
-    padding-right: 2px;
-}
-
-.cop-module {
-    padding: 12px;
-}
-
-.cop-module-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.cop-module-head h3 {
-    margin: 4px 0 0;
-    font-size: 0.98rem;
-    color: var(--ba5-text);
-}
+/* =========================================================
+   BADGES
+   ========================================================= */
 
 .cop-badge {
     display: inline-flex;
@@ -136,157 +252,49 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     justify-content: center;
     min-height: 24px;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--cop-radius-pill);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--cop-surface-glass-4);
     color: var(--ba5-text);
     font-size: 0.68rem;
     font-weight: 700;
     white-space: nowrap;
 }
 
-.cop-stat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+.cop-badge.is-success {
+    color: var(--cop-color-success-soft);
+    border-color: var(--cop-color-success-border);
+    background: var(--cop-color-success-bg);
 }
 
-.cop-stat-grid-2 {
-    margin-bottom: 10px;
+.cop-badge.is-warning {
+    color: var(--cop-color-warning-soft);
+    border-color: var(--cop-color-warning-border);
+    background: var(--cop-color-warning-bg);
 }
 
-.cop-stat-box {
-    padding: 10px;
-    border-radius: 14px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
+.cop-badge.is-danger {
+    color: var(--cop-color-danger-soft);
+    border-color: var(--cop-color-danger-border);
+    background: var(--cop-color-danger-bg);
 }
 
-.cop-stat-box span {
-    display: block;
-    font-size: 0.74rem;
-    color: var(--ba5-muted);
-}
-
-.cop-stat-box strong {
-    display: block;
-    margin-top: 4px;
-    font-size: 1.05rem;
-    color: var(--ba5-text);
-}
-
-.cop-note-list {
-    display: grid;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.cop-note-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
-}
-
-.cop-note-item strong {
-    color: var(--ba5-text);
-    font-size: 0.82rem;
-}
-
-.cop-note-item span {
-    color: var(--ba5-muted);
-    text-align: right;
-    font-size: 0.78rem;
-}
-
-.cop-map-card {
-    height: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-}
-
-.cop-map-head {
-    margin-bottom: 10px;
-}
-
-.cop-map-actions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.cop-map-wrap {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid var(--cop-line);
-    background:
-            radial-gradient(circle at 50% 50%, rgba(95, 168, 255, 0.12), transparent 42%),
-            linear-gradient(180deg, #091524 0%, #07111c 100%);
-}
-
-.cop-map {
-    width: 100%;
-    height: 100%;
-}
-
-.cop-map.leaflet-container {
-    background: #07111c;
-}
-
-.cop-map-overlay {
-    position: absolute;
-    z-index: 450;
-    width: min(220px, calc(100% - 24px));
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(8, 16, 26, 0.78);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-}
-
-.cop-map-overlay strong {
-    display: block;
-    margin: 4px 0;
-    color: var(--ba5-text);
-    font-size: 0.86rem;
-}
-
-.cop-map-overlay p {
-    margin: 0;
-    color: var(--ba5-muted);
-    font-size: 0.76rem;
-    line-height: 1.3;
-}
-
-.cop-map-overlay-left {
-    top: 14px;
-    left: 14px;
-}
-
-.cop-map-overlay-right {
-    right: 14px;
-    bottom: 14px;
-}
-
-.cop-bottom-wide {
-    min-width: 0;
-}
+/* =========================================================
+   TABLES
+   ========================================================= */
 
 .cop-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.76rem;
     color: var(--ba5-text);
+}
+
+.cop-table-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .cop-table-scroll::-webkit-scrollbar {
@@ -298,32 +306,16 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 }
 
 .cop-table-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 10px;
-}
-
-
-.cop-bottom .cop-card {
-    min-height: 0;
-    overflow: hidden;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-}
-
-.cop-table-scroll {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .cop-table th,
 .cop-table td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding: 7px 6px;
     text-align: left;
     vertical-align: top;
+    border-bottom: 1px solid var(--cop-line-soft);
 }
 
 .cop-table th {
@@ -332,6 +324,64 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     letter-spacing: 0.06em;
     color: var(--ba5-muted);
     font-weight: 700;
+}
+
+/* =========================================================
+   KPI CLICKABLE
+   ========================================================= */
+
+.kpi-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-clickable:hover {
+    transform: translateY(-2px);
+}
+
+.kpi-clickable.is-active {
+    background: var(--cop-bg-active);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+.kpi-clickable.is-active .cop-kpi-value,
+.kpi-clickable.is-active .cop-kpi-label,
+.kpi-clickable.is-active p {
+    color: #fff;
+}
+
+/* =========================================================
+   MAPA
+   ========================================================= */
+
+.cop-map-card {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.cop-map-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    border-radius: var(--cop-radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--cop-line);
+    background:
+            radial-gradient(circle at 50% 50%, rgba(95, 168, 255, 0.12), transparent 42%),
+            linear-gradient(180deg, var(--cop-surface-base-2) 0%, var(--cop-surface-base) 100%);
+}
+
+.cop-map {
+    width: 100%;
+    height: 100%;
+}
+
+.cop-map.leaflet-container {
+    background: var(--cop-surface-base);
 }
 
 .cop-map .leaflet-control-zoom {
@@ -347,11 +397,11 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 .cop-map .leaflet-bar a {
     background: rgba(10, 18, 29, 0.9);
     color: #e8eef5;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--cop-line-strong);
 }
 
 .cop-map .leaflet-bar {
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--cop-line-strong);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
 }
 
@@ -371,59 +421,23 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: rgba(232, 238, 245, 0.65);
 }
 
-
-/*
---------------------------------------------------
-                POP-UPS DOS KPIS
---------------------------------------------------
-*/
-
-.kpi-clickable {
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.kpi-clickable:hover {
-    transform: translateY(-2px);
-}
-
-.kpi-clickable.is-active {
-    background: linear-gradient(180deg, #2f6fe0 0%, #1e4fb8 100%);
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
-}
-
-.kpi-clickable.is-active .cop-kpi-value,
-.kpi-clickable.is-active .cop-kpi-label,
-.kpi-clickable.is-active p {
-    color: #ffffff;
-}
+/* =========================================================
+   MODAIS
+   ========================================================= */
 
 .modal-content {
-    border-radius: 18px;
+    border-radius: var(--cop-radius-xl);
     overflow: hidden;
 }
 
 .modal-header,
 .modal-footer {
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--cop-line-strong);
 }
 
 .grid-view table th {
     font-weight: 600;
 }
-
-/*
---------------------------------------------------
-                POP-UPS DOS KPIS
---------------------------------------------------
-*/
-
-/*
---------------------------------------------------
-                MODAIS COP
---------------------------------------------------
-*/
 
 .cop-modal .modal-dialog {
     max-width: 980px;
@@ -431,18 +445,16 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 
 .cop-modal .modal-content {
     background:
-            linear-gradient(180deg, rgba(47, 111, 224, 0.18) 0%, rgba(20, 40, 75, 0.92) 100%),
+            linear-gradient(180deg, var(--cop-color-primary-soft) 0%, rgba(20, 40, 75, 0.92) 100%),
             linear-gradient(180deg, rgba(12, 21, 33, 0.96) 0%, rgba(7, 14, 24, 0.98) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.35);
-    border-radius: 22px;
+    border: 1px solid var(--cop-color-primary-border);
+    border-radius: var(--cop-radius-2xl);
     overflow: hidden;
-    box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.45),
-            0 0 25px rgba(59, 130, 246, 0.15);
+    box-shadow: var(--cop-shadow-modal);
 }
 
 .cop-modal .modal-header {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.05) 100%);
+    background: linear-gradient(90deg, var(--cop-color-primary-soft) 0%, rgba(59, 130, 246, 0.05) 100%);
     border-bottom: 1px solid rgba(59, 130, 246, 0.25);
 }
 
@@ -452,7 +464,7 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 
 .cop-modal .modal-footer {
     padding: 16px 24px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--cop-line-soft);
     background: rgba(255, 255, 255, 0.015);
 }
 
@@ -477,35 +489,35 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     min-width: 0;
 }
 
+.cop-modal-summary-3,
+.cop-modal-summary-4 {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.cop-modal-summary-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cop-modal-summary-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .cop-modal-kpi {
-    background: linear-gradient(180deg, rgba(18, 31, 47, 0.92) 0%, rgba(12, 23, 36, 0.96) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.20);
-    border-radius: 18px;
+    background: var(--cop-bg-modal-card);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--cop-radius-xl);
     padding: 16px 18px;
 }
 
 .cop-modal-kpi-label {
     display: block;
+    margin-bottom: 8px;
     font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #59b8be;
-    margin-bottom: 8px;
-}
-
-.cop-modal-kpi-value {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #f4f8fc;
-}
-
-.cop-modal-kpi-value.is-success {
-    color: #5fbf8f;
-}
-
-.cop-modal-kpi-value.is-warning {
-    color: #f2c14e;
+    color: var(--cop-color-accent-soft);
 }
 
 .cop-modal-section-head {
@@ -519,11 +531,18 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: #edf4fb;
 }
 
+.cop-modal-section-card {
+    padding: 16px;
+    border-radius: var(--cop-radius-xl);
+    border: 1px solid var(--cop-line-soft);
+    background: var(--cop-surface-panel);
+}
+
 .cop-modal-table-wrap {
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 18px;
+    border: 1px solid var(--cop-line-soft);
+    border-radius: var(--cop-radius-xl);
     overflow: hidden;
-    background: rgba(10, 18, 29, 0.84);
+    background: var(--cop-surface-panel-strong);
 }
 
 .cop-modal-table {
@@ -531,78 +550,31 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: #dbe7f3;
     --bs-table-bg: transparent;
     --bs-table-color: #dbe7f3;
-    --bs-table-border-color: rgba(255, 255, 255, 0.06);
+    --bs-table-border-color: var(--cop-line-soft);
     --bs-table-hover-bg: rgba(66, 153, 225, 0.08);
     --bs-table-hover-color: #fff;
 }
 
 .cop-modal-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     padding: 14px 16px;
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #6fc6c7;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--cop-color-accent-muted);
+    background: rgba(18, 31, 47, 0.98);
+    border-bottom: 1px solid var(--cop-line-strong);
     font-weight: 700;
 }
 
 .cop-modal-table tbody td {
     padding: 13px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--cop-line-softer);
     vertical-align: middle;
 }
 
-.cop-empty-state {
-    border: 1px dashed rgba(111, 198, 199, 0.24);
-    border-radius: 18px;
-    padding: 18px 20px;
-    color: #b7c9d8;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.cop-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 38px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.cop-pill-success {
-    color: #dff8ea;
-    background: rgba(95, 191, 143, 0.18);
-    border: 1px solid rgba(95, 191, 143, 0.35);
-}
-
-.modal-backdrop.show {
-    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0.85) 70%);
-    opacity: 0.72;
-    backdrop-filter: blur(10px);
-}
-
-.cop-modal .btn-secondary {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.08);
-    color: #edf4fb;
-    border-radius: 12px;
-}
-
-/*
---------------------------------------------------
-                FIM MODAIS COP
---------------------------------------------------
-*/
-
-
-/*
---------------------------------------------------
-                OPÇÃO SCROLL MODAIS
---------------------------------------------------
-*/
 .cop-modal-table-scroll {
     max-height: 315px;
     overflow-y: auto;
@@ -622,27 +594,31 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     border-radius: 999px;
 }
 
-.cop-modal-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: rgba(18, 31, 47, 0.98);
+.cop-empty-state {
+    border: 1px dashed rgba(111, 198, 199, 0.24);
+    border-radius: var(--cop-radius-xl);
+    padding: 18px 20px;
+    color: var(--cop-color-text-low);
+    background: var(--cop-surface-glass-1);
 }
-/*
---------------------------------------------------
-                OPÇÃO SCROLL MODAIS
---------------------------------------------------
-*/
 
+.modal-backdrop.show {
+    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0.85) 70%);
+    opacity: 0.72;
+    backdrop-filter: blur(10px);
+}
 
+.cop-modal .btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--cop-line-strong);
+    color: #edf4fb;
+    border-radius: 12px;
+}
 
+/* =========================================================
+   PEDIDOS EXTERNOS
+   ========================================================= */
 
-
-/*
---------------------------------------------------
-                Painel direito, pedidos externos
---------------------------------------------------
-*/
 .cop-request-kpis {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -651,9 +627,9 @@ body.dashboard-page-body .frontend-main > .container-fluid {
 
 .cop-request-kpi {
     padding: 14px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--cop-radius-lg);
+    background: var(--cop-surface-glass-3);
+    border: 1px solid var(--cop-line-soft);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -677,637 +653,67 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     color: #fff;
 }
 
-/*
---------------------------------------------------
-           FIM Painel direito, pedidos externos
---------------------------------------------------
-*/
-
-/*
-TABELA APOIO PRESTADO
-*/
-.cop-support-table-wrap.compact {
-    margin-top: 12px;
-    padding: 8px 10px;
-    border-radius: 16px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
-    box-shadow: none;
+.cop-request-kpi .cop-kpi-value.is-success {
+    color: var(--cop-color-success) !important;
 }
 
-.cop-support-table.compact {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    color: var(--ba5-text);
+.cop-request-kpi .cop-kpi-value.is-warning {
+    color: var(--cop-color-warning) !important;
 }
 
-.cop-support-table.compact thead th {
-    padding: 4px 6px 8px;
-    font-size: 0.64rem;
-    font-weight: 700;
-    text-align: center;
-    color: var(--ba5-muted);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    background: transparent;
+.cop-request-kpi .cop-kpi-value.is-danger {
+    color: var(--cop-color-danger) !important;
 }
 
-.cop-support-table.compact thead th:first-child {
-    text-align: left;
-    width: 28%;
+.cop-request-kpi:has(.cop-kpi-value.is-success) {
+    border-color: rgba(34, 197, 94, 0.25);
 }
 
-.cop-support-table.compact tbody th,
-.cop-support-table.compact tbody td {
-    padding: 10px 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: transparent;
+.cop-request-kpi:has(.cop-kpi-value.is-warning) {
+    border-color: rgba(255, 196, 95, 0.22);
 }
 
-.cop-support-table.compact tbody tr:last-child th,
-.cop-support-table.compact tbody tr:last-child td {
-    border-bottom: 0;
+.cop-request-kpi:has(.cop-kpi-value.is-danger) {
+    border-color: rgba(255, 132, 132, 0.25);
 }
 
-.cop-support-table.compact tbody th {
-    text-align: left;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--ba5-text);
-    white-space: nowrap;
-}
+/* =========================================================
+   SWITCHES / TABS
+   ========================================================= */
 
-.cop-support-table.compact tbody td {
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--ba5-text);
-}
-
-.cop-support-table.compact td.is-total {
-    color: #62d4c8;
-}
-/*
-fim tabela apoio prestado
-*/
-
-/*
---------------------------------------------------
-                MODAL DAS CAMAS
---------------------------------------------------
-*/
-
-/*
-Resumo superior com os 4 KPI cards:
-Operacionais, Ocupadas, Disponíveis e Indisponíveis
-*/
-.cop-modal-summary-4 {
+.cop-support-switch,
+.cop-support-switch-meteo {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 22px;
-}
-
-/*
-Grid principal com os 2 painéis do meio:
-- esquerda: indisponibilidade
-- direita: tendência 24h
-*/
-.cop-beds-dual-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    align-items: stretch;
-}
-
-/*
-Card base de cada um dos 2 painéis centrais.
-Usamos flex column para conseguir empurrar a nota final
-da previsão para baixo e manter tudo alinhado.
-*/
-.cop-modal-section-card.cop-beds-panel {
-    padding: 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(10, 18, 29, 0.72);
-    display: flex;
-    flex-direction: column;
-    min-height: 360px;
-}
-
-/* Espaçamento do cabeçalho interno desses painéis */
-.cop-beds-panel-head {
-    margin-bottom: 14px;
-}
-
-/*
-Grid da zona "Motivos atuais".
-2 colunas, ocupando bem o espaço do card.
-*/
-.cop-breakdown-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    align-content: stretch;
-}
-
-/*
-Cada célula individual de motivo de indisponibilidade.
-Ficam com altura equilibrada e conteúdo centrado verticalmente.
-*/
-.cop-breakdown-cell {
-    min-height: 118px;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.025) 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Título pequeno do motivo */
-.cop-breakdown-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #9fb3c8;
-    line-height: 1.2;
-}
-
-/* Número grande de camas afetadas */
-.cop-breakdown-value {
-    margin-top: 10px;
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-    color: #f4f8fc;
-}
-
-/* Texto pequeno "camas" */
-.cop-breakdown-cell small {
-    margin-top: 6px;
-    font-size: 0.78rem;
-    color: #b7c9d8;
-}
-
-/*
-Zona da tendência 24h.
-Fica em coluna com duas caixas.
-*/
-.cop-trend-grid-modal {
-    display: grid;
-    gap: 12px;
-}
-
-/*
-Cada caixa de tendência:
-- camas a recuperar
-- camas a perder se chover
-*/
-.cop-trend-box-modal {
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.025) 100%);
-}
-
-/* Título pequeno dentro das caixas de tendência */
-.cop-trend-box-modal span {
-    display: block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #9fb3c8;
-}
-
-/* Número grande da tendência */
-.cop-trend-box-modal strong {
-    display: block;
-    margin-top: 8px;
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-}
-
-/* Descrição por baixo do número */
-.cop-trend-box-modal small {
-    display: block;
-    margin-top: 8px;
-    color: #b7c9d8;
-    font-size: 0.8rem;
-    line-height: 1.35;
-}
-
-/* Cor para tendência positiva */
-.cop-trend-box-modal.is-positive strong {
-    color: #5fbf8f;
-}
-
-/* Cor para tendência de perda / risco */
-.cop-trend-box-modal.is-negative strong {
-    color: #f2c14e;
-}
-
-/*
---------------------------------------------------
-                RESPONSIVO
---------------------------------------------------
-*/
-
-/*
-Em tablet / ecrãs médios:
-- os 4 KPI passam a 2 colunas
-- os 2 painéis do meio passam a 1 por linha
-*/
-@media (max-width: 991.98px) {
-    .cop-modal-summary-4 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .cop-beds-dual-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-modal-section-card.cop-beds-panel {
-        min-height: auto;
-    }
-}
-
-/*
-Em mobile:
-- os 4 KPI ficam em 1 coluna
-- os motivos de indisponibilidade também ficam em 1 coluna
-*/
-@media (max-width: 575.98px) {
-    .cop-modal-summary-4 {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-breakdown-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/*
---------------------------------------------------
-            PAINEL ESQUERDO - HABITABILIDADE
---------------------------------------------------
-*/
-
-.cop-subsection-head {
-    margin-top: 12px;
-    margin-bottom: 8px;
-}
-
-.cop-subsection-head-spaced {
-    margin-top: 14px;
-}
-
-.cop-trend-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    margin-top: 2px;
-}
-
-.cop-trend-box {
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
-}
-
-.cop-trend-box span {
-    display: block;
-    font-size: 0.72rem;
-    color: var(--ba5-muted);
-}
-
-.cop-trend-box strong {
-    display: block;
-    margin-top: 4px;
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 1;
-}
-
-.cop-trend-box small {
-    display: block;
-    margin-top: 6px;
-    font-size: 0.7rem;
-    line-height: 1.25;
-    color: var(--ba5-muted);
-}
-
-.cop-trend-box.is-positive strong {
-    color: #6fe0a8;
-}
-
-.cop-trend-box.is-negative strong {
-    color: #ff8484;
-}
-
-.cop-text-warning {
-    color: #ffc45f;
-}
-
-.cop-mini-table-wrap {
-    margin-top: 4px;
-    border: 1px solid var(--cop-line);
-    border-radius: 16px;
-    overflow: hidden;
-    background: var(--cop-soft);
-}
-
-.cop-mini-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 0.7rem;
-    color: var(--ba5-text);
-}
-
-.cop-mini-table thead th {
-    padding: 8px 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--ba5-muted);
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    text-align: left;
-}
-
-.cop-mini-table tbody td {
-    padding: 9px 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    color: var(--ba5-text);
-    vertical-align: middle;
-}
-
-.cop-mini-table tbody tr:last-child td {
-    border-bottom: 0;
-}
-
-.cop-inline-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
-}
-
-.cop-inline-total span {
-    font-size: 0.76rem;
-    color: var(--ba5-muted);
-}
-
-.cop-inline-total strong {
-    font-size: 0.88rem;
-    color: #62d4c8;
-}
-
-.cop-note-item-stack {
-    align-items: flex-start;
-}
-
-.cop-note-item-stack span {
-    max-width: 58%;
-    line-height: 1.3;
-}
-
-/*
---------------------------------------------------
-        RESPONSIVO EXTRA DO PAINEL ESQUERDO
---------------------------------------------------
-*/
-@media (max-width: 768px) {
-    .cop-trend-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-mini-table {
-        font-size: 0.66rem;
-    }
-
-    .cop-note-item-stack span {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .cop-modal-summary {
-        flex-direction: column;
-    }
-}
-
-
-@media (max-width: 1800px) {
-    .cop-topbar {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 1400px) {
-    body.dashboard-page-body {
-        overflow: auto;
-    }
-
-    .cop-dashboard {
-        height: auto;
-        grid-template-rows: auto auto auto;
-    }
-
-    .cop-topbar {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .cop-main,
-    .cop-bottom {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-side {
-        overflow: visible;
-        padding-right: 0;
-    }
-
-    .cop-center {
-        min-height: 560px;
-    }
-}
-
-@media (max-width: 768px) {
-    body.dashboard-page-body .frontend-main > .container-fluid {
-        padding: 68px 8px 8px;
-    }
-
-    .cop-topbar {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-map-actions {
-        justify-content: flex-start;
-    }
-
-    .cop-map-overlay {
-        position: static;
-        width: auto;
-        margin: 10px;
-    }
-
-    .cop-map-wrap {
-        display: flex;
-        flex-direction: column;
-        min-height: 420px;
-    }
-
-    .cop-stat-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-/*
---------------------------------------------------
-        MODAL - EFETIVOS EXTERNOS
---------------------------------------------------
-*/
-
-/* Grid dos 2 painéis centrais do modal */
-.cop-manpower-dual-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    align-items: stretch;
-}
-
-/* Card base dos painéis centrais */
-.cop-modal-section-card.cop-manpower-panel {
-    padding: 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(10, 18, 29, 0.72);
-    display: flex;
-    flex-direction: column;
-    min-height: 360px;
-}
-
-/* Espaçamento do cabeçalho interno */
-.cop-manpower-panel-head {
-    margin-bottom: 14px;
-}
-
-/*
---------------------------------------------------
-                RESPONSIVO
---------------------------------------------------
-*/
-@media (max-width: 991.98px) {
-    .cop-manpower-dual-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cop-modal-section-card.cop-manpower-panel {
-        min-height: auto;
-    }
-}
-
-
-
-
-/*
---------------------------------------------------
-        APOIOS INTERNOS (MELHORADO)
---------------------------------------------------
-*/
-
-/* grid principal dos blocos */
-.cop-support-grid {
-    display: grid;
-    gap: 10px;
-}
-
-/* cada linha (banhos, refeições, etc) */
-.cop-support-item {
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
-}
-
-/* título */
-.cop-support-item strong {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--ba5-text);
-    margin-bottom: 6px;
-}
-
-/* valores */
-.cop-support-values {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-size: 0.78rem;
-    color: var(--ba5-muted);
-}
-
-/* cores semânticas (já tens algumas, mas reforço consistência) */
-.cop-text-success {
-    color: #6fe0a8;
-}
-
-.cop-text-warning {
-    color: #ffc45f;
-}
-
-.cop-text-danger {
-    color: #ff8484;
-}
-/*
---------------------------------------------------
-        SWITCH DE APOIOS (COLUNA DIREITA)
---------------------------------------------------
-*/
-.cop-support-switch {
-    display: grid;
-    grid-template-columns: repeat(3, 38px);
-    justify-content: end;
     align-items: center;
     gap: 4px;
-
     padding: 4px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.035);
+    border-radius: var(--cop-radius-pill);
+    border: 1px solid var(--cop-line-strong);
+    background: var(--cop-surface-glass-3);
+}
+
+.cop-support-switch {
+    grid-template-columns: repeat(3, 38px);
+    justify-content: end;
+}
+
+.cop-support-switch-meteo {
+    grid-template-columns: repeat(2, 38px);
+    justify-content: start;
 }
 
 .cop-support-switch-btn {
     width: 38px;
     height: 30px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 0;
     margin: 0;
     border: 0;
-
-    border-radius: 999px;
+    border-radius: var(--cop-radius-pill);
     background: transparent;
     color: var(--ba5-muted);
-
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -1317,8 +723,8 @@ Em mobile:
 }
 
 .cop-support-switch-btn.is-active {
-    background: linear-gradient(180deg, #2f6fe0 0%, #1e4fb8 100%);
-    color: #ffffff;
+    background: var(--cop-bg-active);
+    color: #fff;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.22);
 }
 
@@ -1339,6 +745,37 @@ Em mobile:
     display: block;
 }
 
+/* =========================================================
+   APOIOS
+   ========================================================= */
+
+.cop-support-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.cop-support-item {
+    padding: 10px 12px;
+    border-radius: var(--cop-radius-md);
+    border: 1px solid var(--cop-line);
+    background: var(--cop-surface-glass-3);
+}
+
+.cop-support-item strong {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ba5-text);
+    margin-bottom: 6px;
+}
+
+.cop-support-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--ba5-muted);
+}
+
 .cop-side-right .cop-support-grid {
     gap: 10px;
 }
@@ -1352,21 +789,9 @@ Em mobile:
     row-gap: 6px;
 }
 
-@media (max-width: 768px) {
-    .cop-support-switch {
-        justify-content: start;
-    }
-}
-
-/*
---------------------------------------------------
-        CARD SANITÁRIO SEPARADO
---------------------------------------------------
-*/
-
-.cop-sanitary-card {
-    margin-top: 0;
-}
+/* =========================================================
+   SITUAÇÃO SANITÁRIA
+   ========================================================= */
 
 .cop-sanitary-grid {
     display: grid;
@@ -1376,9 +801,17 @@ Em mobile:
 
 .cop-sanitary-item {
     padding: 12px;
-    border-radius: 14px;
+    border-radius: var(--cop-radius-md);
     border: 1px solid var(--cop-line);
-    background: var(--cop-soft);
+    background: var(--cop-surface-glass-3);
+}
+
+.cop-sanitary-item.is-warning {
+    border-color: rgba(255, 196, 95, 0.22);
+}
+
+.cop-sanitary-item.is-danger {
+    border-color: rgba(255, 132, 132, 0.25);
 }
 
 .cop-sanitary-label {
@@ -1405,31 +838,9 @@ Em mobile:
     color: var(--ba5-muted);
 }
 
-.cop-sanitary-item.is-danger {
-    border-color: rgba(255, 132, 132, 0.25);
-}
-
-.cop-sanitary-item.is-danger .cop-sanitary-value {
-    color: #ff8484;
-}
-
-.cop-sanitary-item.is-warning {
-    border-color: rgba(255, 196, 95, 0.22);
-}
-
-.cop-sanitary-item.is-warning .cop-sanitary-value {
-    color: #ffc45f;
-}
-
-.cop-badge-warning {
-    border-color: rgba(255, 196, 95, 0.22);
-    background: rgba(255, 196, 95, 0.08);
-    color: #ffc45f;
-}
-
-/*
-PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
-*/
+/* =========================================================
+   SISTEMAS / NAVAIDS
+   ========================================================= */
 
 .cop-systems-card .cop-module-head {
     align-items: flex-start;
@@ -1469,9 +880,9 @@ PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(148, 163, 184, 0.14);
-    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--cop-radius-lg);
+    border: 1px solid var(--cop-line-systems);
+    background: var(--cop-surface-glass-2);
 }
 
 .cop-system-main {
@@ -1483,7 +894,7 @@ PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
 .cop-system-name {
     font-size: 0.92rem;
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--cop-color-text-strong);
     line-height: 1.2;
 }
 
@@ -1494,31 +905,135 @@ PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
     color: rgba(226, 232, 240, 0.78);
 }
 
-.cop-badge-success {
-    color: #86efac;
-    border-color: rgba(34, 197, 94, 0.35);
-    background: rgba(34, 197, 94, 0.12);
+/* =========================================================
+   CAMAS / BREAKDOWN / TRENDS
+   ========================================================= */
+
+.cop-beds-dual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
 }
 
-.cop-badge-warning {
-    color: #fcd34d;
-    border-color: rgba(245, 158, 11, 0.35);
-    background: rgba(245, 158, 11, 0.12);
+.cop-beds-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
 }
 
-.cop-badge-danger {
-    color: #fda4af;
-    border-color: rgba(239, 68, 68, 0.35);
-    background: rgba(239, 68, 68, 0.12);
+.cop-beds-panel-head {
+    margin-bottom: 14px;
 }
-/*
-FIM PAINEL ESQUERDO - SISTEMAS OPERACIONAIS
-*/
 
+.cop-breakdown-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-content: stretch;
+}
 
-/*
-KPI DA METEO
-*/
+.cop-breakdown-cell {
+    min-height: 118px;
+    padding: 16px;
+    border-radius: var(--cop-radius-lg);
+    border: 1px solid var(--cop-line-softer);
+    background: var(--cop-bg-panel);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cop-breakdown-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cop-color-text-muted);
+    line-height: 1.2;
+}
+
+.cop-breakdown-value {
+    margin-top: 10px;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--cop-color-text);
+}
+
+.cop-breakdown-cell small {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--cop-color-text-low);
+}
+
+.cop-trend-grid-modal {
+    display: grid;
+    gap: 12px;
+}
+
+.cop-trend-box-modal {
+    padding: 16px 18px;
+    border-radius: var(--cop-radius-lg);
+    border: 1px solid var(--cop-line-strong);
+    background: var(--cop-surface-glass-3);
+}
+
+.cop-trend-box-modal span {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(226, 232, 240, 0.72);
+    margin-bottom: 10px;
+}
+
+.cop-trend-box-modal strong {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--cop-color-text-strong);
+    margin-bottom: 8px;
+}
+
+.cop-trend-box-modal small {
+    display: block;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.cop-trend-box-modal.is-success {
+    border-color: rgba(34, 197, 94, 0.28);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.cop-trend-box-modal.is-success strong {
+    color: var(--cop-color-success-soft);
+}
+
+.cop-trend-box-modal.is-warning {
+    border-color: rgba(245, 158, 11, 0.28);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.cop-trend-box-modal.is-warning strong {
+    color: var(--cop-color-warning-soft);
+}
+
+.cop-trend-box-modal.is-danger {
+    border-color: rgba(239, 68, 68, 0.28);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.cop-trend-box-modal.is-danger strong {
+    color: var(--cop-color-danger-soft);
+}
+
+/* =========================================================
+   METEO
+   ========================================================= */
 
 .cop-kpi-head {
     display: flex;
@@ -1531,129 +1046,134 @@ KPI DA METEO
     opacity: 0.7;
 }
 
-
-#meteoModalRawOb {
-    display: block;
-    font-size: 2rem;
-    background: rgba(0,0,0,0.15);
-    padding: 10px;
-    border-radius: 6px;
-    font-family: monospace;
-}
-
+#meteoModalRawOb,
 #meteoForecastRaw {
     display: block;
     font-size: 2rem;
-    background: rgba(0,0,0,0.15);
+    background: rgba(0, 0, 0, 0.15);
     padding: 10px;
     border-radius: 6px;
     font-family: monospace;
 }
 
-.cop-support-switch-meteo {
-    display: grid;
-    grid-template-columns: repeat(2, 38px);
-    justify-content: start;
-    align-items: flex-end;
-    gap: 4px;
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
-    padding: 4px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.035);
+@media (max-width: 1800px) {
+    .cop-topbar {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
 }
 
-/* ===== KPI COLORS ===== */
+@media (max-width: 1400px) {
+    body.dashboard-page-body {
+        overflow: auto;
+    }
 
-.cop-modal-kpi-value.is-success {
-    color: #6fe0a8;
+    .cop-dashboard {
+        height: auto;
+        grid-template-rows: auto auto auto;
+    }
+
+    .cop-topbar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cop-main,
+    .cop-bottom {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-side {
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    .cop-center {
+        min-height: 560px;
+    }
 }
 
-.cop-modal-kpi-value.is-warning {
-    color: #ffc45f;
+@media (max-width: 991.98px) {
+    .cop-modal-summary {
+        flex-direction: column;
+    }
+
+    .cop-modal-summary-3,
+    .cop-modal-summary-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cop-beds-dual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-beds-panel {
+        min-height: auto;
+    }
 }
 
-.cop-modal-kpi-value.is-danger {
-    color: #ff8484;
+@media (max-width: 768px) {
+    body.dashboard-page-body .frontend-main > .container-fluid {
+        padding: 68px 8px 8px;
+    }
+
+    .cop-topbar {
+        grid-template-columns: 1fr;
+    }
+
+    .cop-support-switch {
+        justify-content: start;
+    }
+
+    .cop-map-wrap {
+        display: flex;
+        flex-direction: column;
+        min-height: 420px;
+    }
 }
 
-.cop-modal-kpi-value.is-positive {
-    color: #6fe0a8;
-}
-/*
-FIM KPI DA METEO
-*/
-
-
-/* box base da síntese operacional */
-.cop-trend-box-modal {
-    padding: 16px 18px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.035);
+@media (max-width: 575.98px) {
+    .cop-modal-summary-3,
+    .cop-modal-summary-4,
+    .cop-breakdown-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* label pequena */
-.cop-trend-box-modal span {
-    display: block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgba(226, 232, 240, 0.72);
-    margin-bottom: 10px;
+@media (max-width: 1920px) {
+    .cop-dashboard {
+        transform: scale(0.8);
+        transform-origin: top left;
+        width: 125%;
+        height: calc((100vh - 82px) * 1.25);
+    }
 }
 
-/* texto principal */
-.cop-trend-box-modal strong {
-    display: block;
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 1.15;
-    color: #f8fafc; /* cor por defeito visível */
-    margin-bottom: 8px;
-}
+@media (max-width: 1920px) {
+    .cop-modal .modal-dialog {
+        max-width: 780px;
+    }
 
-/* detalhe */
-.cop-trend-box-modal small {
-    display: block;
-    font-size: 0.78rem;
-    line-height: 1.35;
-    color: rgba(226, 232, 240, 0.82);
-}
+    .cop-modal .modal-body {
+        padding: 18px 20px;
+    }
 
-/* estados */
-.cop-trend-box-modal.is-success {
-    border-color: rgba(34, 197, 94, 0.28);
-    background: rgba(34, 197, 94, 0.08);
-}
+    .cop-modal-title-text {
+        font-size: 1.2rem;
+    }
 
-.cop-trend-box-modal.is-success strong {
-    color: #86efac;
-}
+    .cop-modal-kpi-value {
+        font-size: 1.6rem;
+    }
 
-.cop-trend-box-modal.is-warning {
-    border-color: rgba(245, 158, 11, 0.28);
-    background: rgba(245, 158, 11, 0.08);
-}
+    .cop-breakdown-value {
+        font-size: 1.6rem;
+    }
 
-.cop-trend-box-modal.is-warning strong {
-    color: #fcd34d;
-}
-
-.cop-trend-box-modal.is-danger {
-    border-color: rgba(239, 68, 68, 0.28);
-    background: rgba(239, 68, 68, 0.08);
-}
-
-.cop-trend-box-modal.is-danger strong {
-    color: #fda4af;
-}
-
-.cop-trend-box-modal.is-positive {
-    border-color: rgba(34, 197, 94, 0.28);
-    background: rgba(34, 197, 94, 0.08);
-}
-
-.cop-trend-box-modal.is-positive strong {
-    color: #86efac;
+    #meteoModalRawOb,
+    #meteoForecastRaw {
+        font-size: 1.4rem;
+    }
 }
