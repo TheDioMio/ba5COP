@@ -304,7 +304,7 @@ class DashboardController extends Controller
 
 
     /**
-     * Esta action serve para ir à API de METEO buscar os dados de monte real.
+     * Esta action serve para ir à API de METEO buscar o REPORT 1H de meteo de Monte Real.
      * Ou seja, esta action é usada no JS, o JS faz o pedido a partir do PHP, e trata dos dados para a view HTML em JS.
      */
     public function actionMeteo() {
@@ -313,6 +313,38 @@ class DashboardController extends Controller
 
         //endpoint da API com as informações de Monte Real, code LPMR. Atualiza de hora a hora.
         $url = 'https://aviationweather.gov/api/data/metar?ids=LPMR&format=json';
+
+        //Vai buscar os dados à API
+        $json = file_get_contents($url);
+
+        //Se a API falhar, devolve erro.
+        if ($json === false) {
+            return [
+                'success' => false,
+                'message' => 'Erro ao obter dados da API',
+            ];
+        }
+
+        //Se der para ir buscar, devolve um JSON com "true", a avisar que a resposta foi sucedida e a data.
+        $data = json_decode($json, true);
+
+        return [
+            'success' => true,
+            'data' => $data,
+        ];
+    }
+
+
+    /**
+     * Esta action serve para ir à API de METEO buscar o REPORT 24H de meteo de Monte Real.
+     * Ou seja, esta action é usada no JS, o JS faz o pedido a partir do PHP, e trata dos dados para a view HTML em JS.
+     */
+    public function actionTaf() {
+        //Avisar a action que é para devolver JSON, e não HTMl
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        //endpoint da API com as informações de Monte Real, code LPMR. Atualiza de dia a dia.
+        $url = 'https://aviationweather.gov/api/data/taf?ids=LPMR&format=json';
 
         //Vai buscar os dados à API
         $json = file_get_contents($url);

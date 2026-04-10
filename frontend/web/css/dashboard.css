@@ -1540,6 +1540,120 @@ KPI DA METEO
     border-radius: 6px;
     font-family: monospace;
 }
+
+#meteoForecastRaw {
+    display: block;
+    font-size: 2rem;
+    background: rgba(0,0,0,0.15);
+    padding: 10px;
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+.cop-support-switch-meteo {
+    display: grid;
+    grid-template-columns: repeat(2, 38px);
+    justify-content: start;
+    align-items: flex-end;
+    gap: 4px;
+
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+/* ===== KPI COLORS ===== */
+
+.cop-modal-kpi-value.is-success {
+    color: #6fe0a8;
+}
+
+.cop-modal-kpi-value.is-warning {
+    color: #ffc45f;
+}
+
+.cop-modal-kpi-value.is-danger {
+    color: #ff8484;
+}
+
+.cop-modal-kpi-value.is-positive {
+    color: #6fe0a8;
+}
 /*
 FIM KPI DA METEO
 */
+
+
+/* box base da síntese operacional */
+.cop-trend-box-modal {
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+/* label pequena */
+.cop-trend-box-modal span {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(226, 232, 240, 0.72);
+    margin-bottom: 10px;
+}
+
+/* texto principal */
+.cop-trend-box-modal strong {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #f8fafc; /* cor por defeito visível */
+    margin-bottom: 8px;
+}
+
+/* detalhe */
+.cop-trend-box-modal small {
+    display: block;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+/* estados */
+.cop-trend-box-modal.is-success {
+    border-color: rgba(34, 197, 94, 0.28);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.cop-trend-box-modal.is-success strong {
+    color: #86efac;
+}
+
+.cop-trend-box-modal.is-warning {
+    border-color: rgba(245, 158, 11, 0.28);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.cop-trend-box-modal.is-warning strong {
+    color: #fcd34d;
+}
+
+.cop-trend-box-modal.is-danger {
+    border-color: rgba(239, 68, 68, 0.28);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.cop-trend-box-modal.is-danger strong {
+    color: #fda4af;
+}
+
+.cop-trend-box-modal.is-positive {
+    border-color: rgba(34, 197, 94, 0.28);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.cop-trend-box-modal.is-positive strong {
+    color: #86efac;
+}

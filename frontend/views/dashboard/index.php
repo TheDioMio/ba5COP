@@ -281,7 +281,6 @@ $copMapOptions = [
                     </header>
 
                     <div class="cop-support-panels">
-
                         <!-- INTERNOS -->
                         <div class="cop-support-panel is-active" data-support-panel="internal">
                             <div class="cop-support-grid">
@@ -1306,10 +1305,23 @@ $copMapOptions = [
     <!---------------------------------------------------------------------------------------------------------------------------->
     <!--                                    MODAL - KPI METEO                                                              -->
     <!---------------------------------------------------------------------------------------------------------------------------->
-
 <?php Modal::begin([
     'id' => 'meteoModal',
-    'title' => '<span class="cop-modal-title-text">KPI - Meteorologia</span>',
+    'title' => '
+    <div class="d-flex align-items-center justify-content-between">
+        
+        <span class="cop-modal-title-text pe-3">KPI - Meteorologia</span>
+
+        <div class="cop-support-switch-meteo" role="tablist">
+            <button type="button" class="cop-support-switch-btn is-active" data-support-target="hourly" title="1H">
+                <i class="fa-solid fa-clock"></i></i>
+            </button>
+            <button type="button" class="cop-support-switch-btn" data-support-target="daily" title="24H">
+                <i class="fa-solid fa-calendar-day"></i>
+            </button>
+        </div>
+    </div>
+',
     'size' => Modal::SIZE_LARGE,
     'centerVertical' => true,
     'options' => ['class' => 'fade cop-modal'],
@@ -1320,161 +1332,295 @@ $copMapOptions = [
         'aria-label' => 'Fechar',
     ],
 ]); ?>
+<!------------------------------------------HOURLY-------------------------------------------------------------------->
+    <div class="is-active cop-support-panel" data-support-panel="hourly">
+        <div class="cop-modal-summary cop-modal-summary-4">
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Estado</span>
+                <strong id="meteoModalStatus" class="cop-modal-kpi-value is-success">--</strong>
+            </div>
 
-    <div class="cop-modal-summary cop-modal-summary-4">
-        <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Estado</span>
-            <strong id="meteoModalStatus" class="cop-modal-kpi-value is-success">--</strong>
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Regras de Voo</span>
+                <strong id="meteoModalFltCat" class="cop-modal-kpi-value">--</strong>
+            </div>
+
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Observação</span>
+                <strong id="meteoModalReportTime" class="cop-modal-kpi-value">--</strong>
+            </div>
+
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Estação</span>
+                <strong id="meteoModalStation" class="cop-modal-kpi-value">--</strong>
+            </div>
         </div>
 
-        <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Regras de Voo</span>
-            <strong id="meteoModalFltCat" class="cop-modal-kpi-value">--</strong>
-        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Condição geral</span>
+                    </div>
 
-        <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Observação</span>
-            <strong id="meteoModalReportTime" class="cop-modal-kpi-value">--</strong>
-        </div>
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Teto e Visibilidade</span>
+                            <strong id="meteoModalCover" class="cop-breakdown-value">--</strong>
+                        </div>
 
-        <div class="cop-modal-kpi">
-            <span class="cop-modal-kpi-label">Estação</span>
-            <strong id="meteoModalStation" class="cop-modal-kpi-value">--</strong>
-        </div>
-    </div>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Visibilidade</span>
+                            <strong id="meteoModalVisib" class="cop-breakdown-value">--</strong>
+                        </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-6">
-            <div class="cop-modal-section-card h-100">
-                <div class="cop-modal-section-head">
-                    <span class="cop-eyebrow">Condição geral</span>
-                    <h6>Condições operacionais</h6>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Tipo de relatório</span>
+                            <strong id="meteoModalType" class="cop-breakdown-value">--</strong>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="cop-breakdown-grid">
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Teto e Visibilidade</span>
-                        <strong id="meteoModalCover" class="cop-breakdown-value">--</strong>
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Vento</span>
                     </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Visibilidade</span>
-                        <strong id="meteoModalVisib" class="cop-breakdown-value">--</strong>
-                    </div>
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Direção</span>
+                            <strong id="meteoModalWdir" class="cop-breakdown-value">--</strong>
+                        </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Tipo de relatório</span>
-                        <strong id="meteoModalType" class="cop-breakdown-value">--</strong>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Velocidade</span>
+                            <strong id="meteoModalWspd" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Direção (graus)</span>
+                            <strong id="meteoModalWdirDeg" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Resumo</span>
+                            <strong id="meteoModalWindSummary" class="cop-breakdown-value">--</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="cop-modal-section-card h-100">
-                <div class="cop-modal-section-head">
-                    <span class="cop-eyebrow">Vento</span>
-                    <h6>Direção e intensidade</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Atmosfera</span>
+                    </div>
+
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Temperatura</span>
+                            <strong id="meteoModalTemp" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Ponto de orvalho</span>
+                            <strong id="meteoModalDewp" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">QNH</span>
+                            <strong id="meteoModalAltim" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Elevação</span>
+                            <strong id="meteoModalElev" class="cop-breakdown-value">--</strong>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="cop-breakdown-grid">
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Direção</span>
-                        <strong id="meteoModalWdir" class="cop-breakdown-value">--</strong>
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Estação</span>
                     </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Velocidade</span>
-                        <strong id="meteoModalWspd" class="cop-breakdown-value">--</strong>
-                    </div>
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">ICAO</span>
+                            <strong id="meteoModalIcao" class="cop-breakdown-value">--</strong>
+                        </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Direção (graus)</span>
-                        <strong id="meteoModalWdirDeg" class="cop-breakdown-value">--</strong>
-                    </div>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Nome</span>
+                            <strong id="meteoModalName" class="cop-breakdown-value">--</strong>
+                        </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Resumo</span>
-                        <strong id="meteoModalWindSummary" class="cop-breakdown-value">--</strong>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Latitude</span>
+                            <strong id="meteoModalLat" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Longitude</span>
+                            <strong id="meteoModalLon" class="cop-breakdown-value">--</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-6">
-            <div class="cop-modal-section-card h-100">
-                <div class="cop-modal-section-head">
-                    <span class="cop-eyebrow">Atmosfera</span>
-                    <h6>Temperatura e pressão</h6>
+        <div class="cop-modal-section-head">
+            <span class="cop-eyebrow">METAR bruto</span>
+        </div>
+
+        <div class="cop-modal-section-card">
+            <code id="meteoModalRawOb" style="display:block; white-space:normal;">--</code>
+        </div>
+    </div>
+<!------------------------------------------ FIM HOURLY---------------------------------------------------------------->
+
+
+
+<!------------------------------------------ DAILY--------------------------------------------------------------------->
+    <div class="cop-support-panel" data-support-panel="daily">
+        <div class="cop-modal-summary cop-modal-summary-4">
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Risco 24H</span>
+                <strong id="meteoForecastStatus" class="cop-modal-kpi-value is-warning">--</strong>
+            </div>
+
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Emitido</span>
+                <strong id="meteoForecastIssued" class="cop-modal-kpi-value">--</strong>
+            </div>
+
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Validade</span>
+                <strong id="meteoForecastValidity" class="cop-modal-kpi-value">--</strong>
+            </div>
+
+            <div class="cop-modal-kpi">
+                <span class="cop-modal-kpi-label">Aeródromo</span>
+                <strong id="meteoForecastStation" class="cop-modal-kpi-value">LPMR</strong>
+            </div>
+        </div>
+
+        <div class="cop-modal-section-card mb-4">
+            <div class="cop-modal-section-head">
+                <span class="cop-eyebrow">Síntese operacional</span>
+                <h6>Leitura rápida da previsão</h6>
+            </div>
+
+            <div class="cop-trend-grid-modal">
+                <div class="cop-trend-box-modal">
+                    <span>Estado base</span>
+                    <strong id="meteoForecastBase">--</strong>
+                    <small id="meteoForecastBaseDetail">--</small>
                 </div>
 
-                <div class="cop-breakdown-grid">
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Temperatura</span>
-                        <strong id="meteoModalTemp" class="cop-breakdown-value">--</strong>
+                <div class="cop-trend-box-modal is-warning">
+                    <span>Principal agravamento</span>
+                    <strong id="meteoForecastRisk">--</strong>
+                    <small id="meteoForecastRiskDetail">--</small>
+                </div>
+
+                <div class="cop-trend-box-modal is-positive">
+                    <span>Evolução provável</span>
+                    <strong id="meteoForecastTrend">--</strong>
+                    <small id="meteoForecastTrendDetail">--</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="cop-modal-section-head">
+            <span class="cop-eyebrow">Janela temporal</span>
+            <h6>Evolução prevista por períodos</h6>
+        </div>
+
+        <div class="cop-modal-section-card mb-4">
+            <div id="meteoForecastTimeline" class="cop-systems-list">
+                <div class="cop-empty-state">
+                    A carregar previsão meteorológica...
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Indicadores principais</span>
                     </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Ponto de orvalho</span>
-                        <strong id="meteoModalDewp" class="cop-breakdown-value">--</strong>
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Vento base</span>
+                            <strong id="meteoForecastWind" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Rajada máx.</span>
+                            <strong id="meteoForecastMaxGust" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Visibilidade min.</span>
+                            <strong id="meteoForecastMinVisib" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Fenómeno crítico</span>
+                            <strong id="meteoForecastWx" class="cop-breakdown-value">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="cop-modal-section-card h-100">
+                    <div class="cop-modal-section-head">
+                        <span class="cop-eyebrow">Estação</span>
                     </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">QNH</span>
-                        <strong id="meteoModalAltim" class="cop-breakdown-value">--</strong>
-                    </div>
+                    <div class="cop-breakdown-grid">
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">ICAO</span>
+                            <strong id="meteoForecastIcao" class="cop-breakdown-value">--</strong>
+                        </div>
 
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Elevação</span>
-                        <strong id="meteoModalElev" class="cop-breakdown-value">--</strong>
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Nome</span>
+                            <strong id="meteoForecastName" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Latitude</span>
+                            <strong id="meteoForecastLat" class="cop-breakdown-value">--</strong>
+                        </div>
+
+                        <div class="cop-breakdown-cell">
+                            <span class="cop-breakdown-label">Longitude</span>
+                            <strong id="meteoForecastLon" class="cop-breakdown-value">--</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="cop-modal-section-card h-100">
-                <div class="cop-modal-section-head">
-                    <span class="cop-eyebrow">Estação</span>
-                    <h6>Localização da observação</h6>
-                </div>
-
-                <div class="cop-breakdown-grid">
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">ICAO</span>
-                        <strong id="meteoModalIcao" class="cop-breakdown-value">--</strong>
-                    </div>
-
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Nome</span>
-                        <strong id="meteoModalName" class="cop-breakdown-value">--</strong>
-                    </div>
-
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Latitude</span>
-                        <strong id="meteoModalLat" class="cop-breakdown-value">--</strong>
-                    </div>
-
-                    <div class="cop-breakdown-cell">
-                        <span class="cop-breakdown-label">Longitude</span>
-                        <strong id="meteoModalLon" class="cop-breakdown-value">--</strong>
-                    </div>
-                </div>
-            </div>
+        <div class="cop-modal-section-head">
+            <span class="cop-eyebrow">TAF bruto</span>
         </div>
+        <div class="cop-modal-section-card">
+            <code id="meteoForecastRaw" style="display:block; white-space:pre-line;">--</code>
+        </div>
+<!------------------------------------------ FIM DAILY ---------------------------------------------------------------->
     </div>
-
-    <div class="cop-modal-section-head">
-        <span class="cop-eyebrow">METAR bruto</span>
-        <h6>Observação original</h6>
-    </div>
-
-    <div class="cop-modal-section-card">
-        <code id="meteoModalRawOb" style="display:block; white-space:normal;">--</code>
-    </div>
-
 <?php Modal::end(); ?>
 
     <!---------------------------------------------------------------------------------------------------------------------------->
@@ -1529,6 +1675,43 @@ document.querySelectorAll('.cop-support-switch').forEach(function (switchEl) {
                 } else if (target === 'combined') {
                     titleEl.textContent = 'Visão Geral';
                 }
+            }
+        });
+    });
+});
+JS);
+?>
+
+<!--JS para switch de botões no KPI de meteo-->
+<?php
+$this->registerJs(<<<JS
+document.querySelectorAll('.cop-support-switch-meteo').forEach(function (switchEl) {
+    const buttons = switchEl.querySelectorAll('.cop-support-switch-btn');
+
+    // vai ao modal inteiro
+    const modal = switchEl.closest('.modal-content, .modal, .cop-modal');
+    if (!modal) return;
+
+    // procura os painéis deste modal
+    const panels = modal.querySelectorAll('.cop-support-panel[data-support-panel]');
+
+    buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const target = btn.dataset.supportTarget;
+
+            buttons.forEach(function (b) {
+                b.classList.remove('is-active');
+            });
+
+            panels.forEach(function (panel) {
+                panel.classList.remove('is-active');
+            });
+
+            btn.classList.add('is-active');
+
+            const activePanel = modal.querySelector('.cop-support-panel[data-support-panel="' + target + '"]');
+            if (activePanel) {
+                activePanel.classList.add('is-active');
             }
         });
     });
