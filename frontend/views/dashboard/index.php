@@ -442,7 +442,7 @@ $copMapOptions = [
                                     </td>
 
                                     <td>
-                                        <?= $task->assigned_to ?? '—' ?>
+                                        <?= $task->assignedTo->username ?? '—' ?>
                                     </td>
 
                                     <td>
@@ -453,7 +453,7 @@ $copMapOptions = [
                                         <?= $task->block_reason ?? 'Sem bloqueio' ?>
                                     </td>
                                     <td>
-                                        <?= $task->due_at?>
+                                        <?= strtoupper(date('dMY H:i', strtotime($task->due_at)))?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -11,6 +11,9 @@ use common\models\Incident;
  */
 class IncidentSearch extends Incident
 {
+    public $task_title;
+    public $assigned_to;
+    public $location_name;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +21,8 @@ class IncidentSearch extends Incident
     {
         return [
             [['id', 'location_id', 'incident_type_id', 'priority_id', 'status_type_id', 'reported_by', 'entity_id'], 'integer'],
-            [['title', 'description'], 'safe'],
+            [['title', 'description', 'task_title', 'location_name'], 'safe'],
+            [['assigned_to'], 'integer'],
         ];
     }
 
@@ -39,37 +43,73 @@ class IncidentSearch extends Incident
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
-    {
-        $query = Incident::find();
-
-        // add conditions that should always apply here
+    public function search($params, $formName = null) {
+        $query = Incident::find()
+            ->alias('i')
+            ->joinWith(['location l', 'tasks t']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+                'attributes' => [
+                    'id' => [
+                        'asc' => ['i.id' => SORT_ASC],
+                        'desc' => ['i.id' => SORT_DESC],
+                    ],
+                    'title' => [
+                        'asc' => ['i.title' => SORT_ASC],
+                        'desc' => ['i.title' => SORT_DESC],
+                    ],
+                    'location_name' => [
+                        'asc' => ['l.name' => SORT_ASC],
+                        'desc' => ['l.name' => SORT_DESC],
+                    ],
+                    'incident_type_id' => [
+                        'asc' => ['i.incident_type_id' => SORT_ASC],
+                        'desc' => ['i.incident_type_id' => SORT_DESC],
+                    ],
+                    'priority_id' => [
+                        'asc' => ['i.priority_id' => SORT_ASC],
+                        'desc' => ['i.priority_id' => SORT_DESC],
+                    ],
+                    'status_type_id' => [
+                        'asc' => ['i.status_type_id' => SORT_ASC],
+                        'desc' => ['i.status_type_id' => SORT_DESC],
+                    ],
+                ],
+            ],
+            'pagination' => [
+                'pageSize' => 20,
+            ],
         ]);
+
+        $query->groupBy('i.id');
 
         $this->load($params, $formName);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'location_id' => $this->location_id,
-            'incident_type_id' => $this->incident_type_id,
-            'priority_id' => $this->priority_id,
-            'status_type_id' => $this->status_type_id,
-            'reported_by' => $this->reported_by,
-            'entity_id' => $this->entity_id,
+            'i.id' => $this->id,
+            'i.location_id' => $this->location_id,
+            'i.incident_type_id' => $this->incident_type_id,
+            'i.priority_id' => $this->priority_id,
+            'i.status_type_id' => $this->status_type_id,
+            'i.reported_by' => $this->reported_by,
+            'i.entity_id' => $this->entity_id,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description]);
+        $query->andFilterWhere(['like', 'i.title', $this->title])
+            ->andFilterWhere(['like', 'i.description', $this->description])
+            ->andFilterWhere(['like', 'l.name', $this->location_name])
+            ->andFilterWhere(['like', 't.title', $this->task_title]);
+
+        if (!empty($this->assigned_to)) {
+            $query->andWhere(['t.assigned_to' => $this->assigned_to]);
+        }
 
         return $dataProvider;
     }

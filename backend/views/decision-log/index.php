@@ -35,8 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     'reason',
                     'decided_at',
-                    'decided_by',
-                    'entity_id',
+                    [
+                        'label' => 'Decidido por',
+                        'attribute' => 'decided_by',
+                        'value' => 'decidedBy.username'
+                    ],
+
                     [
                         'class' => ActionColumn::className(),
                         'urlCreator' => function ($action, DecisionLog $model, $key, $index, $column) {

@@ -849,3 +849,125 @@ COB - MAP 100%
         min-width: 100%;
     }
 }
+
+
+/*
+ABOUT PAGE
+*/
+
+.ba5-about {
+    display: grid;
+    gap: 22px;
+}
+
+.about-hero-card {
+    align-items: stretch;
+}
+
+.about-hero-image {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 320px;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.ba5-about-sidecard {
+    height: 100%;
+}
+
+.about-media-grid,
+.about-bottom-grid,
+.about-grid-top {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+}
+
+.about-media-frame {
+    margin-top: 16px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    min-height: 260px;
+}
+
+.about-section-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.about-support-text {
+    margin-top: 16px;
+    color: var(--ba5-muted);
+}
+
+.about-highlight-card {
+    padding: 24px;
+}
+
+.about-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.about-pillar {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 18px;
+    border: 1px solid var(--ba5-border);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.about-pillar p {
+    margin: 6px 0 0;
+    color: var(--ba5-muted);
+}
+
+.about-pillar-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(95, 168, 255, 0.12);
+    color: var(--ba5-accent);
+    border: 1px solid rgba(95, 168, 255, 0.18);
+    font-size: 1rem;
+}
+
+.about-badge-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 1199px) {
+    .about-media-grid,
+    .about-bottom-grid,
+    .about-grid-top,
+    .about-pillars {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .about-section-image {
+        height: 220px;
+    }
+
+    .about-hero-image {
+        min-height: 240px;
+        max-height: 280px;
+    }
+}

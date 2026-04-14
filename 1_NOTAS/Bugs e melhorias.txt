@@ -16,3 +16,7 @@ Não faz muito sentido os pedidos terem o status "done", basta até ao approved 
 Melhorar as funções nos requests, aquilo podia ser compactado para umas quantas funções (em vez de ter 6 funções para ir buscar os 6 estados diferentes, podia ser só 1 com parãmetro)
 No form da task, tem 2 inputs de datas, created_at e due_at, fazer uma verificação de não deixar o user colocar o due_at antes do created_at.
 
+
+
+--- MUDANÇAS NA BD ---
+Mudar o varchar dos estados para mais... tipo sei la... 30? Todos os varchars ate

@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
-                    'location_id',
+                    'location.name',
                     'name',
                     [
                         'label' => 'Disponibilidade',
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $model->getCurrentCapacity(true);
                         },
                     ],
-                    //'notes',
+                    'notes',
                     [
                         'class' => ActionColumn::className(),
                         'urlCreator' => function ($action, LodgingSite $model, $key, $index, $column) {
