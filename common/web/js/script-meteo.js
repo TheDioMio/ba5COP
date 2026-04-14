@@ -128,40 +128,38 @@ function formatUnixOperationalDate(unixTime) {
 
 // Converte visibilidade da API para km
 function visibilityToKm(visib) {
-    if (!visib && visib !== 0) return "--";
+    if (visib === null || visib === undefined || visib === "") return "--";
 
     const visibStr = String(visib).trim();
+    let valNumeric = 0;
 
-    // Caso "6+"
-    if (visibStr.includes("+")) {
-        const val = parseFloat(visibStr);
-        const km = Math.round(val * 1.609);
-        return "≥ " + km + " km";
-    }
-
-    // Caso fração tipo "1/2"
+    // 1. Tratar frações ou valores com "+"
     if (visibStr.includes("/")) {
         const parts = visibStr.split("/");
-        if (parts.length === 2) {
-            const numerator = parseFloat(parts[0]);
-            const denominator = parseFloat(parts[1]);
-
-            if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
-                const val = numerator / denominator;
-                const km = Math.round(val * 1.609);
-                return km + " km";
-            }
-        }
+        valNumeric = parseFloat(parts[0]) / parseFloat(parts[1]);
+    } else {
+        valNumeric = parseFloat(visibStr.replace("+", ""));
     }
 
-    // Número simples
-    const val = parseFloat(visibStr);
-    if (!isNaN(val)) {
-        const km = Math.round(val * 1.609);
-        return km + " km";
+    if (isNaN(valNumeric)) return visibStr;
+
+    // 2. Conversão Base (Milhas < 50 vs Metros >= 50)
+    let meters = (valNumeric < 50) ? (valNumeric * 1609.34) : valNumeric;
+
+    // 3. Formatação e Correção de Ruído
+    if (meters >= 9600) {
+        // Em aviação, 9999 ou 6SM (9.6km) significa visibilidade ilimitada
+        return "> 10 km";
     }
 
-    return visibStr;
+    if (meters >= 1000) {
+        const km = meters / 1000;
+        return km.toFixed(1).replace(".0", "") + " km";
+    } else {
+        // Abaixo de 1km: arredonda para o múltiplo de 50m mais próximo (ex: 193m -> 200m)
+        const roundedMeters = Math.round(meters / 50) * 50;
+        return roundedMeters + " m";
+    }
 }
 
 
@@ -269,45 +267,25 @@ function getCloudSummary(fcst) {
 function getForecastOperationalSummary(taf) {
     if (!taf || !taf.fcsts || !taf.fcsts.length) {
         return {
-            base: {
-                label: "SEM DADOS",
-                className: "is-warning",
-                detail: "--"
-            },
-            risk: {
-                label: "SEM DADOS",
-                className: "is-warning",
-                detail: "--"
-            },
-            trend: {
-                label: "SEM DADOS",
-                className: "is-warning",
-                detail: "--"
-            }
+            base: { label: "SEM DADOS", className: "is-warning", detail: "--" },
+            risk: { label: "SEM DADOS", className: "is-warning", detail: "--" },
+            trend: { label: "SEM DADOS", className: "is-warning", detail: "--" }
         };
     }
 
     const fcsts = taf.fcsts;
 
     // =========================
-    // 1. ESTADO BASE (primeiro bloco)
+    // 1. ESTADO BASE
     // =========================
     const first = fcsts[0];
+    const firstScore = getForecastBlockRisk(first);
 
-    const firstRisk = getForecastBlockRisk(first);
-
-    let base = {
-        label: "Condição inicial estável",
-        className: "is-success",
-        detail: ""
-    };
-
-    if (firstRisk === 2) {
+    let base = { label: "Condição inicial estável", className: "is-success", detail: "" };
+    if (firstScore === 2) {
         base.label = "Condição inicial condicionada";
         base.className = "is-warning";
-    }
-
-    if (firstRisk === 3) {
+    } else if (firstScore === 3) {
         base.label = "Condição inicial crítica";
         base.className = "is-danger";
     }
@@ -315,15 +293,13 @@ function getForecastOperationalSummary(taf) {
     const windDir = getWindDirection(first.wdir);
     const windSpd = first.wspd ?? "--";
     const vis = visibilityToKm(first.visib);
-
     base.detail = `Vento ${windDir} ${windSpd} kt · Vis ${vis}`;
 
-
     // =========================
-    // 2. PRINCIPAL AGRAVAMENTO (pior bloco)
+    // 2. PRINCIPAL AGRAVAMENTO (Pior Bloco)
     // =========================
     let worstBlock = first;
-    let worstScore = getForecastBlockRisk(first);
+    let worstScore = firstScore;
 
     fcsts.forEach(function (fcst) {
         const score = getForecastBlockRisk(fcst);
@@ -333,32 +309,22 @@ function getForecastOperationalSummary(taf) {
         }
     });
 
-    let risk = {
-        label: "Sem agravamento relevante",
-        className: "is-success",
-        detail: "Sem alterações significativas nas próximas 24h"
-    };
-
+    let risk = { label: "Sem agravamento relevante", className: "is-success", detail: "Sem alterações significativas" };
     if (worstScore === 2) {
         risk.label = "Agravamento moderado";
         risk.className = "is-warning";
-    }
-
-    if (worstScore === 3) {
+    } else if (worstScore === 3) {
         risk.label = "Agravamento crítico";
         risk.className = "is-danger";
     }
 
     const from = formatUnixZuluTime(worstBlock.timeFrom);
     const to = formatUnixZuluTime(worstBlock.timeTo);
-
     risk.detail = `${from}–${to} · ${describeForecastBlock(worstBlock)}`;
 
-
     // =========================
-    // 3. EVOLUÇÃO (comparação início vs fim)
+    // 3. EVOLUÇÃO (Trend) - Lógica de Segurança
     // =========================
-    const firstScore = getForecastBlockRisk(fcsts[0]);
     const lastScore = getForecastBlockRisk(fcsts[fcsts.length - 1]);
 
     let trend = {
@@ -367,19 +333,29 @@ function getForecastOperationalSummary(taf) {
         detail: "Condições estáveis ao longo do período"
     };
 
-    if (lastScore > firstScore) {
+    // CASO ESPECIAL: Se houver um pico de perigo no meio, mas o fim for bom
+    if (worstScore > firstScore && worstScore > lastScore) {
+        trend = {
+            label: "Janelas de Instabilidade",
+            className: "is-warning",
+            detail: "Atenção: existem períodos críticos previstos entre as janelas estáveis."
+        };
+        if (worstScore === 3) trend.className = "is-danger";
+    }
+    // CASO: Fim pior que o início
+    else if (lastScore > firstScore) {
         trend = {
             label: "A degradar",
             className: "is-danger",
             detail: "Os blocos finais indicam agravamento face ao início do período"
         };
     }
-
-    if (lastScore < firstScore) {
+    // CASO: Fim melhor que o início
+    else if (lastScore < firstScore) {
         trend = {
             label: "A melhorar",
             className: "is-positive",
-            detail: "Os blocos finais indicam melhoria face ao início do período"
+            detail: "Os blocos finais indicam melhoria progressiva"
         };
     }
 

@@ -59,17 +59,7 @@ $userLogado = Yii::$app->user->identity;
                     ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
                     ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
                     ['label' => 'Gestão Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
-
-                    //OPERAÇÕES
-                    [
-                        'label' => 'Operações',
-                        'icon' => 'tachometer-alt',
-                        'options' => ['class' => 'nav-item nav-ops'], //Dá a cor
-                        'items' => [
-                            ['label' => 'Incidents', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
-                            ['label' => 'Tasks', 'url' => ['task/index'], 'icon' => 'tasks'],
-                        ],
-                    ],
+                    ['label' => 'Gestão de Incidentes', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
 
                     // LOCALIZAÇÃO / TERRENO
                     [

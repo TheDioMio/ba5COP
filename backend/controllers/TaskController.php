@@ -10,6 +10,7 @@ use common\models\StatusType;
 use common\models\Task;
 use app\models\TaskSearch;
 use common\models\User;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -71,7 +72,8 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate($incident_id = null)
+    {
         $model = new Task();
         $locationsArray = Location::dropDown();
         $incidentsArray = Incident::dropDown();
@@ -81,10 +83,23 @@ class TaskController extends Controller
 
         if ($this->request->isPost) {
             $model->load($this->request->post());
+
+            if ($incident_id !== null) {
+                $incident = Incident::findOne($incident_id);
+
+                if ($incident !== null) {
+                    $model->incident_id = $incident->id;
+                    $model->location_id = $incident->location_id;
+                }
+            }
+
             $entity = Entity::createEntity(Entity::TASK_ID);
 
             if ($entity !== null) {
                 $model->entity_id = $entity->id;
+                $model->status_type_id = StatusType::STATUS_TASK_NEW;
+                $model->created_by = Yii::$app->user->id;
+                $model->created_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
                     return $this->redirect(['view', 'id' => $model->id]);
@@ -92,6 +107,15 @@ class TaskController extends Controller
             }
         } else {
             $model->loadDefaultValues();
+
+            if ($incident_id !== null) {
+                $incident = Incident::findOne($incident_id);
+
+                if ($incident !== null) {
+                    $model->incident_id = $incident->id;
+                    $model->location_id = $incident->location_id;
+                }
+            }
         }
 
         return $this->render('create', [
@@ -161,5 +185,27 @@ class TaskController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionChangeStatus($id) {
+        $model = $this->findModel($id);
+
+        switch ($model->status_type_id) {
+            case StatusType::STATUS_TASK_NEW:
+                $model->status_type_id = StatusType::STATUS_TASK_DOING;
+                break;
+
+            case StatusType::STATUS_TASK_DOING:
+                $model->status_type_id = StatusType::STATUS_TASK_DONE;
+                break;
+
+            default:
+                return $this->redirect(Yii::$app->request->referrer ?: ['incident/index']);
+        }
+
+        $model->save(false);
+
+        return $this->redirect(Yii::$app->request->referrer ?: ['incident/index']);
     }
 }

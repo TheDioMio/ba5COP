@@ -164,7 +164,15 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             . '<td colspan="10" class="p-0">'
                             . '<div class="m-2 p-3 border rounded bg-light">'
                             . '<div class="d-flex justify-content-between align-items-start mb-3">'
-                            . '<div>'
+                            . '<div class="ms-auto">'
+                            . Html::a(
+                                '<i class="fas fa-plus-circle"></i>',
+                                ['task/create', 'incident_id' => $model->id],
+                                [
+                                    'class' => 'btn btn-success btn-xs',
+                                    'title' => 'Criar tarefa',
+                                ]
+                            )
                             . '</div>'
                             . '<div class="text-right">'
                             . '</div>'
@@ -175,10 +183,6 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                                 'tableOptions' => ['class' => 'table table-hover table-striped table-sm mb-0'],
                                 'layout' => "{items}",
                                 'columns' => [
-                                    [
-                                        'attribute' => 'id',
-                                        'contentOptions' => ['style' => 'width: 70px;'],
-                                    ],
                                     'title',
                                     [
                                         'attribute' => 'priority_id',
@@ -206,10 +210,47 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                                         'label' => 'Ações',
                                         'format' => 'raw',
                                         'value' => function ($task) {
-                                            return Html::a('Abrir', ['/task/view', 'id' => $task->id], ['class' => 'btn btn-xs btn-secondary mr-1'])
-                                                . Html::a('Editar', ['/task/update', 'id' => $task->id], ['class' => 'btn btn-xs btn-warning']);
+                                            $buttons = Html::a(
+                                                'Abrir',
+                                                ['/task/view', 'id' => $task->id],
+                                                ['class' => 'btn btn-xs btn-secondary mr-1']
+                                            );
+
+                                            $buttons .= Html::a(
+                                                'Editar',
+                                                ['/task/update', 'id' => $task->id],
+                                                ['class' => 'btn btn-xs btn-warning mr-1']
+                                            );
+
+                                            if ($task->status_type_id == StatusType::STATUS_TASK_NEW) {
+                                                $buttons .= Html::a(
+                                                    'Iniciar',
+                                                    ['/task/change-status', 'id' => $task->id],
+                                                    [
+                                                        'class' => 'btn btn-xs btn-primary',
+                                                        'data' => [
+                                                            'method' => 'post',
+                                                            'confirm' => 'Passar esta tarefa para DOING?',
+                                                        ],
+                                                    ]
+                                                );
+                                            } elseif ($task->status_type_id == StatusType::STATUS_TASK_DOING) {
+                                                $buttons .= Html::a(
+                                                    'Concluir',
+                                                    ['/task/change-status', 'id' => $task->id],
+                                                    [
+                                                        'class' => 'btn btn-xs btn-success',
+                                                        'data' => [
+                                                            'method' => 'post',
+                                                            'confirm' => 'Marcar esta tarefa como DONE?',
+                                                        ],
+                                                    ]
+                                                );
+                                            }
+
+                                            return $buttons;
                                         },
-                                        'contentOptions' => ['style' => 'width: 120px; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 220px; text-align: center;'],
                                     ],
                                 ],
                             ])

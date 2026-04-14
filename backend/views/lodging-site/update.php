@@ -14,10 +14,11 @@ $this->params['breadcrumbs'][] = 'Update';
     <div class="card card-outline card-success shadow-sm">
         <div class="card-header">
             <div class="card-tools">
-                <?= Html::button('<i class="fas fa-arrow-left"></i>', [
-                    'class' => 'btn btn-default',
-                    'onclick' => 'history.back();',
-                ]) ?>
+                <?= Html::button('<i class="fas fa-arrow-left"></i>',
+                    [
+                        'class' => 'btn btn-default',
+                        'onclick' => 'history.back();',
+                    ]) ?>
             </div>
         </div>
         <div class="card-body">

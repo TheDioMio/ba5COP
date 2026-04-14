@@ -204,7 +204,7 @@ class Task extends \yii\db\ActiveRecord {
      */
     public static function getClosedCriticalTasks() {
         $criticalTasks =  self::find()
-            ->with(['statusType', 'tasks.assignedToUser'])
+            ->with(['statusType', 'assignedTo'])
             ->where(['priority_id' => self::MAX_PRIORITY])
             ->andWhere(['status_type_id' => [StatusType::STATUS_TASK_DONE]])
             ->asArray()
