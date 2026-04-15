@@ -33,10 +33,18 @@ $copMapOptions = [
     'locationsIndexUrl' => Url::to(['/site/cop-data']),
 ];
 ?>
-
     <div class="cop-dashboard">
         <!--Zona KPI's-->
         <section class="cop-topbar">
+
+            <button type="button"
+                    id="copNavbarToggle"
+                    class="cop-navbar-toggle-inline"
+                    title="Esconder barra superior"
+                    aria-label="Esconder barra superior">
+                <i class="fa-solid fa-chevron-up"></i>
+            </button>
+
             <article class="cop-kpi-card kpi-clickable"
                      role="region"
                      tabindex="0"
@@ -1702,7 +1710,7 @@ $copMapOptions = [
 
 <!--JS para correr o mapa-->
 <?php
-$this->registerJs('initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');
+$this->registerJs('window.copMapReadOnly = initCopMapReadOnly(' . Json::htmlEncode($copMapOptions) . ');');
 ?>
 
 <!--JS para switch de botões no KPI de apoios (lateral direita)-->
@@ -1784,5 +1792,74 @@ document.querySelectorAll('.cop-support-switch-meteo').forEach(function (switchE
         });
     });
 });
+JS);
+?>
+
+
+<?php
+$this->registerJs(<<<JS
+(function () {
+    const toggleBtn = document.getElementById('copNavbarToggle');
+    if (!toggleBtn) return;
+
+    const body = document.body;
+    const icon = toggleBtn.querySelector('i');
+    const storageKey = 'cop-navbar-hidden';
+
+    function syncNavbarState() {
+        const isHidden = body.classList.contains('cop-navbar-hidden');
+
+        if (icon) {
+            icon.classList.remove('fa-chevron-up', 'fa-chevron-down');
+            icon.classList.add(isHidden ? 'fa-chevron-down' : 'fa-chevron-up');
+        }
+
+        toggleBtn.setAttribute(
+            'title',
+            isHidden ? 'Mostrar barra superior' : 'Esconder barra superior'
+        );
+
+        toggleBtn.setAttribute(
+            'aria-label',
+            isHidden ? 'Mostrar barra superior' : 'Esconder barra superior'
+        );
+    }
+
+    function refreshCopMap() {
+        const mapApi = window.copMapReadOnly;
+        if (!mapApi) return;
+
+        const isHidden = body.classList.contains('cop-navbar-hidden');
+
+        if (isHidden && typeof mapApi.fitCover === 'function') {
+            mapApi.fitCover();
+        } else if (!isHidden && typeof mapApi.fitContain === 'function') {
+            mapApi.fitContain();
+        }
+    }
+
+    if (localStorage.getItem(storageKey) === '1') {
+        body.classList.add('cop-navbar-hidden');
+    }
+
+    syncNavbarState();
+
+    setTimeout(refreshCopMap, 200);
+    setTimeout(refreshCopMap, 500);
+
+    toggleBtn.addEventListener('click', function () {
+        body.classList.toggle('cop-navbar-hidden');
+
+        const isHidden = body.classList.contains('cop-navbar-hidden');
+        localStorage.setItem(storageKey, isHidden ? '1' : '0');
+
+        syncNavbarState();
+
+        setTimeout(refreshCopMap, 50);
+        setTimeout(refreshCopMap, 200);
+        setTimeout(refreshCopMap, 400);
+        setTimeout(refreshCopMap, 700);
+    });
+})();
 JS);
 ?>
