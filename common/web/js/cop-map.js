@@ -33,11 +33,11 @@ window.initCopMap = function (opts) {
         drawRectangle: true,
         drawPolygon: true,
         drawCircle: true,
-        drawCircleMarker: true,
-        drawText: true,
-        editMode: true,
-        dragMode: true,
-        cutPolygon: true,
+        drawCircleMarker: false,
+        drawText: false,
+        editMode: false,
+        dragMode: false,
+        cutPolygon: false,
         removalMode: true,
     });
 

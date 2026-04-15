@@ -19,7 +19,12 @@ use yii\helpers\ArrayHelper;
  * @property Task[] $tasks
  */
 class StatusType extends \yii\db\ActiveRecord {
+    public const STATUS_GREEN = 1;
+    public const STATUS_YELLOW = 2;
+    public const STATUS_RED = 3;
 
+
+//-----------------------------------------------------\\
     public const STATUS_INCIDENT_OPEN = 4;
     public const STATUS_INCIDENT_IN_PROGRESS = 5;
     public const STATUS_INCIDENT_RESOLVED = 6;
@@ -133,5 +138,34 @@ class StatusType extends \yii\db\ActiveRecord {
             ->orderBy(['id'=> SORT_ASC])->asArray()->all();
 
         return ArrayHelper::map($dropDown, 'id', 'description');
+    }
+
+    public static function getStatusLabels($statusID) {
+        $label = '';
+        switch ($statusID):
+            case (self::STATUS_GREEN):
+            case (self::STATUS_TASK_DONE):
+            case (self::STATUS_INCIDENT_RESOLVED):
+            case (self::STATUS_REQUEST_DONE):
+            case (self::STATUS_REQUEST_APPROVED):
+                return $label = 'badge bg-success';
+
+            case (self::STATUS_YELLOW):
+            case (self::STATUS_TASK_DOING):
+            case (self::STATUS_INCIDENT_IN_PROGRESS):
+                return $label = 'badge bg-warning';
+
+            case (self::STATUS_RED):
+            case (self::STATUS_REQUEST_REJECTED):
+                return $label = 'badge bg-danger';
+
+            case (self::STATUS_TASK_NEW):
+            case (self::STATUS_INCIDENT_OPEN):
+            case (self::STATUS_REQUEST_NEW):
+                return $label = 'badge bg-primary';
+
+            default:
+                return $label = 'badge bg-light';
+        endswitch;
     }
 }

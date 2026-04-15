@@ -316,20 +316,23 @@ class SiteController extends Controller
     }
 
 
-    public function actionCopData()
-    {
+    public function actionCopData() {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $rows = (new \yii\db\Query())
-            ->from('location')
+            ->from(['l' => 'location'])
+            ->leftJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
+            ->leftJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
             ->select([
-                'id',
-                'name',
-                'notes',
-                'location_type_id',
-                'status_type_id',
-                'is_critical',
-                'geometry',
+                'l.id',
+                'l.name',
+                'l.notes',
+                'l.location_type_id',
+                'l.status_type_id',
+                'l.is_critical',
+                'l.geometry',
+                'location_type_name' => 'lt.description',
+                'status_type_name' => 'st.description',
             ])
             ->all();
 
@@ -353,7 +356,9 @@ class SiteController extends Controller
                     'name' => $r['name'],
                     'notes' => $r['notes'],
                     'location_type_id' => (int)$r['location_type_id'],
+                    'location_type_name' => $r['location_type_name'] ?? '—',
                     'status_type_id' => (int)$r['status_type_id'],
+                    'status_type_name' => $r['status_type_name'] ?? '—',
                     'is_critical' => (int)$r['is_critical'],
                 ],
                 'geometry' => $geom,

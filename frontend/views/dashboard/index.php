@@ -1,6 +1,7 @@
 <?php
 
 use common\assets\CopMapReadOnlyAsset;
+use common\models\StatusType;
 use frontend\assets\DashboardAsset;
 use yii\bootstrap5\Modal;
 use yii\data\ArrayDataProvider;
@@ -814,9 +815,16 @@ $copMapOptions = [
                         'contentOptions' => ['class' => 'cop-col-priority'],
                     ],
                     [
-                        'label' => 'Estado',
-                        'value' => 'statusType.description',
-                        'contentOptions' => ['class' => 'cop-col-status'],
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                            return Html::tag('span', Html::encode($model->statusType->description), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem; color: black;',
+                            ]);
+                        }
                     ],
                 ],
             ]) ?>
@@ -889,8 +897,16 @@ $copMapOptions = [
                         'value' => 'priority.description',
                     ],
                     [
-                        'label' => 'Estado',
-                        'value' => 'statusType.description',
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                            return Html::tag('span', Html::encode($model->statusType->description), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem; color: black;',
+                            ]);
+                        }
                     ],
                 ],
             ]) ?>
@@ -966,8 +982,16 @@ $copMapOptions = [
                         'value' => 'priority.description',
                     ],
                     [
-                        'label' => 'Estado',
-                        'value' => 'statusType.description',
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status);
+
+                            return Html::tag('span', Html::encode($model->statusType->description), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem; color: black;',
+                            ]);
+                        }
                     ],
                 ],
             ]) ?>
@@ -1020,7 +1044,7 @@ $copMapOptions = [
         <h6>Tarefas críticas ativas</h6>
     </div>
 
-<?php if ($externalRequestsProvider->getCount() > 0): ?>
+<?php if ($criticalTasksProvider->getCount() ): ?>
     <div class="cop-modal-table-wrap">
         <div class="cop-modal-table-scroll">
             <?= GridView::widget([
@@ -1031,6 +1055,21 @@ $copMapOptions = [
                 'columns' => [
                     'title',
                     'description',
+                    [
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'contentOptions' => [
+                            'class' => 'text-center'
+                        ],
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                            return Html::tag('span', Html::encode($model->statusType->description), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem; color: black;',
+                            ]);
+                        }
+                    ],
                 ],
             ]) ?>
         </div>
@@ -1186,10 +1225,21 @@ $copMapOptions = [
                         'summary' => '',
                         'columns' => [
                             'name',
-                            [
-                                'label' => 'Status',
-                                'value' => 'statusType.description',
-                            ],
+                             [
+                               'label' => 'Status',
+                               'format' => 'raw',
+                                 'contentOptions' => [
+                                     'class' => 'text-center'
+                                 ],
+                               'value' => function ($model) {
+                                    $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                                   return Html::tag('span', Html::encode(' '), [
+                                       'class' => $badge,
+                                       'style' => 'font-size: 0.95rem;',
+                                   ]);
+                               }
+                             ],
                         ],
                     ]) ?>
                 </div>
@@ -1211,7 +1261,18 @@ $copMapOptions = [
                             'name',
                             [
                                 'label' => 'Status',
-                                'value' => 'statusType.description',
+                                'format' => 'raw',
+                                'contentOptions' => [
+                                    'class' => 'text-center'
+                                ],
+                                'value' => function ($model) {
+                                    $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                                    return Html::tag('span', Html::encode(' '), [
+                                        'class' => $badge,
+                                        'style' => 'font-size: 0.95rem;',
+                                    ]);
+                                }
                             ],
                         ],
                     ]) ?>
@@ -1278,8 +1339,16 @@ $copMapOptions = [
                 'columns' => [
                         'name',
                     [
-                            'label' => 'status',
-                        'value' => 'statusType.description'
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                            return Html::tag('span', Html::encode(' '), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem;',
+                            ]);
+                        }
                     ],
                     'notes'
                 ],

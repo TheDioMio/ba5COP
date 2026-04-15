@@ -35,8 +35,8 @@ window.initCopMapReadOnly = function (opts) {
 
         const popupHtml = `
             <strong>${item.name ?? 'Sem nome'}</strong><br>
-            Tipo: ${item.location_type_id}<br>
-            Estado: ${item.status_type_id}<br>
+            Tipo: ${item.location_type_name ?? '—'}<br>
+            Estado: ${item.status_type_name ?? '—'}<br>
             Crítico: ${item.is_critical ? 'Sim' : 'Não'}<br>
             ${item.notes ? `Notas: ${item.notes}` : ''}
         `;
@@ -61,7 +61,9 @@ window.initCopMapReadOnly = function (opts) {
                     id: feature.id,
                     name: props.name ?? '',
                     location_type_id: props.location_type_id ?? 3,
+                    location_type_name: props.location_type_name ?? '—',
                     status_type_id: props.status_type_id ?? 1,
+                    status_type_name: props.status_type_name ?? '—',
                     notes: props.notes ?? '',
                     is_critical: props.is_critical ?? 0
                 });
