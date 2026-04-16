@@ -20,6 +20,7 @@ MeteoAsset::register($this);
 
 $asset = CopMapReadOnlyAsset::register($this);
 $imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
+$mapIconsBaseUrl = $asset->baseUrl . '/img/map-icons';
 
 $copMapOptions = [
     'elId' => 'cop-map',
@@ -31,6 +32,7 @@ $copMapOptions = [
     'maxZoom' => 4,
     'scrollWheelZoom' => true,
     'locationsIndexUrl' => Url::to(['/site/cop-data']),
+    'iconsBaseUrl' => $mapIconsBaseUrl,
 ];
 ?>
     <div class="cop-dashboard">

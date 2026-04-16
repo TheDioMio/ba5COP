@@ -7,6 +7,8 @@
 5 - Tabela de WO's criticas no KPI não está a listar as tarefas críticas correspondentes.
 6 - Quando se tenta atualizar um incidente, dá erro por variável indefinida: $arrayIncidentTypes
 7 - Quando se apaga entidades, aquilo não apaga a entidade em questão da tabela das entidades (IMENSAS entidades por apagar).
+8 - Ajustar a view do mapa quando se oculta a navbar no dashboard frontend
+9 - Mapa demora imenso a carregar os objetos lá para dentro
 
 
 
