@@ -25,3 +25,4 @@ Mudar o varchar dos estados para mais... tipo sei la... 30? Todos os varchars at
 Nos incidentes, não faz sentido ter "em progresso", só nas tarefas. Status dos incidentes deviam de ser só "abero" // "resolvido"
 No request, trocar o "status" para "status_type_id"
 Faz sentido ter "done" como status nos pedidos???? acho que n
+Colocar geolocalização nos alojamentos, para eles serem também representados no mapa.

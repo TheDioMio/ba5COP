@@ -204,26 +204,53 @@ window.initCopMapReadOnly = function (opts) {
             onEachFeature: function (feature, layer) {
                 const item = feature.properties || {};
 
-                // Tenta ler primeiro os campos "bonitos" vindos do backend,
-                // e só depois os nomes alternativos antigos.
+                // Tenta ler primeiro os campos "bonitos" vindos do backend, e só depois os nomes alternativos antigos.
                 const locationType = item.location_type_name ?? item.location_type ?? '—';
                 const statusType = item.status_type_name ?? item.status_type ?? '—';
 
                 // Constrói o HTML do popup.
                 const popupHtml = `
-                    <strong>${item.name ?? 'Sem nome'}</strong><br>
-                    Tipo: ${locationType}<br>
-                    Estado: ${statusType}<br>
-                    Crítico: ${Number(item.is_critical) ? 'Sim' : 'Não'}<br>
-                    ${item.notes ? `<br>Notas: ${item.notes}` : ''}
+                    <div class="cop-popup">
+                        <div class="cop-popup__head">
+                            <div class="cop-popup__title-wrap">
+                                <span class="cop-popup__title">${item.name ?? 'Sem nome'}</span>
+                                ${
+                                    Number(item.is_critical)
+                                        ? '<span class="cop-popup__badge cop-popup__badge--critical">Crítico</span>'
+                                        : '<span class="cop-popup__badge cop-popup__badge--normal">Normal</span>'
+                                }
+                            </div>
+                        </div>
+                
+                        <div class="cop-popup__body">
+                            <div class="cop-popup__row">
+                                <span class="cop-popup__label">Tipo</span>
+                                <span class="cop-popup__value">${locationType ?? '—'}</span>
+                            </div>
+                
+                            ${
+                                    item.notes
+                                        ? `
+                                    <div class="cop-popup__notes">
+                                        <span class="cop-popup__label">Notas</span>
+                                        <div class="cop-popup__notes-text">${item.notes}</div>
+                                    </div>
+                                    `
+                                        : ''
+                                }
+                        </div>
+                    </div>
                 `;
 
                 // Associa o popup à feature/layer.
-                layer.bindPopup(popupHtml);
+                layer.bindPopup(popupHtml, {
+                    className: 'cop-leaflet-popup',
+                    maxWidth: 320,
+                    minWidth: 240
+                });
             },
 
             // Define o estilo de linhas e polígonos.
-            // Isto não afeta pontos quando usamos pointToLayer.
             style: function (feature) {
                 const item = feature.properties || {};
 
@@ -310,8 +337,7 @@ window.initCopMapReadOnly = function (opts) {
             return;
         }
 
-        // Se não houver dados embebidos nem URL para fetch,
-        // o mapa fica só com a imagem de fundo.
+        // Se não houver dados embebidos nem URL para fetch, o mapa fica só com a imagem de fundo.
         console.warn('initCopMapReadOnly: nem featureCollection nem locationsIndexUrl foram fornecidos');
     }
 

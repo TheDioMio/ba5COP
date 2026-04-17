@@ -1313,5 +1313,104 @@ body.dashboard-page-body.cop-navbar-hidden .cop-dashboard {
     }
 }
 
+.cop-leaflet-popup .leaflet-popup-content-wrapper {
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(16, 28, 42, 0.98) 0%, rgba(10, 19, 30, 0.98) 100%);
+    color: #e9f2ff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+}
+
+.cop-leaflet-popup .leaflet-popup-content {
+    margin: 0;
+    min-width: 240px;
+}
+
+.cop-leaflet-popup .leaflet-popup-tip {
+    background: rgba(10, 19, 30, 0.98);
+}
+
+.cop-popup {
+    font-size: 0.92rem;
+}
+
+.cop-popup__head {
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.cop-popup__title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.cop-popup__title {
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.25;
+    color: #ffffff;
+}
+
+.cop-popup__body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cop-popup__row,
+.cop-popup__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cop-popup__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(233, 242, 255, 0.65);
+}
+
+.cop-popup__value,
+.cop-popup__notes-text {
+    color: #e9f2ff;
+    line-height: 1.4;
+}
+
+.cop-popup__notes-text {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.cop-popup__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.cop-popup__badge--critical {
+    background: rgba(220, 53, 69, 0.18);
+    color: #ffb3bd;
+    border: 1px solid rgba(220, 53, 69, 0.32);
+}
+
+.cop-popup__badge--normal {
+    background: rgba(25, 135, 84, 0.18);
+    color: #9fe3bd;
+    border: 1px solid rgba(25, 135, 84, 0.32);
+}
+
 
 
