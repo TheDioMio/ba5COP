@@ -37,6 +37,7 @@ class LodgingEntry extends \yii\db\ActiveRecord
             [['notes'], 'default', 'value' => null],
             [['lodging_site_id', 'people_count', 'checkin_at'], 'required'],
             [['lodging_site_id', 'people_count'], 'integer'],
+            [['people_count'], 'validateCapacity'],  //regra de validar capacidade antes de os colocar lá.
             [['checkin_at', 'checkout_at'], 'safe'],
             [['checkout_at'], 'default', 'value' => null],
             [['notes'], 'string', 'max' => 30],
@@ -132,5 +133,30 @@ class LodgingEntry extends \yii\db\ActiveRecord
             ->joinWith('unit')
             ->where(['lodging_entry.checkout_at' => null])
             ->andWhere(['!=', 'unit.branch_id', 1]);
+    }
+
+
+    /**
+     * Validador personalizado para a capacidade do alojamento
+     */
+    public function validateCapacity($attribute, $params) {
+        if (!$this->hasErrors()) {
+            $site = $this->lodgingSite; // Relação com o LodgingSite
+
+            if ($site) {
+                $available = $site->getAvailableBeds(false);
+
+                // Se for um UPDATE, temos de somar o valor que já estava ocupado por este registo
+                // para não nos validarmos contra nós próprios
+                if (!$this->isNewRecord) {
+                    $oldAttributes = $this->getOldAttributes();
+                    $available += $oldAttributes['people_count'];
+                }
+
+                if ($this->people_count > $available) {
+                    $this->addError($attribute, "Capacidade excedida! Este alojamento só tem {$available} camas disponíveis.");
+                }
+            }
+        }
     }
 }

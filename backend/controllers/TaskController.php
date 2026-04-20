@@ -72,8 +72,7 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($incident_id = null)
-    {
+    public function actionCreate($incident_id = null) {
         $model = new Task();
         $locationsArray = Location::dropDown();
         $incidentsArray = Incident::dropDown();

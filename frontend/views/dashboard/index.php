@@ -99,7 +99,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#bedsModal">
                 <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning"><?= $overallAvailability ?></div>
+                <div class="cop-kpi-value is-warning"><?=$availableBeds ?? 0?></div>
                 <p>disponíveis</p>
             </article>
 
@@ -109,7 +109,7 @@ $copMapOptions = [
                      data-bs-toggle="modal"
                      data-bs-target="#externalManpower">
                 <span class="cop-kpi-label">Efetivos externos</span>
-                <div class="cop-kpi-value is-warning"><?= $externalOccupancy ?></div>
+                <div class="cop-kpi-value is-warning"><?= $externalOccupancy ?? 0?></div>
                 <p>ativos</p>
             </article>
 
@@ -629,22 +629,22 @@ $copMapOptions = [
     <div class="cop-modal-summary-4">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas operacionais</span>
-            <strong class="cop-modal-kpi-value">246</strong>
+            <strong class="cop-modal-kpi-value"><?=$operationalBeds ?? 0?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas ocupadas</span>
-            <strong class="cop-modal-kpi-value">118</strong>
+            <strong class="cop-modal-kpi-value"><?=$occupiedBeds ?? 0?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas disponíveis</span>
-            <strong class="cop-modal-kpi-value is-success">128</strong>
+            <strong class="cop-modal-kpi-value is-success"><?=$availableBeds ?? 0?></strong>
         </div>
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Camas indisponíveis</span>
-            <strong class="cop-modal-kpi-value is-warning">56</strong>
+            <strong class="cop-modal-kpi-value is-warning"><?=$unavailableBeds ?? 0?></strong>
         </div>
     </div>
 
@@ -741,13 +741,13 @@ $copMapOptions = [
                     [
                         'label' => 'Ocupadas',
                         'value' => function ($model) {
-                            return $model->occupancy() ?? 0;
+                            return $model->getOccupiedBeds() ?? 0;
                         },
                     ],
                     [
                         'label' => 'Disponíveis',
                         'value' => function ($model) {
-                            return $model->getCurrentCapacity(false) ?? 0;
+                            return $model->getAvailableBeds(false) ?? 0;
                         },
                     ],
                 ],
@@ -1117,7 +1117,7 @@ $copMapOptions = [
     <div class="cop-modal-summary cop-modal-summary-4">
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Efetivos agora</span>
-            <strong class="cop-modal-kpi-value is-success"><?= $externalOccupancy ?></strong>
+            <strong class="cop-modal-kpi-value is-success"><?= $externalOccupancy ?? 0?></strong>
         </div>
 
         <div class="cop-modal-kpi">
@@ -1132,7 +1132,7 @@ $copMapOptions = [
 
         <div class="cop-modal-kpi">
             <span class="cop-modal-kpi-label">Diferença H24</span>
-            <strong class="cop-modal-kpi-value is-warning"><?= $externalOccupancyDifference24H ?></strong>
+            <strong class="cop-modal-kpi-value is-warning"><?= $externalOccupancyDifference24H ?? 0?></strong>
         </div>
     </div>
 

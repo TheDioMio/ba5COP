@@ -49,13 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Disponibilidade Atual',
                         'format' => 'raw',
                         'value' => function ($model) {
-                            return $model->getCurrentCapacity(true);
-                        },
-                    ],
-                    [
-                        'label' => 'Geometria',
-                        'value' => function ($model) {
-                            return empty($model->geometry) ? 'Não' : 'Sim';
+                            return $model->getAvailableBeds(true);
                         },
                     ],
                     'notes',

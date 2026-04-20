@@ -82,10 +82,11 @@ class LodgingSite extends \yii\db\ActiveRecord
     }
 
     /**
-     * Devolve o número de camas ocupadas.
+     * Camas ocupadas neste alojamento.
+     *
+     * @return int
      */
-    public function occupancy()
-    {
+    public function getOccupiedBeds() {
         $occupancy = LodgingEntry::find()
             ->where(['lodging_site_id' => $this->id])
             ->andWhere(['checkout_at' => null]) // só pessoas ainda alojadas
@@ -100,47 +101,49 @@ class LodgingSite extends \yii\db\ActiveRecord
      *
      * O $badge é boolean e determina se devolve só o número ou HTML formatado.
      */
-    public function getCurrentCapacity($badge)
-    {
-        $totalCapacity = (int)$this->capacity_total;
-        $occupancy = $this->occupancy();
+    public function getAvailableBeds(bool $badge = false) {
+        $occupied = $this->getOccupiedBeds();
+        $availableBeds = $this->capacity_available - $occupied;
 
-        $currentCapacity = $totalCapacity - $occupancy;
 
-        if ($badge == true) {
-            // percentagem de ocupação/pressão da capacidade
-            $divisor = $totalCapacity > 0 ? $totalCapacity : 1;
-            $percentageAvailable = ($currentCapacity / $divisor) * 100;
-
-            if ($percentageAvailable <= 0) {
-                $color = 'red';
-            } elseif ($percentageAvailable < 20) {
-                $color = 'orange';
-            } else {
-                $color = 'green';
-            }
-
-            return "<span style='color:$color;font-weight:bold;'>$currentCapacity</span>";
+        if (!$badge) {
+            return $availableBeds;
         }
 
-        return $currentCapacity;
+        $operationalBeds = $this->capacity_available;
+        $divisor = $operationalBeds > 0 ? $operationalBeds : 1;
+        $percentageAvailable = ($availableBeds / $divisor) * 100;
+
+        if ($percentageAvailable <= 0) {
+            $color = 'red';
+        } elseif ($percentageAvailable < 20) {
+            $color = 'orange';
+        } else {
+            $color = 'green';
+        }
+
+        return "<span style='color:{$color};font-weight:bold;'>{$availableBeds}</span>";
     }
 
     /**
-     * Devolve o número total de camas (capacidade total) em todos os alojamentos.
+     * Total de camas físicas em todos os alojamentos.
+     *
+     * @return int
      */
-    public static function getOverallCapacity()
+    public static function getTotalBedsAll()
     {
         $overallBeds = self::find()->sum('capacity_total');
         return (int)($overallBeds ?? 0);
     }
 
     /**
-     * Devolve o número total de camas disponíveis em todos os alojamentos.
+     * Total de camas disponíveis em todos os alojamentos.
+     * Operacionais - ocupadas.
+     *
+     * @return int
      */
-    public static function getOverallAvailability()
-    {
-        $overallBeds = self::getOverallCapacity();
+    public static function getTotalAvailableBeds() {
+        $overallBeds = self::getTotalBedsAll();
         $takenBeds = LodgingEntry::getOverallOccupancy();
 
         return $overallBeds - (int)($takenBeds ?? 0);
@@ -156,8 +159,41 @@ class LodgingSite extends \yii\db\ActiveRecord
             ->all();
 
         return array_filter($sites, function ($site) {
-            return $site->getCurrentCapacity(false) > 0;
+            return $site->getAvailableBeds(false) > 0;
         });
+    }
+
+    /**
+     * Total de camas operacionais em todos os alojamentos.
+     *
+     * @return int
+     */
+    public static function getTotalOperationalBeds(): int
+    {
+        $total = self::find()->sum('capacity_available');
+        return (int)($total ?? 0);
+    }
+
+    /**
+     * Total de camas ocupadas em todos os alojamentos.
+     *
+     * @return int
+     */
+    public static function getTotalOccupiedBeds(): int
+    {
+        return (int)(LodgingEntry::getOverallOccupancy() ?? 0);
+    }
+
+    /**
+     * Total de camas indisponíveis em todos os alojamentos.
+     * Totais - operacionais.
+     *
+     * @return int
+     */
+    public static function getTotalUnavailableBeds(): int
+    {
+        $unavailable = self::getTotalBedsAll() - self::getTotalOperationalBeds();
+        return max(0, $unavailable);
     }
 
     /**

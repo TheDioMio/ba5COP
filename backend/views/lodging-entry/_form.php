@@ -10,15 +10,29 @@ use yii\widgets\ActiveForm;
 
 <div class="lodging-entry-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'enableClientValidation' => true, // Garante que valida no browser
+        'enableAjaxValidation' => false,
+    ]); ?>
 
     <?= $form->field($model, 'lodging_site_id')->hiddenInput()->label(false) ?>
+
+    <?php
+    //mostrar ao user quanto espaço há antes de ele escrever
+    $disponivel = $model->lodgingSite ? $model->lodgingSite->getAvailableBeds(false) : '—';
+    ?>
+    <div class="alert alert-info">
+        Camas disponíveis neste alojamento: <strong><?= $disponivel ?></strong>
+    </div>
 
     <?= $form->field($model, 'unit_id')
         ->dropDownList($unitArray, ['prompt' => '-- UNIDADE --'])
         ->label('Unidade') ?>
 
-    <?= $form->field($model, 'people_count')->input('number', ['min' => 1]) ?>
+    <?= $form->field($model, 'people_count')->input('number', [
+        'min' => 1,
+        'max' => $disponivel
+    ]) ?>
 
     <?= $form->field($model, 'checkin_at')->input('date') ?>
 

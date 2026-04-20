@@ -20,9 +20,8 @@ use yii\web\Response;
 
 class DashboardController extends Controller
 {
-    public function actionIndex(){
-        $overallAvailability = LodgingSite::getOverallAvailability();
-
+    public function actionIndex()
+    {
         //--- INCIDENTES - SEGURANÇA ---
         //total de incidentes (geral)
         $securityIncidents = Incident::incidentTotal(IncidentType::SECURITY);
@@ -39,12 +38,15 @@ class DashboardController extends Controller
         //--- FIM INCIDENTES - SEGURANÇA ---
 
 
-
         //--- CAMAS ---
         //total de alojamentos que tenham camas disponíveis
         $availableLodgings = LodgingSite::findWithAvailableBeds();
-        //total de camas ocupadas neste momento
-        $occupiedBeds = LodgingEntry::getOverallOccupancy();
+        $totalBeds = LodgingSite::getTotalBedsAll();
+        $operationalBeds = LodgingSite::getTotalOperationalBeds();
+        $occupiedBeds = LodgingSite::getTotalOccupiedBeds();
+        $availableBeds = LodgingSite::getTotalAvailableBeds();
+        $unavailableBeds = LodgingSite::getTotalUnavailableBeds();
+
         //Data provider para o widget do KPI (listagem dos alojamentos com camas disponíveis)
         $availableLodgingsProvider = new ArrayDataProvider([
             'allModels' => $availableLodgings,
@@ -52,7 +54,6 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         //--- FIM CAMAS ---
-
 
 
         // --- INCIDENTES - ÁGUA ---
@@ -69,7 +70,6 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         // --- FIM INCIDENTES - ÁGUA ---
-
 
 
         // --- PEDIDOS EXTERNOS ---
@@ -97,7 +97,6 @@ class DashboardController extends Controller
         // --- FIM PEDIDOS EXTERNOS ---
 
 
-
         // --- TAREFAS CRÍTICAS ---
         //tarefas críticas (em todos os estados)
         $criticalTasks = Task::getCriticalTasks();
@@ -114,7 +113,6 @@ class DashboardController extends Controller
         // --- FIM TAREFAS CRÍTICAS ---
 
 
-
         // --- EFETIVOS EXTERNOS ---
         //Efetivos externos, devolve um INT.
         $externalOccupancy = LodgingEntry::getExternalOccupancy();
@@ -128,7 +126,6 @@ class DashboardController extends Controller
             'sort' => false,
         ]);
         // --- FIM EFETIVOS EXTERNOS ---
-
 
 
         // --- MOBILIDADE ---
@@ -151,7 +148,6 @@ class DashboardController extends Controller
         // --- FIM MOBILIDADE ---
 
 
-
         // --- VEDAÇÃO ---
         //% do perimetro operacional
         $perimeterPercentage = Location::getPerimeterOperationalPercentage();
@@ -163,9 +159,8 @@ class DashboardController extends Controller
         // --- FIM VEDAÇÃO ---
 
 
-
         // --- APOIOS PRESTADOS  ---
-                //externo e interno
+        //externo e interno
         $bathsGivenAccOverall = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH);
         $bathsGivenOntOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday');
         $bathsGivenHjOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today');
@@ -179,7 +174,7 @@ class DashboardController extends Controller
         $bedsGivenHjOverall = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'today');
 
 
-                //interno
+        //interno
         $bathsGivenAccInternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH, 'internal');
         $bathsGivenOntInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday', 'internal');
         $bathsGivenHjInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today', 'internal');
@@ -193,7 +188,7 @@ class DashboardController extends Controller
         $bedsGivenHjInternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BED, 'today');
 
 
-                //externo
+        //externo
         $bathsGivenAccExternal = Request::getAllNumberRequestsOfType(RequestType::TYPE_BATH, 'external');
         $bathsGivenOntExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'yesterday', 'external');
         $bathsGivenHjExternal = Request::getRequestsOfTypeWithin(RequestType::TYPE_BATH, 'today', 'external');
@@ -211,7 +206,6 @@ class DashboardController extends Controller
         // --- SITUAÇÃO SANITÁRIA  ---
 
         // --- FIM SITUAÇÃO SANITÁRIA  ---
-
 
 
         // --- ESTADO DE SISTEMAS NAVids ---
@@ -234,7 +228,11 @@ class DashboardController extends Controller
 
 
         return $this->render('index', [
-            'overallAvailability' => $overallAvailability,
+            'availableBeds' => $availableBeds,
+            'totalBeds' => $totalBeds,
+            'operationalBeds' => $operationalBeds,
+            'unavailableBeds' => $unavailableBeds,
+            'occupiedBeds' => $occupiedBeds,
             'waterIncidents' => $waterIncidents,
             'securityIncidents' => $securityIncidents,
             'activeSecurityIncidents' => $activeSecurityIncidents,
@@ -247,7 +245,6 @@ class DashboardController extends Controller
             'closedSecurityIncidents' => $closedSecurityIncidents,
             'securityIncidentsProvider' => $securityIncidentsProvider,
             'availableLodgingsProvider' => $availableLodgingsProvider,
-            'occupiedBeds' => $occupiedBeds,
             'activeWaterIncidents' => $activeWaterIncidents,
             'closedWaterIncidents' => $closedWaterIncidents,
             'waterIncidentsProvider' => $waterIncidentsProvider,
@@ -307,7 +304,8 @@ class DashboardController extends Controller
      * Esta action serve para ir à API de METEO buscar o REPORT 1H de meteo de Monte Real.
      * Ou seja, esta action é usada no JS, o JS faz o pedido a partir do PHP, e trata dos dados para a view HTML em JS.
      */
-    public function actionMeteo() {
+    public function actionMeteo()
+    {
         //Avisar a action que é para devolver JSON, e não HTMl
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -339,7 +337,8 @@ class DashboardController extends Controller
      * Esta action serve para ir à API de METEO buscar o REPORT 24H de meteo de Monte Real.
      * Ou seja, esta action é usada no JS, o JS faz o pedido a partir do PHP, e trata dos dados para a view HTML em JS.
      */
-    public function actionTaf() {
+    public function actionTaf()
+    {
         //Avisar a action que é para devolver JSON, e não HTMl
         Yii::$app->response->format = Response::FORMAT_JSON;
 

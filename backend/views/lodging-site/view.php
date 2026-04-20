@@ -125,10 +125,10 @@ $this->params['breadcrumbs'][] = $breadcrumbsTitle;
                             <span class="fw-semibold"><?= Html::encode($model->capacity_total) ?></span>
                         </div>
                         <div class="col-4">
-                            <span class="fw-semibold"><?= Html::encode($model->getCurrentCapacity(false)) ?></span>
+                            <span class="fw-semibold"><?= Html::encode($model->getAvailableBeds(false)) ?></span>
                         </div>
                         <div class="col-4">
-                            <span class="fw-semibold"><?= Html::encode($model->occupancy() ?? 0) ?></span>
+                            <span class="fw-semibold"><?= Html::encode($model->getOccupiedBeds() ?? 0) ?></span>
                         </div>
                     </div>
                 </div>

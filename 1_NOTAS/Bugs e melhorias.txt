@@ -1,6 +1,5 @@
 --- BUGS ---
 1 - No index do lodging-site, na coluna da disponibilidade, não está a funcionar as cores de cada número, aparece sempre verde mesmo se estiver em 0.
-2 - Dá para adicionar mais pessoas a um alojamento do que a capacidade, a disponibilidade vai para os negativos.
 3 - O mapa no dashboard não fica centrado em momento algum, nem no zoom, fica sempre off-centre, muito para baixo
 4 - Na função Entity para criar uma nova entidade, pode acontecer de dar erro no form e não criar a entidade original, mas criar entidade na tabela de entidades.
     EXEMPLO: User cria um novo incidente, mas dá erro e não cria o incidente. Porém, a função para criar uma nova entidade corre, e cria um id na entity table mesmo assim.
@@ -9,6 +8,7 @@
 7 - Quando se apaga entidades, aquilo não apaga a entidade em questão da tabela das entidades (IMENSAS entidades por apagar).
 8 - Ajustar a view do mapa quando se oculta a navbar no dashboard frontend
 9 - Mapa demora imenso a carregar os objetos lá para dentro
+10 - No popup do mapa, frontend, dashboard, aparecem sempre "CRÍTICO", apesar de n ser esse o status correto.
 
 
 
@@ -17,12 +17,9 @@ No modelo LodgingSite, função occupancy() é só um query à BD do modelo Lodg
 Não faz muito sentido os pedidos terem o status "done", basta até ao approved só.
 Melhorar as funções nos requests, aquilo podia ser compactado para umas quantas funções (em vez de ter 6 funções para ir buscar os 6 estados diferentes, podia ser só 1 com parãmetro)
 No form da task, tem 2 inputs de datas, created_at e due_at, fazer uma verificação de não deixar o user colocar o due_at antes do created_at.
-
+No cop-map-readonly, fazer um switch com os alojamentos para mostrar os ícones diferentes dependendo da capacidade disponível do alojamento.
 
 
 --- MUDANÇAS NA BD ---
-Mudar o varchar dos estados para mais... tipo sei la... 30? Todos os varchars até...
-Nos incidentes, não faz sentido ter "em progresso", só nas tarefas. Status dos incidentes deviam de ser só "abero" // "resolvido"
-No request, trocar o "status" para "status_type_id"
+Nos incidentes, não faz sentido ter "em progresso", só nas tarefas. Status dos incidentes deviam de ser só "aberto" // "resolvido"
 Faz sentido ter "done" como status nos pedidos???? acho que n
-Colocar geolocalização nos alojamentos, para eles serem também representados no mapa.

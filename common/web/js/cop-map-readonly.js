@@ -130,19 +130,10 @@ window.initCopMapReadOnly = function (opts) {
         if (entityType === 'lodging_site') {
             let file = 'house-default.png';
 
-            switch (statusType) {
-                case 'RED':
-                    file = 'house-red.png';
-                    break;
-
-                case 'YELLOW':
-                    file = 'house-yellow.png';
-                    break;
-
-                case 'GREEN':
-                    file = 'house-green.png';
-                    break;
-            }
+            //swich da capacidade disponível dos alojamentos. Por fazer.
+            // switch () {
+            //
+            // }
 
             return L.icon({
                 iconUrl: base + '/' + file,
