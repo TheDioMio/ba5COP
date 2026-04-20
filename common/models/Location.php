@@ -22,11 +22,11 @@ use yii\helpers\ArrayHelper;
  * @property Entity $entity
  * @property Incident[] $incidents
  * @property LocationType $locationType
- * @property LodgingSite[] $lodgingSites
  * @property StatusType $statusType
  * @property Task[] $tasks
  */
-class Location extends \yii\db\ActiveRecord {
+class Location extends \yii\db\ActiveRecord
+{
     const BUILDING = 'BUILDING';
     const AREA = 'AREA';
     const POINT = 'POINT';
@@ -51,7 +51,7 @@ class Location extends \yii\db\ActiveRecord {
             [['notes'], 'default', 'value' => null],
             [['is_critical'], 'default', 'value' => 0],
             [['location_type_id', 'name', 'geometry', 'status_type_id', 'entity_id'], 'required'],
-            [['location_type_id', 'status_type_id', 'entity_id'], 'integer'],
+            [['location_type_id', 'status_type_id', 'entity_id', 'is_critical'], 'integer'],
             [['geometry'], 'string'],
             [['updated_at'], 'safe'],
             [['name'], 'string', 'max' => 25],
@@ -111,16 +111,6 @@ class Location extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[LodgingSites]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLodgingSites()
-    {
-        return $this->hasMany(LodgingSite::class, ['location_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[StatusType]].
      *
      * @return \yii\db\ActiveQuery
@@ -156,11 +146,54 @@ class Location extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Devolve a geometria descodificada em array.
+     */
+    public function getGeometryArray(): ?array
+    {
+        if (empty($this->geometry)) {
+            return null;
+        }
+
+        $decoded = json_decode($this->geometry, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * Devolve a localização em formato GeoJSON Feature para o mapa.
+     */
+    public function toGeoJsonFeature(): ?array
+    {
+        $geometry = $this->getGeometryArray();
+
+        if ($geometry === null) {
+            return null;
+        }
+
+        return [
+            'type' => 'Feature',
+            'id' => $this->id,
+            'geometry' => $geometry,
+            'properties' => [
+                'entity_type' => 'location',
+                'name' => $this->name,
+                'location_type_id' => $this->location_type_id,
+                'location_type_name' => $this->locationType->description ?? null,
+                'status_type_id' => $this->status_type_id,
+                'status_type_name' => $this->statusType->description ?? null,
+                'notes' => $this->notes,
+                'is_critical' => (int)$this->is_critical,
+            ],
+        ];
+    }
+
+    /**
      * Lista total de vedações na base
      * Devolve int (número total)
      */
-    public static function getPerimeterTotal(): int {
-        return (int) (new Query())
+    public static function getPerimeterTotal(): int
+    {
+        return (int)(new Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where(['lt.description' => 'VEDACAO'])
@@ -173,7 +206,7 @@ class Location extends \yii\db\ActiveRecord {
      */
     public static function getPerimeterTotalByStatus(string $status): int
     {
-        return (int) (new Query())
+        return (int)(new Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->innerJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
@@ -186,9 +219,9 @@ class Location extends \yii\db\ActiveRecord {
 
     /**
      * Percentagem do perímetro operacional
-     *
      */
-    public static function getPerimeterOperationalPercentage() {
+    public static function getPerimeterOperationalPercentage()
+    {
         $total = self::getPerimeterTotal();
         $green = self::getPerimeterTotalByStatus('GREEN');
 
@@ -196,33 +229,32 @@ class Location extends \yii\db\ActiveRecord {
             return 0;
         }
 
-        return (int) round(($green / $total) * 100);
+        return (int)round(($green / $total) * 100);
     }
 
     /**
      * Query dos perímetros INOPs
-     *
      */
-    public static function findPerimeterInop() {
+    public static function findPerimeterInop()
+    {
         return self::find()
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
-            ->where(['lt.description' => Location::VEDACAO,])
+            ->where(['lt.description' => self::VEDACAO])
             ->andWhere(['!=', 'l.status_type_id', 1]);
     }
 
     /**
      * Total de CORREDORES CRÍTICOS
-     *
      */
     public static function getCriticalCorridorsTotal(): int
     {
-        return (int) (new \yii\db\Query())
+        return (int)(new Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => 'ROAD',
+                'lt.description' => self::ROAD,
             ])
             ->count();
     }
@@ -230,15 +262,15 @@ class Location extends \yii\db\ActiveRecord {
     /**
      * Total de CORREDORES CRÍTICOS ABERTOS
      * Se levar parâmetro, devolve os CORREDORES CRÍTICOS por STATUS.
-     *
      */
-    public static function getCriticalCorridors(?string $status = null){
-        $query = (new \yii\db\Query())
+    public static function getCriticalCorridors(?string $status = null)
+    {
+        $query = (new Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => Location::ROAD,
+                'lt.description' => self::ROAD,
             ]);
 
         if ($status !== null) {
@@ -252,21 +284,21 @@ class Location extends \yii\db\ActiveRecord {
                 ->andWhere(['st.description' => $status]);
         }
 
-        return (int) $query->count();
+        return (int)$query->count();
     }
 
     /**
      * Total de ESTACIONAMENTOS CRÍTICOS ABERTOS
      * Se levar parâmetro, devolve os ESTACIONAMENTOS CRÍTICOS por STATUS.
-     *
      */
-    public static function getCriticalParkings(?string $status = null){
-        $query = (new \yii\db\Query())
+    public static function getCriticalParkings(?string $status = null)
+    {
+        $query = (new Query())
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => Location::PARKING,
+                'lt.description' => self::PARKING,
             ]);
 
         if ($status !== null) {
@@ -280,44 +312,43 @@ class Location extends \yii\db\ActiveRecord {
                 ->andWhere(['st.description' => $status]);
         }
 
-        return (int) $query->count();
+        return (int)$query->count();
     }
 
     /**
      * Query de estacionamentos totais que são CRÍTICOS
-     *
      */
-    public static function findCriticalParkings() {
+    public static function findCriticalParkings()
+    {
         return self::find()
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => Location::PARKING,
+                'lt.description' => self::PARKING,
             ]);
     }
 
     /**
      * Query de estradas totais que são CRÍTICAS
-     *
      */
-    public static function findCriticalRoads() {
+    public static function findCriticalRoads()
+    {
         return self::find()
             ->from(['l' => 'location'])
             ->innerJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
             ->where([
                 'l.is_critical' => 1,
-                'lt.description' => Location::ROAD,
+                'lt.description' => self::ROAD,
             ]);
     }
 
-
     /**
      * Array de todas as localizações com X tipo de location_type_id
-     *
      */
-    public static function getLocationsOfType($location_type){
-        return Location::find()
+    public static function getLocationsOfType($location_type)
+    {
+        return self::find()
             ->where(['location_type_id' => $location_type])
             ->with('statusType')
             ->orderBy(['name' => SORT_ASC])

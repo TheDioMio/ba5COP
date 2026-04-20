@@ -9,19 +9,16 @@ use yii\helpers\ArrayHelper;
  * This is the model class for table "lodging_site".
  *
  * @property int $id
- * @property int $location_id
  * @property string $name
  * @property int $capacity_total
  * @property int $capacity_available
  * @property string|null $notes
+ * @property string|null $geometry
  *
- * @property Location $location
  * @property LodgingEntry[] $lodgingEntries
  */
 class LodgingSite extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -36,11 +33,11 @@ class LodgingSite extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['notes'], 'default', 'value' => null],
-            [['location_id', 'name', 'capacity_total', 'capacity_available'], 'required'],
-            [['location_id', 'capacity_total', 'capacity_available'], 'integer'],
-            [['name', 'notes'], 'string', 'max' => 30],
-            [['location_id'], 'exist', 'skipOnError' => true, 'targetClass' => Location::class, 'targetAttribute' => ['location_id' => 'id']],
+            [['notes', 'geometry'], 'default', 'value' => null],
+            [['name', 'capacity_total', 'capacity_available'], 'required'],
+            [['capacity_total', 'capacity_available'], 'integer'],
+            [['notes', 'geometry'], 'string'],
+            [['name'], 'string', 'max' => 30],
         ];
     }
 
@@ -51,22 +48,12 @@ class LodgingSite extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'location_id' => 'ID da Localização',
             'name' => 'Nome',
             'capacity_total' => 'Capacidade Total',
             'capacity_available' => 'Capacidade Disponível',
             'notes' => 'OBS.',
+            'geometry' => 'Geometria',
         ];
-    }
-
-    /**
-     * Gets query for [[Location]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLocation()
-    {
-        return $this->hasOne(Location::class, ['id' => 'location_id']);
     }
 
     /**
@@ -94,86 +81,121 @@ class LodgingSite extends \yii\db\ActiveRecord
         return ArrayHelper::map($rows, 'id', 'name');
     }
 
-    /**d
-     *  Devolve o número de camas ocupadas
-     *  Query à BD.
+    /**
+     * Devolve o número de camas ocupadas.
      */
-    public function occupancy() {
+    public function occupancy()
+    {
         $occupancy = LodgingEntry::find()
             ->where(['lodging_site_id' => $this->id])
             ->andWhere(['checkout_at' => null]) // só pessoas ainda alojadas
             ->sum('people_count');
 
-        return $occupancy;
+        return (int)($occupancy ?? 0);
     }
 
     /**
      * Devolve o número de capacidade atual do alojamento, com uma cor associada.
      * (Capacidade total - capacidade ocupada)
      *
-     * O $badge é boolean, e determina se manda o número só em int, ou já com formatação de cores.
+     * O $badge é boolean e determina se devolve só o número ou HTML formatado.
      */
-    public function getCurrentCapacity($badge) {
-        $totalCapacity = $this->capacity_total;
-
+    public function getCurrentCapacity($badge)
+    {
+        $totalCapacity = (int)$this->capacity_total;
         $occupancy = $this->occupancy();
 
-        $currentCapacity = $totalCapacity - $occupancy ?? 0;
+        $currentCapacity = $totalCapacity - $occupancy;
 
-        if($badge == true) {
-            //Isto aqui evita a divisão por 0, o que daria erro. Ex. 0/300 = Erro, 1/300 = 300.
-            if($occupancy == 0){
-                $occupancy = 1;
-            }
+        if ($badge == true) {
+            // percentagem de ocupação/pressão da capacidade
+            $divisor = $totalCapacity > 0 ? $totalCapacity : 1;
+            $percentageAvailable = ($currentCapacity / $divisor) * 100;
 
-            $percentage = ($totalCapacity / $occupancy) * 100;
-
-            if ($percentage == 0) {
+            if ($percentageAvailable <= 0) {
                 $color = 'red';
-            } elseif ($percentage < 20) {
+            } elseif ($percentageAvailable < 20) {
                 $color = 'orange';
             } else {
                 $color = 'green';
             }
 
             return "<span style='color:$color;font-weight:bold;'>$currentCapacity</span>";
-        } else {
-            return $currentCapacity;
         }
+
+        return $currentCapacity;
     }
 
     /**
      * Devolve o número total de camas (capacidade total) em todos os alojamentos.
-     *
      */
-    public static function getOverallCapacity(){
-        $overallBeds = self::find()
-            ->sum('capacity_total');
-
-        return $overallBeds;
-    }
-
-    public static function getOverallAvailability(){
-        $overallBeds = LodgingSite::getOverallCapacity();
-        $takenBeds = LodgingEntry::getOverallOccupancy();
-
-        $availability = $overallBeds - $takenBeds;
-
-        return $availability;
+    public static function getOverallCapacity()
+    {
+        $overallBeds = self::find()->sum('capacity_total');
+        return (int)($overallBeds ?? 0);
     }
 
     /**
-     * Devolve a lista dos alojdamentos com camas disponíveis
-     *
+     * Devolve o número total de camas disponíveis em todos os alojamentos.
      */
-    public static function findWithAvailableBeds(){
+    public static function getOverallAvailability()
+    {
+        $overallBeds = self::getOverallCapacity();
+        $takenBeds = LodgingEntry::getOverallOccupancy();
+
+        return $overallBeds - (int)($takenBeds ?? 0);
+    }
+
+    /**
+     * Devolve a lista dos alojamentos com camas disponíveis.
+     */
+    public static function findWithAvailableBeds()
+    {
         $sites = self::find()
-            ->with(['location', 'lodgingEntries'])
+            ->with(['lodgingEntries'])
             ->all();
 
-        //Isto retorna os sites que só tem camas disponíveis
         return array_filter($sites, function ($site) {
             return $site->getCurrentCapacity(false) > 0;
         });
+    }
+
+    /**
+     * Devolve a geometria descodificada em array.
+     */
+    public function getGeometryArray(): ?array
+    {
+        if (empty($this->geometry)) {
+            return null;
+        }
+
+        $decoded = json_decode($this->geometry, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * Devolve o alojamento em formato GeoJSON Feature para o mapa.
+     */
+    public function toGeoJsonFeature(): ?array
+    {
+        $geometry = $this->getGeometryArray();
+
+        if ($geometry === null) {
+            return null;
+        }
+
+        return [
+            'type' => 'Feature',
+            'id' => $this->id,
+            'geometry' => $geometry,
+            'properties' => [
+                'entity_type' => 'lodging_site',
+                'name' => $this->name,
+                'capacity_total' => $this->capacity_total,
+                'capacity_available' => $this->capacity_available,
+                'notes' => $this->notes,
+            ],
+        ];
     }
 }

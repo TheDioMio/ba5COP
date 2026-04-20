@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -13,19 +12,33 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'location_id')->dropDownList(
-        $arraySites,
-        ['prompt' => '-- LOCALIZAÇÕES --']
-    )->label('Localização') ?>
+    <?= $form->field($model, 'name')->textInput([
+        'maxlength' => true,
+        'placeholder' => 'Ex.: Bloco A'
+    ]) ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'capacity_total')->input('number', [
+        'min' => 0,
+        'step' => 1
+    ]) ?>
 
-    <?= $form->field($model, 'capacity_total')->input('number', ['min' => 1]) ?>
+    <?= $form->field($model, 'capacity_available')->input('number', [
+        'min' => 0,
+        'step' => 1
+    ]) ?>
 
-    <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'notes')->textarea([
+        'rows' => 3,
+        'placeholder' => 'Observações do alojamento'
+    ]) ?>
+
+    <?= $form->field($model, 'geometry')->textarea([
+        'rows' => 6,
+        'placeholder' => '{"type":"Point","coordinates":[300,200]}'
+    ])->hint('GeoJSON da geometria do alojamento no mapa.') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

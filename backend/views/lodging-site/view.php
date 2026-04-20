@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -12,8 +12,6 @@ $this->title = 'Gestão de Alojamentos';
 $breadcrumbsTitle = 'Alojamento: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Alojamentos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $breadcrumbsTitle;
-
-$locationLabel = $model->location ? $model->location->name : ('#' . $model->location_id);
 ?>
 
 <div class="lodging-site-view fade-in-up">
@@ -66,8 +64,13 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                             [
-                                'label' => 'Localização',
-                                'value' => $locationLabel,
+                                'label' => 'Capacidade Total',
+                                'attribute' => 'capacity_total',
+                                'contentOptions' => ['class' => 'align-middle'],
+                            ],
+                            [
+                                'label' => 'Capacidade Disponível',
+                                'attribute' => 'capacity_available',
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                             [
@@ -78,10 +81,10 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                             [
-                                'label' => 'Galeria de fotos',
-                                'attribute' => 'notes',
+                                'label' => 'Geometria',
+                                'attribute' => 'geometry',
                                 'format' => 'ntext',
-                                'value' => $model->notes ?: 'Não definido',
+                                'value' => $model->geometry ?: 'Não definida',
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
                         ],
@@ -101,7 +104,7 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                     </div>
 
                     <h4 class="font-weight-bold mb-1"><?= Html::encode($model->name) ?></h4>
-                    <span class="badge bg-info text-dark"><?= Html::encode($locationLabel) ?></span>
+                    <span class="badge bg-info text-dark">Alojamento</span>
 
                     <hr>
 
@@ -189,10 +192,9 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                     [
                         'label' => 'Checkout',
                         'attribute' => 'checkout_at',
-                        'format' => 'raw', //Tem que ser raw, para os botões serem renderizados (Botões HTML)
+                        'format' => 'raw',
                         'value' => function ($model) {
-                            if($model->checkout_at == null) {
-                                //Se a data de checkout estiver NULL, ou seja, ainda não estiver feita.
+                            if ($model->checkout_at == null) {
                                 return Html::a('CHECKOUT', ['/lodging-entry/checkout', 'id' => $model->id], [
                                     'class' => 'btn btn-xs btn-danger btn-block',
                                     'data' => [
@@ -200,21 +202,19 @@ $locationLabel = $model->location ? $model->location->name : ('#' . $model->loca
                                     ],
                                 ]);
                             }
-                            if ($model->checkout_at != null) {
-                                //Se a data de checkout não estiver NULL quer dizer que o checkout já foi feito.
-                                return Html::a('FEITO!', ['#'], [
-                                    'class' => 'btn btn-xs btn-success btn-block disabled',
-                                    'data' => [
-                                        'method' => 'post',
-                                        'onclick' => 'return false;', // Para não fazer nada se clicar
-                                        'style' => 'opacity: 0.7;'
-                                    ],
-                                ]);
-                            }
+
+                            return Html::a('FEITO!', ['#'], [
+                                'class' => 'btn btn-xs btn-success btn-block disabled',
+                                'data' => [
+                                    'method' => 'post',
+                                    'onclick' => 'return false;',
+                                    'style' => 'opacity: 0.7;'
+                                ],
+                            ]);
                         },
                         'filter' => [
                             null => 'Por fazer',
-                            !null  => 'Feito',
+                            !null => 'Feito',
                         ],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                     ],

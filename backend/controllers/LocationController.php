@@ -3,15 +3,15 @@
 namespace backend\controllers;
 
 use common\models\Location;
-use app\models\LocationSearch;
 use common\models\LocationType;
+use common\models\LodgingSite;
+use app\models\LocationSearch;
+use Yii;
+use yii\db\Expression;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 use yii\web\Response;
-use yii\web\BadRequestHttpException;
-use yii\db\Query;
 
 /**
  * LocationController implements the CRUD actions for Location model.
@@ -27,11 +27,11 @@ class LocationController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'map-index' => ['GET'],
                         'map-create' => ['POST'],
-                        'map-update' => ['POST'],   //POST EM VEZ DE PATCH
+                        'map-update' => ['POST'],
                         'map-delete' => ['POST'],
                     ],
                 ],
@@ -57,6 +57,7 @@ class LocationController extends Controller
 
     /**
      * Displays a single Location model.
+     *
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -70,7 +71,7 @@ class LocationController extends Controller
 
     /**
      * Creates a new Location model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return string|\yii\web\Response
      */
     public function actionCreate()
@@ -94,7 +95,7 @@ class LocationController extends Controller
 
     /**
      * Updates an existing Location model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
@@ -116,7 +117,7 @@ class LocationController extends Controller
 
     /**
      * Deletes an existing Location model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
@@ -130,7 +131,7 @@ class LocationController extends Controller
 
     /**
      * Finds the Location model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return Location the loaded model
      * @throws NotFoundHttpException if the model cannot be found
@@ -144,54 +145,50 @@ class LocationController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * Devolve uma FeatureCollection única com:
+     * - locations
+     * - lodging sites
+     *
+     * Isto permite ao mapa mostrar ambas as entidades ao mesmo tempo.
+     */
     public function actionMapIndex()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $rows = (new \yii\db\Query())
-            ->from(['l' => 'location'])
-            ->leftJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
-            ->leftJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
-            ->select([
-                'l.id',
-                'l.name',
-                'l.notes',
-                'l.location_type_id',
-                'l.status_type_id',
-                'l.is_critical',
-                'l.geometry',
-                'location_type_name' => 'lt.description',
-                'status_type_name' => 'st.description',
-            ])
-            ->all();
-
         $features = [];
 
-        foreach ($rows as $r) {
-            $geom = json_decode($r['geometry'], true);
+        // =========================
+        // LOCATIONS
+        // =========================
+        $locations = Location::find()
+            ->with(['locationType', 'statusType'])
+            ->where(['not', ['geometry' => null]])
+            ->andWhere(['<>', 'geometry', ''])
+            ->all();
 
-            if (!$geom && is_string($r['geometry'])) {
-                $geom = json_decode(stripslashes($r['geometry']), true);
+        foreach ($locations as $location) {
+            $feature = $location->toGeoJsonFeature();
+
+            if ($feature !== null) {
+                $features[] = $feature;
             }
+        }
 
-            if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
-                continue;
+        // =========================
+        // LODGING SITES
+        // =========================
+        $lodgingSites = LodgingSite::find()
+            ->where(['not', ['geometry' => null]])
+            ->andWhere(['<>', 'geometry', ''])
+            ->all();
+
+        foreach ($lodgingSites as $lodgingSite) {
+            $feature = $lodgingSite->toGeoJsonFeature();
+
+            if ($feature !== null) {
+                $features[] = $feature;
             }
-
-            $features[] = [
-                'type' => 'Feature',
-                'id' => (int)$r['id'],
-                'properties' => [
-                    'name' => $r['name'],
-                    'notes' => $r['notes'],
-                    'location_type_id' => (int)$r['location_type_id'],
-                    'location_type_name' => $r['location_type_name'] ?? '—',
-                    'status_type_id' => (int)$r['status_type_id'],
-                    'status_type_name' => $r['status_type_name'] ?? '—',
-                    'is_critical' => (int)$r['is_critical'],
-                ],
-                'geometry' => $geom,
-            ];
         }
 
         return [
@@ -200,11 +197,15 @@ class LocationController extends Controller
         ];
     }
 
+    /**
+     * Cria uma nova location via mapa.
+     */
     public function actionMapCreate()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $data = json_decode(Yii::$app->request->getRawBody(), true);
+
         if (!$data) {
             throw new \yii\web\BadRequestHttpException('JSON inválido.');
         }
@@ -222,12 +223,14 @@ class LocationController extends Controller
 
         $geomJson = json_encode($geometry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
+        // Cria registo entity associado à location
         Yii::$app->db->createCommand()->insert('entity', [
             'entity_type_id' => 1,
         ])->execute();
 
         $entityId = (int)Yii::$app->db->getLastInsertID();
 
+        // Cria location
         Yii::$app->db->createCommand()->insert('location', [
             'location_type_id' => $locationTypeId,
             'name' => $name,
@@ -235,26 +238,33 @@ class LocationController extends Controller
             'geometry' => $geomJson,
             'status_type_id' => $statusTypeId,
             'is_critical' => $isCritical,
-            'updated_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
+            'updated_at' => new Expression('CURRENT_TIMESTAMP'),
             'entity_id' => $entityId,
         ])->execute();
 
         $id = (int)Yii::$app->db->getLastInsertID();
 
-        return ['ok' => true, 'id' => $id];
+        return [
+            'ok' => true,
+            'id' => $id,
+        ];
     }
 
+    /**
+     * Atualiza atributos e/ou geometria de uma location via mapa.
+     */
     public function actionMapUpdate($id)
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
         $data = json_decode(Yii::$app->request->getRawBody(), true);
+
         if (!$data) {
             throw new \yii\web\BadRequestHttpException('JSON inválido.');
         }
 
         $update = [
-            'updated_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
+            'updated_at' => new Expression('CURRENT_TIMESTAMP'),
         ];
 
         if (array_key_exists('name', $data)) {
@@ -291,6 +301,9 @@ class LocationController extends Controller
         return ['ok' => true];
     }
 
+    /**
+     * Apaga uma location via mapa.
+     */
     public function actionMapDelete($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -301,7 +314,4 @@ class LocationController extends Controller
 
         return ['ok' => true];
     }
-
-
-
 }

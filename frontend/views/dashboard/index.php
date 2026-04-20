@@ -995,7 +995,7 @@ $copMapOptions = [
                         'label' => 'Status',
                         'format' => 'raw',
                         'value' => function ($model) {
-                            $badge = StatusType::getStatusLabels($model->status);
+                            $badge = StatusType::getStatusLabels($model->statusType->id);
 
                             return Html::tag('span', Html::encode($model->statusType->description), [
                                 'class' => $badge,

@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Location;
+use common\models\LodgingSite;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -16,6 +17,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -48,6 +50,7 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                    'cop-data' => ['get'],
                 ],
             ],
         ];
@@ -93,6 +96,7 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -124,6 +128,7 @@ class SiteController extends Controller
     public function actionContact()
     {
         $model = new ContactForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
                 Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
@@ -157,6 +162,7 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
             return $this->goHome();
@@ -175,10 +181,10 @@ class SiteController extends Controller
     public function actionRequestPasswordReset()
     {
         $model = new PasswordResetRequestForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
-
                 return $this->goHome();
             }
 
@@ -207,7 +213,6 @@ class SiteController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             Yii::$app->session->setFlash('success', 'New password saved.');
-
             return $this->goHome();
         }
 
@@ -220,7 +225,7 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @return yii\web\Response
+     * @return \yii\web\Response
      * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
@@ -230,6 +235,7 @@ class SiteController extends Controller
         } catch (InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
+
         if ($model->verifyEmail()) {
             Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
             return $this->goHome();
@@ -247,16 +253,18 @@ class SiteController extends Controller
     public function actionResendVerificationEmail()
     {
         $model = new ResendVerificationEmailForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
                 return $this->goHome();
             }
+
             Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
         }
 
         return $this->render('resendVerificationEmail', [
-            'model' => $model
+            'model' => $model,
         ]);
     }
 
@@ -267,46 +275,38 @@ class SiteController extends Controller
         ]);
     }
 
+    /**
+     * Devolve locations + lodging sites numa única FeatureCollection
+     */
     private function buildLocationFeatureCollection(): array
     {
-        $rows = (new \yii\db\Query())
-            ->from('location')
-            ->select([
-                'id',
-                'name',
-                'notes',
-                'location_type_id',
-                'status_type_id',
-                'is_critical',
-                'geometry',
-            ])
-            ->all();
-
         $features = [];
 
-        foreach ($rows as $r) {
-            $geom = json_decode($r['geometry'], true);
+        $locations = Location::find()
+            ->with(['locationType', 'statusType'])
+            ->where(['not', ['geometry' => null]])
+            ->andWhere(['<>', 'geometry', ''])
+            ->all();
 
-            if (!$geom && is_string($r['geometry'])) {
-                $geom = json_decode(stripslashes($r['geometry']), true);
+        foreach ($locations as $location) {
+            $feature = $location->toGeoJsonFeature();
+
+            if ($feature !== null) {
+                $features[] = $feature;
             }
+        }
 
-            if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
-                continue;
+        $lodgingSites = LodgingSite::find()
+            ->where(['not', ['geometry' => null]])
+            ->andWhere(['<>', 'geometry', ''])
+            ->all();
+
+        foreach ($lodgingSites as $lodgingSite) {
+            $feature = $lodgingSite->toGeoJsonFeature();
+
+            if ($feature !== null) {
+                $features[] = $feature;
             }
-
-            $features[] = [
-                'type' => 'Feature',
-                'id' => (int)$r['id'],
-                'properties' => [
-                    'name' => $r['name'],
-                    'notes' => $r['notes'],
-                    'location_type_id' => (int)$r['location_type_id'],
-                    'status_type_id' => (int)$r['status_type_id'],
-                    'is_critical' => (int)$r['is_critical'],
-                ],
-                'geometry' => $geom,
-            ];
         }
 
         return [
@@ -315,59 +315,13 @@ class SiteController extends Controller
         ];
     }
 
+    /**
+     * Endpoint JSON para o mapa read-only
+     */
+    public function actionCopData()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-    public function actionCopData() {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        $rows = (new \yii\db\Query())
-            ->from(['l' => 'location'])
-            ->leftJoin(['lt' => 'location_type'], 'lt.id = l.location_type_id')
-            ->leftJoin(['st' => 'status_type'], 'st.id = l.status_type_id')
-            ->select([
-                'l.id',
-                'l.name',
-                'l.notes',
-                'l.location_type_id',
-                'l.status_type_id',
-                'l.is_critical',
-                'l.geometry',
-                'location_type_name' => 'lt.description',
-                'status_type_name' => 'st.description',
-            ])
-            ->all();
-
-        $features = [];
-
-        foreach ($rows as $r) {
-            $geom = json_decode($r['geometry'], true);
-
-            if (!$geom && is_string($r['geometry'])) {
-                $geom = json_decode(stripslashes($r['geometry']), true);
-            }
-
-            if (!$geom || !isset($geom['type'], $geom['coordinates'])) {
-                continue;
-            }
-
-            $features[] = [
-                'type' => 'Feature',
-                'id' => (int)$r['id'],
-                'properties' => [
-                    'name' => $r['name'],
-                    'notes' => $r['notes'],
-                    'location_type_id' => (int)$r['location_type_id'],
-                    'location_type_name' => $r['location_type_name'] ?? '—',
-                    'status_type_id' => (int)$r['status_type_id'],
-                    'status_type_name' => $r['status_type_name'] ?? '—',
-                    'is_critical' => (int)$r['is_critical'],
-                ],
-                'geometry' => $geom,
-            ];
-        }
-
-        return [
-            'type' => 'FeatureCollection',
-            'features' => $features,
-        ];
+        return $this->buildLocationFeatureCollection();
     }
 }

@@ -13,13 +13,16 @@ use Yii;
  * @property string $origin
  * @property string $details
  * @property int $priority_id
- * @property int $status
+ * @property int $status_type_id
  * @property string $created_at
  * @property int $entity_id
+ * @property int|null $request_type_id
+ * @property int|null $quantity
  *
  * @property Entity $entity
  * @property Priority $priority
- * @property StatusType $status0
+ * @property StatusType $statusType
+ * @property RequestType $requestType
  */
 class Request extends \yii\db\ActiveRecord
 {
@@ -41,15 +44,15 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             [['quantity'], 'default', 'value' => 1],
-            [['is_external', 'origin', 'details', 'priority_id', 'status', 'entity_id'], 'required'],
-            [['is_external', 'priority_id', 'status', 'entity_id', 'request_type_id', 'quantity'], 'integer'],
+            [['is_external', 'origin', 'details', 'priority_id', 'status_type_id', 'entity_id'], 'required'],
+            [['is_external', 'priority_id', 'status_type_id', 'entity_id', 'request_type_id', 'quantity'], 'integer'],
             [['created_at'], 'safe'],
             [['origin'], 'string', 'max' => 30],
             [['details'], 'string', 'max' => 120],
             [['request_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => RequestType::class, 'targetAttribute' => ['request_type_id' => 'id']],
             [['entity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Entity::class, 'targetAttribute' => ['entity_id' => 'id']],
             [['priority_id'], 'exist', 'skipOnError' => true, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
-            [['status'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status' => 'id']],
+            [['status_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => StatusType::class, 'targetAttribute' => ['status_type_id' => 'id']],
         ];
     }
 
@@ -64,7 +67,7 @@ class Request extends \yii\db\ActiveRecord
             'origin' => 'Origem',
             'details' => 'Detalhes',
             'priority_id' => 'ID da Prioridade',
-            'status' => 'Status',
+            'status_type_id' => 'Status',
             'created_at' => 'Criado às',
             'entity_id' => 'ID da Entidade',
             'request_type_id' => 'ID do Tipo de Pedido',
@@ -93,13 +96,13 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Status0]].
+     * Gets query for [[StatusType]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getStatusType()
     {
-        return $this->hasOne(StatusType::class, ['id' => 'status']);
+        return $this->hasOne(StatusType::class, ['id' => 'status_type_id']);
     }
 
     /**
@@ -115,36 +118,35 @@ class Request extends \yii\db\ActiveRecord
     /**
      * Devolve o número total de pedidos EXTERNOS (todos os estados)
      */
-    public static function getExternalRequests() {
-        $externalRequests = self::find()
-            ->where(['is_external' => Request::EXTERNAL_REQUEST])
+    public static function getExternalRequests()
+    {
+        return self::find()
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
             ->asArray()
             ->all();
-
-        return $externalRequests;
     }
 
     /**
      * Devolve o número total de pedidos EXTERNOS RESOLVIDOS
      */
-    public static function getExternalDone() {
-        $externalRequests =  self::find()
-            ->where(['is_external' => Request::EXTERNAL_REQUEST])
-            ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+    public static function getExternalDone()
+    {
+        return self::find()
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
             ->asArray()
             ->all();
-
-        return $externalRequests;
     }
 
     /**
      * Devolve o número total de pedidos EXTERNOS ATIVOS
      */
-    public static function getActiveExternal(){
+    public static function getActiveExternal()
+    {
         return self::find()
-            ->where(['is_external' => 1])
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
             ->andWhere([
-                'status' => [
+                'status_type_id' => [
                     StatusType::STATUS_REQUEST_NEW,
                     StatusType::STATUS_REQUEST_IN_PROGRESS,
                 ]
@@ -157,24 +159,24 @@ class Request extends \yii\db\ActiveRecord
     /**
      * Devolve o número total de pedidos EXTERNOS REJEITADOS
      */
-    public static function getExternalRejected() {
-        $externalRequests =  self::find()
-            ->where(['is_external' => Request::EXTERNAL_REQUEST])
-            ->andWhere(['status' => StatusType::STATUS_REQUEST_REJECTED])
+    public static function getExternalRejected()
+    {
+        return self::find()
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_REJECTED])
             ->asArray()
             ->all();
-
-        return $externalRequests;
     }
 
     /**
      * Devolve o número total de pedidos EM ANÁLISE
      */
-    public static function getExternalInAnalisis(){
+    public static function getExternalInAnalisis()
+    {
         return self::find()
-            ->where(['is_external' => 1])
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
             ->andWhere([
-                'status' => [
+                'status_type_id' => [
                     StatusType::STATUS_REQUEST_IN_PROGRESS,
                 ]
             ])
@@ -186,11 +188,12 @@ class Request extends \yii\db\ActiveRecord
     /**
      * Devolve o número total de pedidos ACEITES
      */
-    public static function getExternalAccepted(){
+    public static function getExternalAccepted()
+    {
         return self::find()
-            ->where(['is_external' => 1])
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
             ->andWhere([
-                'status' => [
+                'status_type_id' => [
                     StatusType::STATUS_REQUEST_APPROVED,
                     StatusType::STATUS_REQUEST_DONE,
                 ]
@@ -206,9 +209,9 @@ class Request extends \yii\db\ActiveRecord
     public static function findActiveExternal()
     {
         return self::find()
-            ->where(['is_external' => 1])
+            ->where(['is_external' => self::EXTERNAL_REQUEST])
             ->andWhere([
-                'status' => [
+                'status_type_id' => [
                     StatusType::STATUS_REQUEST_NEW,
                     StatusType::STATUS_REQUEST_IN_PROGRESS,
                 ]
@@ -218,41 +221,40 @@ class Request extends \yii\db\ActiveRecord
 
     /**
      * Devolve o número total de pedidos NOVOS (submetidos nas últimas 24H)
-     * Pedidos que foram submetidos nas últimas 24H e que ainda têm o status "NEW"
+     * Pedidos que foram submetidos nas últimas 24H.
      */
-    public static function getExternalNew(){
+    public static function getExternalNew()
+    {
         $datetime = date('Y-m-d H:i:s', strtotime('-24 hours'));
-        $externalRequests = self::find()
+
+        return self::find()
             ->where(['>=', 'created_at', $datetime])
-            ->andWhere(['is_external' => Request::EXTERNAL_REQUEST])
+            ->andWhere(['is_external' => self::EXTERNAL_REQUEST])
             ->asArray()
             ->all();
-
-        return $externalRequests;
     }
 
     /**
      * Devolve os pedidos de "X" tipo de request_type, que estejam já fornecidos
-     *
      */
-    public static function getNumberRequestsOfType($requestType, $external){
-        if($external) {
-            $is_external = Request::EXTERNAL_REQUEST;
-        } else {
-            $is_external = Request::NOT_EXTERNAL_REQUEST;
-        }
+    public static function getNumberRequestsOfType($requestType, $external)
+    {
+        $is_external = $external ? self::EXTERNAL_REQUEST : self::NOT_EXTERNAL_REQUEST;
 
-        if (Request::find()->where(['request_type_id' => $requestType]) != null) {
-            $requests = Request::find()
-                ->where(['request_type_id' => $requestType])
-                ->andWhere(['is_external' => $is_external])
-                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
-                ->asArray()
-                ->all();
-            return $requests;
-        } else {
+        $exists = self::find()
+            ->where(['request_type_id' => $requestType])
+            ->exists();
+
+        if (!$exists) {
             return -1;
         }
+
+        return self::find()
+            ->where(['request_type_id' => $requestType])
+            ->andWhere(['is_external' => $is_external])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
+            ->asArray()
+            ->all();
     }
 
     /**
@@ -261,32 +263,33 @@ class Request extends \yii\db\ActiveRecord
      *
      * ERROS: -2 em caso de erro no parâmetro $external
      */
-    public static function getAllNumberRequestsOfType($requestType, $external = null){
-        if($external != null) {
-            switch (strtolower($external)){
+    public static function getAllNumberRequestsOfType($requestType, $external = null)
+    {
+        if ($external !== null) {
+            switch (strtolower($external)) {
                 case 'external':
-                    $query = Request::EXTERNAL_REQUEST;
+                    $query = self::EXTERNAL_REQUEST;
                     break;
                 case 'internal':
-                    $query = Request::NOT_EXTERNAL_REQUEST;
+                    $query = self::NOT_EXTERNAL_REQUEST;
                     break;
                 default:
                     return -2;
             }
         }
 
-        if($external == null) {
-            return Request::find()
+        if ($external === null) {
+            return self::find()
                 ->where(['request_type_id' => $requestType])
-                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
-                ->sum('quantity');
-        } else {
-            return Request::find()
-                ->where(['request_type_id' => $requestType])
-                ->andWhere(['is_external' => $query])
-                ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+                ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
                 ->sum('quantity');
         }
+
+        return self::find()
+            ->where(['request_type_id' => $requestType])
+            ->andWhere(['is_external' => $query])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
+            ->sum('quantity');
     }
 
     /**
@@ -316,7 +319,7 @@ class Request extends \yii\db\ActiveRecord
 
         $query = self::find()
             ->where(['request_type_id' => $requestType])
-            ->andWhere(['status' => StatusType::STATUS_REQUEST_DONE])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
             ->andWhere(['>=', 'created_at', $comp1->format('Y-m-d H:i:s')])
             ->andWhere(['<', 'created_at', $comp2->format('Y-m-d H:i:s')]);
 
@@ -335,7 +338,6 @@ class Request extends \yii\db\ActiveRecord
             }
         }
 
-        return (int) ($query->sum('quantity') ?? 0);
+        return (int)($query->sum('quantity') ?? 0);
     }
-
 }

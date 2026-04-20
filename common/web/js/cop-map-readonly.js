@@ -1,30 +1,33 @@
-//Função global que inicia o mapa em read-only, "opts" é VITAL para o mapa funcionar, e é depois convertido para JSON
+// Função global que inicia o mapa em read-only.
+// "opts" é VITAL para o mapa funcionar, e é depois convertido para JSON.
 window.initCopMapReadOnly = function (opts) {
-    //ID do elemento HTML onde o Leaflet vai ser montado, Se não vier nada, usa "map" por defeito
+    // ID do elemento HTML onde o Leaflet vai ser montado.
+    // Se não vier nada, usa "map" por defeito.
     const elId = opts.elId || 'map';
 
-    //O mapa read-only depende sempre de uma imagem de fundo, se não houver imageUrl, não faz sentido continuar
+    // O mapa read-only depende sempre de uma imagem de fundo.
     if (!opts.imageUrl) {
         console.error('initCopMapReadOnly: imageUrl é obrigatório');
         return;
     }
 
-    //Esta funcionalidade foi pensada apenas para modo "image", ou seja, mapa baseado numa imagem estática
+    // Este mapa foi pensado apenas para modo "image".
     if (opts.mode !== 'image') {
         throw new Error('Este mapa está preparado apenas para mode=image');
     }
 
-    //Converte largura/altura da imagem para Number (porque podem vir como string do PHP/JSON)
+    // Converte largura/altura da imagem para Number.
     const IMG_W = Number(opts.imageWidth);
     const IMG_H = Number(opts.imageHeight);
 
-    //Sem largura e altura válidas, o Leaflet não sabe qual é a área útil do mapa
+    // Sem largura e altura válidas, o Leaflet não sabe a área útil do mapa.
     if (!IMG_W || !IMG_H) {
         console.error('initCopMapReadOnly: imageWidth e imageHeight são obrigatórios');
         return;
     }
 
-    // Cria a instância principal do Leaflet, usa CRS.Simple porque estamos a trabalhar com coordenadas "planas" da imagem
+    // Cria a instância principal do Leaflet.
+    // Usa CRS.Simple porque estamos a trabalhar com coordenadas planas de imagem.
     const map = L.map(elId, {
         crs: L.CRS.Simple,
         minZoom: opts.minZoom ?? -2,
@@ -34,55 +37,43 @@ window.initCopMapReadOnly = function (opts) {
         scrollWheelZoom: opts.scrollWheelZoom ?? false,
     });
 
-    //Define os limites totais da imagem
-    //Em CRS.Simple, o canto superior esquerdo é [0,0] e o canto inferior direito é [altura, largura].
+    // Define os limites totais da imagem.
     const bounds = [[0, 0], [IMG_H, IMG_W]];
 
-    //Centro geométrico da imagem
+    // Centro geométrico da imagem.
     const center = [IMG_H / 2, IMG_W / 2];
 
-    //Coloca a imagem de fundo no mapa
+    // Coloca a imagem de fundo no mapa.
     L.imageOverlay(opts.imageUrl, bounds).addTo(map);
 
-    //Guarda a layer GeoJSON atual, é útil para remover a layer antiga quando se faz reload, evitando duplicar features.
+    // Guarda a layer GeoJSON atual.
     let geoJsonLayer = null;
 
-    // Ajusta o mapa para mostrar a imagem inteira dentro da área disponível.
-    // "contain" = caber toda a imagem no ecrã.
+    // Ajusta o mapa para mostrar a imagem inteira.
     function fitContain() {
-        // Obriga o Leaflet a recalcular o tamanho real do container.
         map.invalidateSize(true);
-
-        // Ajusta a câmara para caberem os bounds todos.
         map.fitBounds(bounds, { animate: false });
-
-        // Limita a navegação para não fugir da imagem.
         map.setMaxBounds(bounds);
     }
 
     // Ajusta o mapa para "encher" melhor a área visível.
-    // Pode cortar mais um pouco, mas ocupa melhor o espaço.
     function fitCover() {
         map.invalidateSize(true);
-        // Calcula um zoom adequado para cobrir a área.
         const zoom = map.getBoundsZoom(bounds, true);
-
-        // Define a vista com centro no meio da imagem e o zoom calculado.
         map.setView(center, zoom, { animate: false });
-
         map.setMaxBounds(bounds);
     }
 
-    //Encaixe inicial da imagem no mapa.
+    // Encaixe inicial da imagem.
     fitContain();
 
-    // Segundo ajusto ligeiramente atrasado, para deixar o html estabilizar primeiro
+    // Segundo ajuste ligeiramente atrasado.
     setTimeout(fitContain, 200);
 
     // Variável para debounce do resize da janela.
     let resizeTimeout;
 
-    // Quando a janela muda de tamanho, espera um pouco e depois recalcula o tamanho do mapa.
+    // Quando a janela muda de tamanho, recalcula o mapa.
     window.addEventListener('resize', function () {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
@@ -94,8 +85,6 @@ window.initCopMapReadOnly = function (opts) {
     const container = document.getElementById(elId);
 
     // Se existir ResizeObserver, observa diretamente o container.
-    // Isto é útil quando o mapa muda de tamanho por alterações de layout
-    // internas (ex.: navbar escondida/mostrada), mesmo sem resize da janela.
     if (container && typeof ResizeObserver !== 'undefined') {
         const observer = new ResizeObserver(() => {
             map.invalidateSize(true);
@@ -104,7 +93,6 @@ window.initCopMapReadOnly = function (opts) {
     }
 
     // Função auxiliar que traduz o estado operacional numa cor.
-    // Serve para não repetir o mesmo switch em vários sítios.
     function getStatusColor(status) {
         switch (status) {
             case 'CRÍTICO':
@@ -119,17 +107,27 @@ window.initCopMapReadOnly = function (opts) {
             case 'GREEN':
                 return '#00c853';
 
-            // Cor default caso não haja estado reconhecido.
             default:
                 return '#3388ff';
         }
     }
 
-    // Função auxiliar que traduz o location_type de uma localização num ícone, e muda-o consoante o status_type
-    function getLocationIcon(locationTypeId, statusType) {
+    // Função auxiliar para escapar texto antes de o meter no popup.
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    // Função auxiliar que traduz o tipo de entidade / location_type num ícone.
+    function getLocationIcon(entityType, locationTypeId, statusType) {
         const base = opts.iconsBaseUrl || '';
 
-        if (Number(locationTypeId) === 1) {
+        // Ícone para lodging_site
+        if (entityType === 'lodging_site') {
             let file = 'house-default.png';
 
             switch (statusType) {
@@ -152,7 +150,33 @@ window.initCopMapReadOnly = function (opts) {
                 iconAnchor: [13, 13],
                 popupAnchor: [0, -12]
             });
-        } else if(Number(locationTypeId) === 7) {
+        } 
+
+        // Ícones para locations normais
+        if (Number(locationTypeId) === 1) {
+            let file = 'building-default.png';
+
+            switch (statusType) {
+                case 'RED':
+                    file = 'building-red.png';
+                    break;
+
+                case 'YELLOW':
+                    file = 'building-yellow.png';
+                    break;
+
+                case 'GREEN':
+                    file = 'building-green.png';
+                    break;
+            }
+
+            return L.icon({
+                iconUrl: base + '/' + file,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
+                popupAnchor: [0, -12]
+            });
+        } else if (Number(locationTypeId) === 7) {
             let file = 'navid-default.png';
 
             switch (statusType) {
@@ -185,8 +209,6 @@ window.initCopMapReadOnly = function (opts) {
 
     // Recebe um FeatureCollection GeoJSON e desenha-o no mapa.
     function renderFeatures(featureCollection) {
-        // Validação mínima:
-        // tem de existir um objeto com "features" e esse campo deve ser array.
         if (!featureCollection || !Array.isArray(featureCollection.features)) {
             console.warn('initCopMapReadOnly: featureCollection inválida');
             return;
@@ -197,70 +219,128 @@ window.initCopMapReadOnly = function (opts) {
             map.removeLayer(geoJsonLayer);
         }
 
-        //Cria uma layer Leaflet a partir do GeoJSON, o Leaflet trata automaticamente de Point / LineString / Polygon, etc.
+        // Cria uma layer Leaflet a partir do GeoJSON.
         geoJsonLayer = L.geoJSON(featureCollection, {
-            // Corre uma vez por cada feature desenhada.
-            // Aqui normalmente ligamos popups, eventos, tooltips, etc.
             onEachFeature: function (feature, layer) {
                 const item = feature.properties || {};
+                const entityType = item.entity_type || 'location';
 
-                // Tenta ler primeiro os campos "bonitos" vindos do backend, e só depois os nomes alternativos antigos.
-                const locationType = item.location_type_name ?? item.location_type ?? '—';
-                const statusType = item.status_type_name ?? item.status_type ?? '—';
+                // =========================
+                // LOCATION
+                // =========================
+                if (entityType === 'location') {
+                    const locationType = item.location_type_name ?? item.location_type ?? '—';
 
-                // Constrói o HTML do popup.
-                const popupHtml = `
-                    <div class="cop-popup">
-                        <div class="cop-popup__head">
-                            <div class="cop-popup__title-wrap">
-                                <span class="cop-popup__title">${item.name ?? 'Sem nome'}</span>
+                    const popupHtml = `
+                        <div class="cop-popup">
+                            <div class="cop-popup__head">
+                                <div class="cop-popup__title-wrap">
+                                    <span class="cop-popup__title">${escapeHtml(item.name ?? 'Sem nome')}</span>
+                                    ${
+                        Number(item.is_critical)
+                            ? '<span class="cop-popup__badge cop-popup__badge--critical">Crítico</span>'
+                            : '<span class="cop-popup__badge cop-popup__badge--normal">Normal</span>'
+                    }
+                                </div>
+                            </div>
+
+                            <div class="cop-popup__body">
+                                <div class="cop-popup__row">
+                                    <span class="cop-popup__label">Tipo</span>
+                                    <span class="cop-popup__value">${escapeHtml(locationType ?? '—')}</span>
+                                </div>
+
                                 ${
-                                    Number(item.is_critical)
-                                        ? '<span class="cop-popup__badge cop-popup__badge--critical">Crítico</span>'
-                                        : '<span class="cop-popup__badge cop-popup__badge--normal">Normal</span>'
-                                }
+                        item.notes
+                            ? `
+                                        <div class="cop-popup__notes">
+                                            <span class="cop-popup__label">Notas</span>
+                                            <div class="cop-popup__notes-text">${escapeHtml(item.notes)}</div>
+                                        </div>
+                                        `
+                            : ''
+                    }
                             </div>
                         </div>
-                
-                        <div class="cop-popup__body">
-                            <div class="cop-popup__row">
-                                <span class="cop-popup__label">Tipo</span>
-                                <span class="cop-popup__value">${locationType ?? '—'}</span>
-                            </div>
-                
-                            ${
-                                    item.notes
-                                        ? `
-                                    <div class="cop-popup__notes">
-                                        <span class="cop-popup__label">Notas</span>
-                                        <div class="cop-popup__notes-text">${item.notes}</div>
-                                    </div>
-                                    `
-                                        : ''
-                                }
-                        </div>
-                    </div>
-                `;
+                    `;
 
-                // Associa o popup à feature/layer.
-                layer.bindPopup(popupHtml, {
-                    className: 'cop-leaflet-popup',
-                    maxWidth: 320,
-                    minWidth: 240
-                });
+                    layer.bindPopup(popupHtml, {
+                        className: 'cop-leaflet-popup',
+                        maxWidth: 320,
+                        minWidth: 240
+                    });
+
+                    return;
+                }
+
+                // =========================
+                // LODGING SITE
+                // =========================
+                if (entityType === 'lodging_site') {
+                    const popupHtml = `
+                        <div class="cop-popup">
+                            <div class="cop-popup__head">
+                                <div class="cop-popup__title-wrap">
+                                    <span class="cop-popup__title">${escapeHtml(item.name ?? 'Sem nome')}</span>
+                                    <span class="cop-popup__badge cop-popup__badge--normal">Alojamento</span>
+                                </div>
+                            </div>
+
+                            <div class="cop-popup__body">
+                                <div class="cop-popup__row">
+                                    <span class="cop-popup__label">Tipo</span>
+                                    <span class="cop-popup__value">Alojamento</span>
+                                </div>
+
+                                <div class="cop-popup__row">
+                                    <span class="cop-popup__label">Capacidade total</span>
+                                    <span class="cop-popup__value">${escapeHtml(item.capacity_total ?? '—')}</span>
+                                </div>
+
+                                <div class="cop-popup__row">
+                                    <span class="cop-popup__label">Disponíveis</span>
+                                    <span class="cop-popup__value">${escapeHtml(item.capacity_available ?? '—')}</span>
+                                </div>
+
+                                ${
+                        item.notes
+                            ? `
+                                        <div class="cop-popup__notes">
+                                            <span class="cop-popup__label">Notas</span>
+                                            <div class="cop-popup__notes-text">${escapeHtml(item.notes)}</div>
+                                        </div>
+                                        `
+                            : ''
+                    }
+                            </div>
+                        </div>
+                    `;
+
+                    layer.bindPopup(popupHtml, {
+                        className: 'cop-leaflet-popup',
+                        maxWidth: 320,
+                        minWidth: 240
+                    });
+                }
             },
 
             // Define o estilo de linhas e polígonos.
             style: function (feature) {
                 const item = feature.properties || {};
+                const entityType = item.entity_type || 'location';
 
-                // Vai buscar o estado da feature.
+                // Alojamentos sem status_type usam uma cor própria
+                if (entityType === 'lodging_site') {
+                    return {
+                        color: '#4dabf7',
+                        weight: 3,
+                        fillOpacity: 0.2
+                    };
+                }
+
                 const statusType = item.status_type_name ?? item.status_type ?? null;
-
-                // Traduz estado em cor.
                 const color = getStatusColor(statusType);
 
-                // Devolve o estilo gráfico da feature.
                 return {
                     color: color,
                     weight: 3,
@@ -268,22 +348,26 @@ window.initCopMapReadOnly = function (opts) {
                 };
             },
 
-            //AQUI transforma-se os markers "points"!
+            // Aqui transformam-se os "points" em markers.
             pointToLayer: function (feature, latlng) {
                 const item = feature.properties || {};
+                const entityType = item.entity_type || 'location';
                 const statusType = item.status_type_name ?? item.status_type ?? null;
-                const color = getStatusColor(statusType);
 
-                const customIcon = getLocationIcon(item.location_type_id, statusType);
+                const color = entityType === 'lodging_site'
+                    ? '#4dabf7'
+                    : getStatusColor(statusType);
 
-                // se existir ícone, usa marker com ícone
+                const customIcon = getLocationIcon(entityType, item.location_type_id, statusType);
+
+                // Se existir ícone, usa marker com ícone
                 if (customIcon) {
                     return L.marker(latlng, {
                         icon: customIcon
                     });
                 }
 
-                // se não existir ícone, usa círculo normal
+                // Se não existir ícone, usa círculo normal
                 return L.circleMarker(latlng, {
                     radius: 6,
                     color: color,
@@ -298,19 +382,14 @@ window.initCopMapReadOnly = function (opts) {
     }
 
     // Carrega as features do mapa.
-    // Pode usar uma featureCollection já embebida nas opções
-    // OU ir buscar os dados por fetch a um endpoint.
     function loadFeatures() {
-
-        // Caso 1:
-        // os dados já vieram no próprio objeto opts.
+        // Caso 1: os dados já vieram no próprio objeto opts.
         if (opts.featureCollection && Array.isArray(opts.featureCollection.features)) {
             renderFeatures(opts.featureCollection);
             return;
         }
 
-        // Caso 2:
-        // os dados têm de ser pedidos ao backend/frontend via URL.
+        // Caso 2: os dados têm de ser pedidos via URL.
         if (opts.locationsIndexUrl) {
             fetch(opts.locationsIndexUrl, {
                 method: 'GET',
@@ -326,8 +405,6 @@ window.initCopMapReadOnly = function (opts) {
                     return response.json();
                 })
                 .then(function (data) {
-
-                    // Quando o JSON chega, desenha as features no mapa.
                     renderFeatures(data);
                 })
                 .catch(function (error) {
@@ -337,7 +414,6 @@ window.initCopMapReadOnly = function (opts) {
             return;
         }
 
-        // Se não houver dados embebidos nem URL para fetch, o mapa fica só com a imagem de fundo.
         console.warn('initCopMapReadOnly: nem featureCollection nem locationsIndexUrl foram fornecidos');
     }
 
@@ -345,10 +421,6 @@ window.initCopMapReadOnly = function (opts) {
     loadFeatures();
 
     // Devolve uma pequena API pública do mapa.
-    // Isto permite, noutro ponto do código, fazer por exemplo:
-    // window.copMapReadOnly.fitContain()
-    // window.copMapReadOnly.fitCover()
-    // window.copMapReadOnly.reload()
     return {
         map: map,
         fitContain: fitContain,
