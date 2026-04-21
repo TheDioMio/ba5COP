@@ -25,7 +25,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'error', 'error-page'],
                         'allow' => true,
                     ],
                     [
@@ -69,6 +69,8 @@ class SiteController extends Controller
         //Define uma variável global do Layout, neste caso com o utilizador logado (View Params)
         //Como é impossível um guest aceder à Dashboard, não há necessidade de tratar do null que isto pode devolver.
         $this->view->params['userLogado'] = $userLogado;
+
+
 
         return true;
     }
@@ -116,5 +118,21 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    public function actionErrorPage($type = 'generic')
+    {
+        $allowedTypes = [
+            'action-unavailable',
+            'access-denied',
+            'not-found',
+            'maintenance',
+        ];
+
+        if (!in_array($type, $allowedTypes)) {
+            $type = 'action-unavailable';
+        }
+
+        return $this->render("errors/{$type}");
     }
 }

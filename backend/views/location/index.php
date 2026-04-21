@@ -16,15 +16,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="location-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">
         <div class="card-header">
-            <div class="card-tools float-right">
-                <?= Html::a('<i class="fas fa-plus-circle"></i>',
-                    ['create'],
-                    [
-                        'class' => 'btn btn-success',
-                        'title' => 'Criar',
-                    ])
-                ?>
-            </div>
+<!--            <div class="card-tools float-right">-->
+<!--                --><?php //= Html::a('<i class="fas fa-plus-circle"></i>',
+//                    ['create'],
+//                    [
+//                        'class' => 'btn btn-success',
+//                        'title' => 'Criar',
+//                    ])
+//                ?>
+<!--            </div>-->
         </div>
         <div class="card-body p-0">
             <?= GridView::widget([
@@ -33,10 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
-                        [
-                                'label' => 'Tipo',
-                            'value' => 'locationType.description',
-                        ],
+                    [
+                        'label' => 'Tipo',
+                        'value' => 'locationType.description',
+                    ],
                     'name',
                     [
                         'label' => 'Status',
@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     //'entity_id',
                     [
                         'class' => ActionColumn::className(),
+                        'template' => '{delete}',
                         'urlCreator' => function ($action, Location $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);
                         }

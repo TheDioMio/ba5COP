@@ -39,6 +39,18 @@ class LocationController extends Controller
         );
     }
 
+
+    public function beforeAction($action)
+    {
+        if (in_array($action->id, ['create', 'update'])) {
+            // bloqueia acesso direto
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Lists all Location models.
      *
@@ -100,8 +112,8 @@ class LocationController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
+
         $model = $this->findModel($id);
         $locationTypeArray = LocationType::dropDown();
 

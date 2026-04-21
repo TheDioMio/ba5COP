@@ -1,7 +1,9 @@
 <?php
 
 use hail812\adminlte\widgets\Menu;
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
+use yii\web\View;
 
 $userLogado = Yii::$app->user->identity;
 
@@ -68,7 +70,6 @@ $userLogado = Yii::$app->user->identity;
                         'options' => ['class' => 'nav-item nav-loc'],
                         'items' => [
                             ['label' => 'Locations', 'url' => ['location/index'], 'icon' => 'map-marker-alt'],
-                            ['label' => 'Location Types', 'url' => ['location-type/index'], 'icon' => 'tags'],
                             ['label' => 'Branches', 'url' => ['branch/index'], 'icon' => 'sitemap'],
                         ],
                     ],
@@ -91,21 +92,22 @@ $userLogado = Yii::$app->user->identity;
                         'items' => [
                             ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'icon' => 'history'],
                             ['label' => 'Entity Updates', 'url' => ['entity-update/index'], 'icon' => 'exchange-alt'],
-                            ['label' => 'Entities', 'url' => ['entity/index'], 'icon' => 'database'],
                         ],
                     ],
 
-                    // CONFIGURAÇÃO
+                    // ZONA PERIGOSA
                     [
-                        'label' => 'Configuração',
+                        'label' => 'DANGER ZONE',
                         'icon' => 'cogs',
-                        'options' => ['class' => 'nav-item nav-config'],
+                        'options' => ['class' => 'nav-item nav-danger-zone'],
                         'items' => [
-                            ['label' => 'Priorities', 'url' => ['priority/index'], 'icon' => 'bolt'],
-                            ['label' => 'Status Types', 'url' => ['status-type/index'], 'icon' => 'toggle-on'],
-                            ['label' => 'Incident Types', 'url' => ['incident-type/index'], 'icon' => 'list'],
-                            ['label' => 'Entity Types', 'url' => ['entity-type/index'], 'icon' => 'layer-group'],
-                            ['label' => 'Request Types', 'url' => ['request-type/index'], 'icon' => 'layer-group'],
+                            ['label' => 'Entidades', 'url' => ['entity/index'], 'icon' => 'database'],
+                            ['label' => 'Tipos de Prioridades', 'url' => ['priority/index'], 'icon' => 'bolt'],
+                            ['label' => 'Tipos de Status', 'url' => ['status-type/index'], 'icon' => 'toggle-on'],
+                            ['label' => 'Tipos de Incidentes', 'url' => ['incident-type/index'], 'icon' => 'list'],
+                            ['label' => 'Tipos de Entidades', 'url' => ['entity-type/index'], 'icon' => 'layer-group'],
+                            ['label' => 'Tipos de Pedidos', 'url' => ['request-type/index'], 'icon' => 'layer-group'],
+                            ['label' => 'Location Types', 'url' => ['location-type/index'], 'icon' => 'tags'],
                         ],
                     ],
                 ],
@@ -116,3 +118,144 @@ $userLogado = Yii::$app->user->identity;
     </div>
     <!-- /.sidebar -->
 </aside>
+
+<?php Modal::begin([
+    'id' => 'dangerZoneModal',
+    'title' => '
+        <div class="danger-zone-modal-title-wrap">
+            <div>
+                <div class="danger-zone-modal-title-text">Danger Zone</div>
+            </div>
+        </div>
+    ',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade danger-zone-modal'],
+    'headerOptions' => ['class' => 'danger-zone-modal-header'],
+    'bodyOptions' => ['class' => 'danger-zone-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white',
+        'aria-label' => 'Fechar',
+    ],
+]); ?>
+
+<div class="danger-zone-alert-box">
+    <div class="danger-zone-alert-icon">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+    <div class="danger-zone-alert-content">
+        <div class="danger-zone-alert-title">Acesso a tabelas sensíveis</div>
+        <div class="danger-zone-alert-text">
+            Está prestes a entrar numa zona administrativa sensível. Alterações incorretas podem comprometer a lógica da
+            aplicação, afetar relações internas da base de dados e provocar comportamentos inesperados no sistema.
+        </div>
+    </div>
+</div>
+
+<div class="danger-zone-section">
+    <div class="danger-zone-section-title">Impactos possíveis</div>
+
+    <div class="danger-zone-impact-list">
+        <div class="danger-zone-impact-item">
+            <span class="danger-zone-impact-badge is-danger">
+                <i class="fas fa-bug"></i>
+            </span>
+            <div class="danger-zone-impact-content">
+                <strong>Falhas no sistema</strong>
+                <div class="danger-zone-impact-desc">
+                    Funcionalidades podem deixar de responder corretamente.
+                </div>
+            </div>
+        </div>
+
+        <div class="danger-zone-impact-item">
+            <span class="danger-zone-impact-badge is-warning">
+                <i class="fas fa-database"></i>
+            </span>
+            <div class="danger-zone-impact-content">
+                <strong>Inconsistência de dados</strong>
+                <div class="danger-zone-impact-desc">
+                    Estados, tipos e prioridades podem deixar de estar alinhados com a lógica da aplicação.
+                </div>
+            </div>
+        </div>
+
+        <div class="danger-zone-impact-item">
+            <span class="danger-zone-impact-badge is-dark">
+                <i class="fas fa-unlink"></i>
+            </span>
+            <div class="danger-zone-impact-content">
+                <strong>Quebra de relações críticas</strong>
+                <div class="danger-zone-impact-desc">
+                    Mudanças indevidas podem afetar relações na base de dados, validações e comportamento de módulos dependentes.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="danger-zone-confirm-box">
+    <i class="fas fa-circle-exclamation"></i>
+    <span>Confirma que pretende continuar?</span>
+</div>
+
+<div class="danger-zone-actions">
+    <button type="button" id="dangerCancel" class="danger-zone-btn danger-zone-btn-cancel">
+        <i class="fas fa-arrow-left"></i>
+        <span>Cancelar</span>
+    </button>
+
+    <button type="button" id="dangerConfirm" class="danger-zone-btn danger-zone-btn-confirm">
+        <i class="fas fa-unlock-alt"></i>
+        <span>Continuar</span>
+    </button>
+</div>
+
+<?php Modal::end(); ?>
+
+<?php
+$this->registerJs(<<<JS
+let allowOpenDangerZone = false;
+
+function initDangerZoneWarning() {
+    const dangerItem = document.querySelector('.nav-danger-zone');
+    const dangerLink = dangerItem ? dangerItem.querySelector('.nav-link') : null;
+    const modalEl = document.getElementById('dangerZoneModal');
+    const confirmBtn = document.getElementById('dangerConfirm');
+    const cancelBtn = document.getElementById('dangerCancel');
+
+    if (!dangerItem || !dangerLink || !modalEl || !confirmBtn || !cancelBtn) {
+        console.log('Danger Zone: elementos não encontrados.');
+        return;
+    }
+
+    const modal = new bootstrap.Modal(modalEl);
+
+    dangerLink.addEventListener('click', function (e) {
+        if (!allowOpenDangerZone) {
+            e.preventDefault();
+            e.stopPropagation();
+            modal.show();
+        }
+    });
+
+    confirmBtn.addEventListener('click', function () {
+        allowOpenDangerZone = true;
+        modal.hide();
+
+        dangerItem.classList.add('menu-open');
+
+        const submenu = dangerItem.querySelector('.nav-treeview');
+        if (submenu) {
+            submenu.style.display = 'block';
+        }
+    });
+
+    cancelBtn.addEventListener('click', function () {
+        modal.hide();
+    });
+}
+
+initDangerZoneWarning();
+JS, View::POS_READY);
+?>
