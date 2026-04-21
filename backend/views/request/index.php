@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             $s->description,
                             [
                                 'index',
-                                'status' => $s->id,
+                                'status_type_id' => $s->id,
                                 'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
                                 'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
                             ],

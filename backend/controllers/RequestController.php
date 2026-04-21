@@ -45,7 +45,7 @@ class RequestController extends Controller
 
     public function actionIndex()
     {
-        $status = Yii::$app->request->get('status');
+        $status = Yii::$app->request->get('status_type_id');
 
         $searchModelInternos = new RequestSearch();
         $searchModelInternos->fixedIsExternal = 0;
@@ -59,8 +59,8 @@ class RequestController extends Controller
         $dataProviderExternos = $searchModelExternos->search(Yii::$app->request->queryParams);
 
         if (!empty($status)) {
-            $dataProviderInternos->query->andWhere(['status' => $status]);
-            $dataProviderExternos->query->andWhere(['status' => $status]);
+            $dataProviderInternos->query->andWhere(['status_type_id' => $status]);
+            $dataProviderExternos->query->andWhere(['status_type_id' => $status]);
         }
 
         $statuses = StatusType::find()

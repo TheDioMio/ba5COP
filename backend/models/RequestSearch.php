@@ -20,7 +20,7 @@ class RequestSearch extends Request
     public function rules()
     {
         return [
-            [['id', 'is_external', 'priority_id', 'status', 'entity_id'], 'integer'],
+            [['id', 'is_external', 'priority_id', 'status_type_id', 'entity_id'], 'integer'],
             [['origin', 'details', 'created_at'], 'safe'],
         ];
     }
@@ -69,7 +69,7 @@ class RequestSearch extends Request
             'id' => $this->id,
             'is_external' => $this->is_external,
             'priority_id' => $this->priority_id,
-            'status' => $this->status,
+            'status_type_id' => $this->status_type_id,
             'created_at' => $this->created_at,
             'entity_id' => $this->entity_id,
         ]);
