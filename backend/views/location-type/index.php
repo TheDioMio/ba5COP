@@ -10,35 +10,39 @@ use yii\grid\GridView;
 /** @var app\models\LocationTypeSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Location Types';
+$this->title = 'Gestão Tipo de Localizações';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="location-type-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Location Type', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'description',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, LocationType $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+<div class="location-type-index container-fluid">
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header">
+            <div class="card-tools float-right">
+                <?= Html::a('<i class="fas fa-plus-circle"></i>',
+                    ['create'],
+                    [
+                        'class' => 'btn btn-success',
+                        'title' => 'Criar',
+                    ])
+                ?>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'layout' => "{items}\n{summary}\n{pager}",
+                'tableOptions' => ['class' => 'table table-hover table-striped table-sm'],
+                'columns' => [
+                    'description',
+                    [
+                        'class' => ActionColumn::className(),
+                        'template' => '{update} {delete}',
+                        'urlCreator' => function ($action, LocationType $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
 </div>

@@ -32,6 +32,14 @@ class StatusTypeController extends Controller
         );
     }
 
+    public function beforeAction($action) {
+        if (in_array($action->id, ['view'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
     /**
      * Lists all StatusType models.
      *
@@ -54,12 +62,12 @@ class StatusTypeController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-//    public function actionView($id)
-//    {
-//        return $this->render('view', [
-//            'model' => $this->findModel($id),
-//        ]);
-//    }
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
     /**
      * Creates a new StatusType model.

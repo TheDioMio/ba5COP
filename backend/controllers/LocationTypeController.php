@@ -31,6 +31,13 @@ class LocationTypeController extends Controller
         );
     }
 
+    public function beforeAction($action) {
+        if (in_array($action->id, ['view'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all LocationType models.
      *

@@ -9,7 +9,7 @@
 8 - Ajustar a view do mapa quando se oculta a navbar no dashboard frontend
 9 - Mapa demora imenso a carregar os objetos lá para dentro
 10 - No popup do mapa, frontend, dashboard, aparecem sempre "CRÍTICO", apesar de n ser esse o status correto.
-
+11 - Não há botão para apagar a conta do próprio user no backend, mas depois se o user colocar no URL o caminho, aquilo de certezinha que apaga.
 
 
 --- MELHORIAS ---

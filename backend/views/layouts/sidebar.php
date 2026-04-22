@@ -102,12 +102,18 @@ $userLogado = Yii::$app->user->identity;
                         'options' => ['class' => 'nav-item nav-danger-zone'],
                         'items' => [
                             ['label' => 'Entidades', 'url' => ['entity/index'], 'icon' => 'database'],
-                            ['label' => 'Tipos de Prioridades', 'url' => ['priority/index'], 'icon' => 'bolt'],
-                            ['label' => 'Tipos de Status', 'url' => ['status-type/index'], 'icon' => 'toggle-on'],
-                            ['label' => 'Tipos de Incidentes', 'url' => ['incident-type/index'], 'icon' => 'list'],
-                            ['label' => 'Tipos de Entidades', 'url' => ['entity-type/index'], 'icon' => 'layer-group'],
-                            ['label' => 'Tipos de Pedidos', 'url' => ['request-type/index'], 'icon' => 'layer-group'],
-                            ['label' => 'Location Types', 'url' => ['location-type/index'], 'icon' => 'tags'],
+                            [
+                                'label' => 'Tipos de Dados', 'icon' => 'layer-group',
+                                'items' => [
+
+                                    ['label' => 'Tipos de Prioridades', 'url' => ['priority/index'], 'icon' => 'none'],
+                                    ['label' => 'Tipos de Status', 'url' => ['status-type/index'], 'icon' => 'none'],
+                                    ['label' => 'Tipos de Incidentes', 'url' => ['incident-type/index'], 'icon' => 'none'],
+                                    ['label' => 'Tipos de Entidades', 'url' => ['entity-type/index'], 'icon' => 'none'],
+                                    ['label' => 'Tipos de Pedidos', 'url' => ['request-type/index'], 'icon' => 'none'],
+                                    ['label' => 'Tipos de Localizações', 'url' => ['location-type/index'], 'icon' => 'none'],
+                                ]
+                            ],
                         ],
                     ],
                 ],
