@@ -26,7 +26,7 @@ $this->title = ' '
             </h1>
 
             <p class="error-description">
-                A funcionalidade que tentaste aceder não está disponível neste contexto.
+                A funcionalidade a que tentou aceder não está disponível.
             </p>
 
             <div class="error-actions">

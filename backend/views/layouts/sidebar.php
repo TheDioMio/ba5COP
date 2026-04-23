@@ -55,13 +55,19 @@ $userLogado = Yii::$app->user->identity;
             <?php
             echo Menu::widget([
                 'items' => [
-                    // DASHBOARD
                     ['label' => 'Página Inicial', 'url' => ['site/index'], 'icon' => 'home'],
-                    ['label' => 'Gestão de Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
-                    ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
-                    ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
-                    ['label' => 'Gestão Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
-                    ['label' => 'Gestão de Incidentes', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
+                    [
+                        'label' => 'Módulos de Gestão',
+                        'icon' => 'tools',
+                        'options' => ['class' => 'nav-item nav-loc'],
+                        'items' => [
+                            ['label' => 'Gestão de Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
+                            ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
+                            ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
+                            ['label' => 'Gestão Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
+                            ['label' => 'Gestão de Incidentes', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
+                        ],
+                    ],
 
                     // LOCALIZAÇÃO / TERRENO
                     [
@@ -70,7 +76,7 @@ $userLogado = Yii::$app->user->identity;
                         'options' => ['class' => 'nav-item nav-loc'],
                         'items' => [
                             ['label' => 'Locations', 'url' => ['location/index'], 'icon' => 'map-marker-alt'],
-                            ['label' => 'Branches', 'url' => ['branch/index'], 'icon' => 'sitemap'],
+                            ['label' => 'Ramos', 'url' => ['branch/index'], 'icon' => 'sitemap'],
                         ],
                     ],
 
