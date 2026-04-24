@@ -77,17 +77,42 @@ class LodgingEntryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($lodging_site_id) {
+    public function actionCreate($lodging_site_id)
+    {
         $model = new LodgingEntry();
         $model->lodging_site_id = $lodging_site_id;
+        $model->checkin_at = date('Y-m-d H:i:s');
 
-        //Valor default de current_timestamp.
-        $model->checkin_at = date('Y-m-d');
         $unitArray = Unit::dropDown();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
+            $model->load($this->request->post());
+
+            $lodgingSite = $model->lodgingSite;
+
+            if ($model->people_count > $lodgingSite->capacity_available) {
+                $model->addError('people_count', 'Não há camas disponíveis suficientes.');
+            } else {
+                $transaction = Yii::$app->db->beginTransaction();
+
+                try {
+                    if (!$model->save()) {
+                        throw new \Exception('Erro ao guardar entrada.');
+                    }
+
+                    $lodgingSite->capacity_available -= $model->people_count;
+
+                    if (!$lodgingSite->save(false)) {
+                        throw new \Exception('Erro ao atualizar capacidade disponível.');
+                    }
+
+                    $transaction->commit();
+
+                    return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
+                } catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -160,16 +185,43 @@ class LodgingEntryController extends Controller
      * Faz o checkout de uma entrada no Lodging-entry.
      * Esta função é invocada a partir do view de cada lodging-site.
      */
-    public function actionCheckout($id){
+    public function actionCheckout($id)
+    {
         $model = $this->findModel($id);
 
-        if ($model->checkout_at == null) {
-            $model->checkout_at = date('Y-m-d');
-        } else {
+        if ($model->checkout_at !== null) {
             Yii::$app->session->setFlash('warning', 'Checkout já foi feito.');
+
+            return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
         }
 
-        $model->save(false); //tem que estar false, se não explode
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            $model->checkout_at = date('Y-m-d H:i:s');
+
+            if (!$model->save(false)) {
+                throw new \Exception('Erro ao guardar checkout.');
+            }
+
+            $lodgingSite = $model->lodgingSite;
+            $lodgingSite->capacity_available += $model->people_count;
+
+            if ($lodgingSite->capacity_available > $lodgingSite->capacity_total) {
+                $lodgingSite->capacity_available = $lodgingSite->capacity_total;
+            }
+
+            if (!$lodgingSite->save(false)) {
+                throw new \Exception('Erro ao atualizar capacidade disponível.');
+            }
+
+            $transaction->commit();
+
+            Yii::$app->session->setFlash('success', 'Checkout realizado com sucesso.');
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
 
         return $this->redirect(['lodging-site/view', 'id' => $model->lodging_site_id]);
     }

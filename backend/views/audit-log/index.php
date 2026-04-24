@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'action',
                     'occurred_at',
                     [
+                        'template' => '{delete}',
                         'class' => ActionColumn::className(),
                         'urlCreator' => function ($action, AuditLog $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);

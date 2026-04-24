@@ -138,9 +138,18 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
+    public function actionDelete($id) {
+        $model = $this->findModel($id);
+
+        if ((int)$model->id === (int)Yii::$app->user->id) {
+            Yii::$app->session->setFlash('danger', 'Não podes apagar a tua própria conta.');
+
+            return $this->redirect(['index']);
+        }
+
+        $model->delete();
+
+        Yii::$app->session->setFlash('success', 'Utilizador eliminado com sucesso.');
 
         return $this->redirect(['index']);
     }
@@ -162,8 +171,14 @@ class UserController extends Controller
     }
 
 
-    public function actionUpdateStatus($id){
+    public function actionUpdateStatus($id) {
         $model = $this->findModel($id);
+
+        if ((int)$model->id === (int)Yii::$app->user->id) {
+            Yii::$app->session->setFlash('danger', 'Não podes alterar o estado da tua própria conta.');
+
+            return $this->redirect(Yii::$app->request->referrer ?: ['index']);
+        }
 
         if ($model->status == User::STATUS_ACTIVE) {
             $model->status = User::STATUS_INACTIVE;
@@ -173,7 +188,7 @@ class UserController extends Controller
             Yii::$app->session->setFlash('success', 'Utilizador ativado!');
         }
 
-        $model->save(false); //tem que estar false, se não explode
+        $model->save(false);
 
         return $this->redirect(Yii::$app->request->referrer ?: ['index']);
     }

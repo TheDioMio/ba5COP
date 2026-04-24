@@ -32,11 +32,6 @@ use yii\widgets\ActiveForm;
         'placeholder' => 'Observações do alojamento'
     ]) ?>
 
-    <?= $form->field($model, 'geometry')->textarea([
-        'rows' => 6,
-        'placeholder' => '{"type":"Point","coordinates":[300,200]}'
-    ])->hint('GeoJSON da geometria do alojamento no mapa.') ?>
-
     <div class="form-group">
         <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
     </div>

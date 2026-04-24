@@ -119,14 +119,22 @@ class IncidentController extends Controller
         $model = $this->findModel($id);
 
         $arrayLocations = Location::dropDown();
+        $arrayIncidentTypes = IncidentType::dropDown();
+        $arrayPriorities = Priority::dropDown();
+        $arrayStatus = StatusType::getStatusDropdown(Entity::INCIDENT_ID);
+        $arrayUsers = User::dropDown();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
             'model' => $model,
             'arrayLocations' => $arrayLocations,
+            'arrayIncidentTypes' => $arrayIncidentTypes,
+            'arrayPriorities' => $arrayPriorities,
+            'arrayStatus' => $arrayStatus,
+            'arrayUsers' => $arrayUsers,
         ]);
     }
 

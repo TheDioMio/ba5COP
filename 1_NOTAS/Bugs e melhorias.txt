@@ -1,16 +1,7 @@
 --- BUGS ---
-1 - No index do lodging-site, na coluna da disponibilidade, não está a funcionar as cores de cada número, aparece sempre verde mesmo se estiver em 0.
-3 - O mapa no dashboard não fica centrado em momento algum, nem no zoom, fica sempre off-centre, muito para baixo
 4 - Na função Entity para criar uma nova entidade, pode acontecer de dar erro no form e não criar a entidade original, mas criar entidade na tabela de entidades.
     EXEMPLO: User cria um novo incidente, mas dá erro e não cria o incidente. Porém, a função para criar uma nova entidade corre, e cria um id na entity table mesmo assim.
-5 - Tabela de WO's criticas no KPI não está a listar as tarefas críticas correspondentes.
-6 - Quando se tenta atualizar um incidente, dá erro por variável indefinida: $arrayIncidentTypes
-7 - Quando se apaga entidades, aquilo não apaga a entidade em questão da tabela das entidades (IMENSAS entidades por apagar).
 8 - Ajustar a view do mapa quando se oculta a navbar no dashboard frontend
-9 - Mapa demora imenso a carregar os objetos lá para dentro
-10 - No popup do mapa, frontend, dashboard, aparecem sempre "CRÍTICO", apesar de n ser esse o status correto.
-11 - Não há botão para apagar a conta do próprio user no backend, mas depois se o user colocar no URL o caminho, aquilo de certezinha que apaga.
-12 - Quando se cria uma Location, aquilo não está a ir com o entity_id correto.
 
 
 --- MELHORIAS ---

@@ -101,17 +101,17 @@ class LodgingSite extends \yii\db\ActiveRecord
      *
      * O $badge é boolean e determina se devolve só o número ou HTML formatado.
      */
-    public function getAvailableBeds(bool $badge = false) {
-        $occupied = $this->getOccupiedBeds();
-        $availableBeds = $this->capacity_available - $occupied;
-
+    public function getAvailableBeds(bool $badge = false)
+    {
+        $availableBeds = $this->capacity_available;
 
         if (!$badge) {
             return $availableBeds;
         }
 
-        $operationalBeds = $this->capacity_available;
+        $operationalBeds = $this->capacity_total;
         $divisor = $operationalBeds > 0 ? $operationalBeds : 1;
+
         $percentageAvailable = ($availableBeds / $divisor) * 100;
 
         if ($percentageAvailable <= 0) {

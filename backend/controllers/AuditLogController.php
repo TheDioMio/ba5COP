@@ -33,6 +33,15 @@ class AuditLogController extends Controller
         );
     }
 
+    public function beforeAction($action) {
+        if (in_array($action->id, ['view', 'update'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Lists all AuditLog models.
      *
