@@ -176,6 +176,10 @@ class Entity extends \yii\db\ActiveRecord
             return $location->name;
         }
 
+        if ($decision = DecisionLog::find()->where(['entity_id' => $this->id])->one()) {
+            return $decision->reason;
+        }
+
         return null;
     }
 

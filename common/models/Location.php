@@ -354,4 +354,34 @@ class Location extends \yii\db\ActiveRecord
             ->orderBy(['name' => SORT_ASC])
             ->all();
     }
+
+    /**
+     * Este metodo atualiza as tabelas auditLog para ter um histórico automático de mudanças.
+     * No caso, depois de uma ação CR(Create, Update), atualiza isso no auditLog.
+     */
+    public function afterSave($insert, $changedAttributes) {
+        switch ($insert) {
+            case (true):
+                $action = 'CREATE';
+                break;
+            case (false):
+                $action = 'UPDATE';
+                break;
+            default:
+                $action = 'ERRO 101';
+        }
+
+        $entityID = $this->entity_id;
+        $userID = Yii::$app->user->id;
+
+        AuditLog::logAction($action, $entityID, $userID);
+    }
+
+    public function afterDelete() {
+        $entityID = $this->entity_id;
+        $userID = Yii::$app->user->id;
+        $action = 'DELETE';
+
+        AuditLog::logAction($action, $entityID, $userID);
+    }
 }

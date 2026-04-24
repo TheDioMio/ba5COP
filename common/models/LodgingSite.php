@@ -190,8 +190,7 @@ class LodgingSite extends \yii\db\ActiveRecord
      *
      * @return int
      */
-    public static function getTotalUnavailableBeds(): int
-    {
+    public static function getTotalUnavailableBeds(): int {
         $unavailable = self::getTotalBedsAll() - self::getTotalOperationalBeds();
         return max(0, $unavailable);
     }
@@ -199,8 +198,7 @@ class LodgingSite extends \yii\db\ActiveRecord
     /**
      * Devolve a geometria descodificada em array.
      */
-    public function getGeometryArray(): ?array
-    {
+    public function getGeometryArray(): ?array {
         if (empty($this->geometry)) {
             return null;
         }
@@ -213,8 +211,7 @@ class LodgingSite extends \yii\db\ActiveRecord
     /**
      * Devolve o alojamento em formato GeoJSON Feature para o mapa.
      */
-    public function toGeoJsonFeature(): ?array
-    {
+    public function toGeoJsonFeature(): ?array {
         $geometry = $this->getGeometryArray();
 
         if ($geometry === null) {

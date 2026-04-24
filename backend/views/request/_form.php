@@ -52,7 +52,7 @@ use yii\widgets\ActiveForm;
         ->dropDownList($prioritiesArray, ['prompt' => '-- PRIORIDADE --'])
         ->label('Prioridade') ?>
 
-    <?= $form->field($model, 'status')
+    <?= $form->field($model, 'status_type_id')
         ->dropDownList($statusArray, ['prompt' => '-- STATUS --'])
         ->label('Status') ?>
 

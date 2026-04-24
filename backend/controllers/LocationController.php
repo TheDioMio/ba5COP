@@ -40,8 +40,7 @@ class LocationController extends Controller
     }
 
 
-    public function beforeAction($action)
-    {
+    public function beforeAction($action) {
         if (in_array($action->id, ['create', 'update'])) {
             // bloqueia acesso direto
             return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);

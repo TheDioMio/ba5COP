@@ -10,6 +10,7 @@
 9 - Mapa demora imenso a carregar os objetos lá para dentro
 10 - No popup do mapa, frontend, dashboard, aparecem sempre "CRÍTICO", apesar de n ser esse o status correto.
 11 - Não há botão para apagar a conta do próprio user no backend, mas depois se o user colocar no URL o caminho, aquilo de certezinha que apaga.
+12 - Quando se cria uma Location, aquilo não está a ir com o entity_id correto.
 
 
 --- MELHORIAS ---

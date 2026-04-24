@@ -40,7 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'label' => 'Entidade',
-                        'value' => 'entity.entityName',
+                        'value' => function ($model) {
+                            return $model->entity->entityName ?? 'Apagado! Entity ID: ' . $model->entity_id;
+                        },
                     ],
                     'action',
                     'occurred_at',

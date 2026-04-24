@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use DateTime;
+use DateTimeZone;
 use Yii;
 
 /**
@@ -73,5 +75,20 @@ class AuditLog extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+
+    public static function logAction($action, $entityID, $userID) {
+        $log = new AuditLog();
+
+        $log->action = $action;
+        $log->entity_id = $entityID;
+        $log->user_id = $userID;
+        $log->occurred_at = date('Y-m-d H:i:s');
+
+        if (!$log->save()) {
+            var_dump($log->errors);
+            die;
+        }
     }
 }
