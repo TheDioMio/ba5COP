@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Entity;
 use common\models\Location;
 use common\models\LocationType;
 use common\models\LodgingSite;
@@ -85,15 +86,21 @@ class LocationController extends Controller
      *
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new Location();
         $locationTypeArray = LocationType::dropDown();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+           $model->load($this->request->post());
+
+           $entity = Entity::createEntity(Entity::LOCATION_ID);
+           if($entity !== null) {
+               $model->entity_id = $entity->id;
+
+               if($model->save()) {
+                   return $this->redirect(['view', 'id' => $model->id]);
+               }
+           }
         } else {
             $model->loadDefaultValues();
         }
@@ -234,38 +241,36 @@ class LocationController extends Controller
 
         $geomJson = json_encode($geometry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        // Cria registo entity associado à location
-        Yii::$app->db->createCommand()->insert('entity', [
-            'entity_type_id' => 1,
-        ])->execute();
+        // Cria registo entity associado à location com ID 1XXXX
+        $entity = Entity::createEntity(Entity::LOCATION_ID);
 
-        $entityId = (int)Yii::$app->db->getLastInsertID();
+        if ($entity === null) {
+            throw new \yii\web\ServerErrorHttpException('Erro ao criar entity.');
+        }
 
-        // Cria location
-        Yii::$app->db->createCommand()->insert('location', [
-            'location_type_id' => $locationTypeId,
-            'name' => $name,
-            'notes' => $notes,
-            'geometry' => $geomJson,
-            'status_type_id' => $statusTypeId,
-            'is_critical' => $isCritical,
-            'updated_at' => new Expression('CURRENT_TIMESTAMP'),
-            'entity_id' => $entityId,
-        ])->execute();
+        $model = new Location();
+        $model->location_type_id = $locationTypeId;
+        $model->name = $name;
+        $model->notes = $notes;
+        $model->geometry = $geomJson;
+        $model->status_type_id = $statusTypeId;
+        $model->is_critical = $isCritical;
+        $model->entity_id = $entity->id;
 
-        $id = (int)Yii::$app->db->getLastInsertID();
+        if (!$model->save()) {
+            throw new \yii\web\ServerErrorHttpException(json_encode($model->errors));
+        }
 
         return [
             'ok' => true,
-            'id' => $id,
+            'id' => $model->id,
         ];
     }
 
     /**
      * Atualiza atributos e/ou geometria de uma location via mapa.
      */
-    public function actionMapUpdate($id)
-    {
+    public function actionMapUpdate($id) {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $data = json_decode(Yii::$app->request->getRawBody(), true);
@@ -274,40 +279,40 @@ class LocationController extends Controller
             throw new \yii\web\BadRequestHttpException('JSON inválido.');
         }
 
-        $update = [
-            'updated_at' => new Expression('CURRENT_TIMESTAMP'),
-        ];
+        $model = $this->findModel($id);
 
         if (array_key_exists('name', $data)) {
-            $update['name'] = trim((string)$data['name']) ?: 'Novo local';
+            $model->name = trim((string)$data['name']) ?: 'Novo local';
         }
 
         if (array_key_exists('notes', $data)) {
-            $update['notes'] = trim((string)$data['notes']) ?: null;
+            $model->notes = trim((string)$data['notes']) ?: null;
         }
 
         if (array_key_exists('location_type_id', $data)) {
-            $update['location_type_id'] = (int)$data['location_type_id'];
+            $model->location_type_id = (int)$data['location_type_id'];
         }
 
         if (array_key_exists('status_type_id', $data)) {
-            $update['status_type_id'] = (int)$data['status_type_id'];
+            $model->status_type_id = (int)$data['status_type_id'];
         }
 
         if (array_key_exists('is_critical', $data)) {
-            $update['is_critical'] = (int)$data['is_critical'];
+            $model->is_critical = (int)$data['is_critical'];
         }
 
         if (array_key_exists('geometry', $data) && is_array($data['geometry'])) {
-            $update['geometry'] = json_encode(
+            $model->geometry = json_encode(
                 $data['geometry'],
                 JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
             );
         }
 
-        Yii::$app->db->createCommand()
-            ->update('location', $update, ['id' => (int)$id])
-            ->execute();
+        if (!$model->save()) {
+            throw new \yii\web\ServerErrorHttpException(
+                json_encode($model->errors, JSON_UNESCAPED_UNICODE)
+            );
+        }
 
         return ['ok' => true];
     }
@@ -315,13 +320,14 @@ class LocationController extends Controller
     /**
      * Apaga uma location via mapa.
      */
-    public function actionMapDelete($id)
-    {
+    public function actionMapDelete($id) {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        Yii::$app->db->createCommand()
-            ->delete('location', ['id' => (int)$id])
-            ->execute();
+        $model = $this->findModel($id);
+
+        if ($model->delete() === false) {
+            throw new \yii\web\ServerErrorHttpException('Erro ao apagar location.');
+        }
 
         return ['ok' => true];
     }
