@@ -20,31 +20,15 @@ class RbacController extends Controller
         $loginFrontend = $this->addPermission($auth, 'login.frontend', 'Acesso ao Frontend');
         $loginBackend = $this->addPermission($auth, 'login.backend', 'Acesso ao Backend');
 
-        // Sistema
-        $userManage = $this->addPermission($auth, 'user.manage', 'CRUD de utilizadores');
-        $auditView  = $this->addPermission($auth, 'audit.view', 'Ver auditoria');
-
         // COP / Mapa
         $copView  = $this->addPermission($auth, 'cop.view', 'Ver dashboard COP');
         $mapView  = $this->addPermission($auth, 'map.view', 'Ver mapa');
         $mapManage = $this->addPermission($auth, 'map.manage', 'Gerir mapa (camadas, editar, exportar, etc.)');
 
-        // Incidentes
         $incidentManage = $this->addPermission($auth, 'incident.manage', 'Criar/editar/atribuir incidentes');
-        $incidentClose  = $this->addPermission($auth, 'incident.close', 'Fechar/reabrir incidentes');
-
-        // Tasks
-        $taskManage   = $this->addPermission($auth, 'task.manage', 'Criar/editar/atribuir tasks');
-        $taskComplete = $this->addPermission($auth, 'task.complete', 'Concluir/reabrir tasks');
-
-        // Requests
         $requestManage = $this->addPermission($auth, 'request.manage', 'Criar/editar/atribuir/fechar pedidos');
-        $requestDecide = $this->addPermission($auth, 'request.decide', 'Aprovar/recusar pedidos');
-
-        // (Opcional) se fores mesmo usar
-        $kpiManage      = $this->addPermission($auth, 'kpi.manage', 'Gerir KPIs (ver/editar/publicar)');
-        $decisionManage = $this->addPermission($auth, 'decision.manage', 'Gerir decisões (criar/editar/publicar)');
-
+        $userManage = $this->addPermission($auth, 'user.manage', 'CRUD de utilizadores');
+        $auditView  = $this->addPermission($auth, 'audit.view', 'Ver auditoria');
 
         // -------------------- ROLES --------------------
 
@@ -72,19 +56,15 @@ class RbacController extends Controller
         // -------------------- ROLE -> PERMISSIONS --------------------
 
         // ADMINISTRADOR
-        $auth->addChild($admin, $loginFrontend);
+//        $auth->addChild($admin, $loginFrontend);
         $auth->addChild($admin, $loginBackend);
         $auth->addChild($admin, $userManage);
         $auth->addChild($admin, $auditView);
-        $auth->addChild($admin, $copView);
+//        $auth->addChild($admin, $copView);
         $auth->addChild($admin, $mapView);
         $auth->addChild($admin, $mapManage);
         $auth->addChild($admin, $incidentManage);
-        $auth->addChild($admin, $incidentClose);
-        $auth->addChild($admin, $taskManage);
-        $auth->addChild($admin, $taskComplete);
         $auth->addChild($admin, $requestManage);
-        $auth->addChild($admin, $requestDecide);
         // ADMINISTRADOR
 
 
@@ -93,21 +73,17 @@ class RbacController extends Controller
         $auth->addChild($comandante, $copView);
         $auth->addChild($comandante, $mapView);
         $auth->addChild($comandante, $incidentManage);
-        $auth->addChild($comandante, $incidentClose);
-        $auth->addChild($comandante, $taskManage);
-        $auth->addChild($comandante, $taskComplete);
         $auth->addChild($comandante, $requestManage);
-        $auth->addChild($comandante, $requestDecide);
         $auth->addChild($comandante, $auditView);
         // COMANDANTE
 
         // OPERADOR
         $auth->addChild($operador, $loginFrontend);
+        $auth->addChild($operador, $loginBackend);
         $auth->addChild($operador, $copView);
         $auth->addChild($operador, $mapView);
+        $auth->addChild($operador, $mapManage);
         $auth->addChild($operador, $incidentManage);
-        $auth->addChild($operador, $taskManage);
-        $auth->addChild($operador, $taskComplete);
         // OPERADOR
 
         // GESTOR DE PEDIDOS

@@ -10,6 +10,8 @@ use common\models\Location;
 use common\models\Priority;
 use common\models\StatusType;
 use common\models\User;
+use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -27,6 +29,24 @@ class IncidentController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'denyCallback' => function () {
+                        //se tiver acesso ao Backend redireciona para a home do back se não, redireciona para para o login
+                        if (Yii::$app->user->can('login.backend')) {
+                            return Yii::$app->response->redirect(['/site/index']);
+                        }
+                        return Yii::$app->response->redirect(['/site/login']);
+
+                    },
+                    'except' => ['error'],
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['incident.manage'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

@@ -8,6 +8,7 @@ use common\models\LodgingSite;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,6 +27,28 @@ class LodgingSiteController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'denyCallback' => function () {
+                        //se tiver acesso ao Backend redireciona para a home do back se não, redireciona para para o login
+                        if (Yii::$app->user->can('login.backend')) {
+                            return Yii::$app->response->redirect(['/site/index']);
+                        }
+                        return Yii::$app->response->redirect(['/site/login']);
+
+                    },
+                    'except' => ['error'],
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['login'],
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [

@@ -154,7 +154,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 ]) ?>
             </div>
 
-            <div id="map" style="height: calc(80vh - 220px); min-height: 600px;"></div>
+            <?php
+            if(Yii::$app->user->can('map.manage')) {
+                echo '<div id="map" style="height: calc(80vh - 220px); min-height: 600px;"></div>';
+            }
+            ?>
+
 
             <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog">

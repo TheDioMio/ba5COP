@@ -51,10 +51,15 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
         ]);
 
         $menuItems = [
-            ['label' => 'Dashboard', 'url' => ['/dashboard/index'], 'active' => $currentRoute === 'dashboard/index'],
-            ['label' => 'COP', 'url' => ['/site/cop'], 'active' => $currentRoute === 'site/cop'],
+            [
+                'label' => 'Dashboard',
+                'url' => ['/dashboard/index'],
+                'active' => $currentRoute === 'dashboard/index',
+                'visible' => Yii::$app->user->can('user.manage'),
+            ],
+//            ['label' => 'COP', 'url' => ['/site/cop'], 'active' => $currentRoute === 'site/cop'],
             ['label' => 'Sobre', 'url' => ['/site/about'], 'active' => $currentRoute === 'site/about'],
-            ['label' => 'Contacto', 'url' => ['/site/contact'], 'active' => $currentRoute === 'site/contact'],
+//            ['label' => 'Contacto', 'url' => ['/site/contact'], 'active' => $currentRoute === 'site/contact'],
         ];
 
         echo Nav::widget([

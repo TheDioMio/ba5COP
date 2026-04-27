@@ -23,13 +23,21 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'denyCallback' => function () {
+                    //se tiver acesso ao Backend redireciona para a home do back se não, redireciona para para o login
+                    if (Yii::$app->user->can('login.backend')) {
+                        return Yii::$app->response->redirect(['/site/index']);
+                    }
+                    return Yii::$app->response->redirect(['/site/login']);
+
+                },
+                'except' => ['error'],
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'error-page'],
                         'allow' => true,
+                        'actions' => ['login'],
                     ],
                     [
-                        'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -91,20 +99,48 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            // Verifica permissão para acessar o backend
+            if (Yii::$app->user->can('login.backend')) {
+                return $this->goHome();
+            } else {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'You are not allowed to access the backend.');
+                return $this->redirect(['site/login']);
+            }
         }
 
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            // Depois do login, verificar permissão
+            if (Yii::$app->user->can('login.backend')) {
+                return $this->goBack();
+            } else {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'You are not allowed to access the backend.');
+                return $this->redirect(['site/login']);
+            }
         }
 
         $model->password = '';
 
         return $this->render('login', [
             'model' => $model,
+        ]);
+    }
+
+    public function actionError()
+    {
+        $exception = Yii::$app->errorHandler->exception;
+
+        // Se NÃO estiver logado → redireciona para LOGIN
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['/site/login']);
+        }
+
+        return $this->render('error', [
+            'exception' => $exception,
         ]);
     }
 
@@ -122,6 +158,10 @@ class SiteController extends Controller
 
     public function actionErrorPage($type = 'generic')
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['/site/login']);
+        }
+
         $allowedTypes = [
             'action-unavailable',
             'access-denied',

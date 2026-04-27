@@ -12,6 +12,7 @@ $this->title = 'BA5 COP';
 
 $asset = CopMapReadOnlyAsset::register($this);
 $imageUrl = $asset->baseUrl . '/img/img_mapa.jpg';
+$mapIconsBaseUrl = $asset->baseUrl . '/img/map-icons';
 
 $homeMapOptions = [
     'elId' => 'home-map',
@@ -21,8 +22,9 @@ $homeMapOptions = [
     'imageHeight' => 701,
     'minZoom' => -1.5,
     'maxZoom' => 2,
-    'scrollWheelZoom' => false,
+    'scrollWheelZoom' => true,
     'locationsIndexUrl' => Url::to(['/site/cop-data']),
+    'iconsBaseUrl' => $mapIconsBaseUrl,
 ];
 ?>
 

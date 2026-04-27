@@ -15,13 +15,64 @@ use common\models\Task;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class DashboardController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'denyCallback' => function () {
+                    if (Yii::$app->user->can('login.frontend')) {
+                        return Yii::$app->response->redirect(['/site/index']);
+                    }
+                    return Yii::$app->response->redirect('/site/login');
+                },
+                'except' => ['error'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['login.frontend', 'cop.view'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'logout' => ['post'],
+                    'cop-data' => ['get'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => \yii\web\ErrorAction::class,
+            ],
+            'captcha' => [
+                'class' => \yii\captcha\CaptchaAction::class,
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
     public function actionIndex()
     {
+        if (!Yii::$app->user->can('cop.view')) {
+            throw new ForbiddenHttpException('Sem permissão para ver a dashboard do COP');
+        }
+
         //--- INCIDENTES - SEGURANÇA ---
         //total de incidentes (geral)
         $securityIncidents = Incident::incidentTotal(IncidentType::SECURITY);

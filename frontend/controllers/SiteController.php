@@ -32,15 +32,19 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'denyCallback' => function () {
+                    if (Yii::$app->user->can('login.frontend')) {
+                        return Yii::$app->response->redirect(['/site/index']);
+                    }
+                    return Yii::$app->response->redirect('/site/login');
+                },
+                'except' => ['error'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['login', 'signup'],
                         'allow' => true,
-                        'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -91,14 +95,19 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest )  {
             return $this->goHome();
         }
 
         $model = new LoginForm();
-
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            if (Yii::$app->user->can('login.frontend')) {
+                return $this->goBack();
+            } else {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'You are not allowed to access the frontend.');
+                return $this->redirect(['site/login']);
+            }
         }
 
         $model->password = '';

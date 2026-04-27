@@ -10,8 +10,12 @@ Não faz muito sentido os pedidos terem o status "done", basta até ao approved 
 Melhorar as funções nos requests, aquilo podia ser compactado para umas quantas funções (em vez de ter 6 funções para ir buscar os 6 estados diferentes, podia ser só 1 com parãmetro)
 No form da task, tem 2 inputs de datas, created_at e due_at, fazer uma verificação de não deixar o user colocar o due_at antes do created_at.
 No cop-map-readonly, fazer um switch com os alojamentos para mostrar os ícones diferentes dependendo da capacidade disponível do alojamento.
-
+Fazer página de erros no frontend e ocultar a pag comentadas no main/site
 
 --- MUDANÇAS NA BD ---
 Nos incidentes, não faz sentido ter "em progresso", só nas tarefas. Status dos incidentes deviam de ser só "aberto" // "resolvido"
 Faz sentido ter "done" como status nos pedidos???? acho que n
+
+
+--- TODO ---
+Começar a tratar do processo de SIGNUP no frontend???

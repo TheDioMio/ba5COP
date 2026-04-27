@@ -61,11 +61,26 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'tools',
                         'options' => ['class' => 'nav-item nav-loc'],
                         'items' => [
-                            ['label' => 'Gestão de Utilizadores', 'url' => ['user/index'], 'icon' => 'user'],
-                            ['label' => 'Gestão de Pedidos', 'url' => ['request/index'], 'icon' => 'inbox'],
+                            [
+                                'label' => 'Gestão de Utilizadores',
+                                'url' => ['user/index'],
+                                'icon' => 'user',
+                                'visible' => Yii::$app->user->can('user.manage'),
+                            ],
+                            [
+                                'label' => 'Gestão de Pedidos',
+                                'url' => ['request/index'],
+                                'icon' => 'inbox',
+                                'visible' => Yii::$app->user->can('request.manage'),
+                            ],
                             ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
                             ['label' => 'Gestão Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
-                            ['label' => 'Gestão de Incidentes', 'url' => ['incident/index'], 'icon' => 'exclamation-triangle'],
+                            [
+                                'label' => 'Gestão de Incidentes',
+                                'url' => ['incident/index'],
+                                'icon' => 'exclamation-triangle',
+                                'visible' => Yii::$app->user->can('incident.manage'),
+                            ],
                         ],
                     ],
 
@@ -96,8 +111,13 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'users-cog',
                         'options' => ['class' => 'nav-item nav-admin'],
                         'items' => [
-                            ['label' => 'Audit Log', 'url' => ['audit-log/index'], 'icon' => 'history'],
-                            ['label' => 'Entity Updates', 'url' => ['entity-update/index'], 'icon' => 'exchange-alt'],
+                            [
+                                'label' => 'Audit Log',
+                                'url' => ['audit-log/index'],
+                                'icon' => 'history',
+                                'visible' => Yii::$app->user->can('audit.view'),
+                            ],
+//                            ['label' => 'Entity Updates', 'url' => ['entity-update/index'], 'icon' => 'exchange-alt'],
                         ],
                     ],
 

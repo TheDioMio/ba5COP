@@ -391,30 +391,30 @@ $copMapOptions = [
                     </div>
                 </article>
 
-                <article class="cop-card cop-module cop-sanitary-card">
-                    <header class="cop-module-head">
-                        <div>
-                            <span class="cop-eyebrow">Situação sanitária</span>
-                            <h3>Estado sanitário e restrições</h3>
-                        </div>
-                        <span class="cop-badge cop-badge-warning">Atenção</span>
-                    </header>
-
-                    <div class="cop-sanitary-grid">
-
-                        <div class="cop-sanitary-item is-danger">
-                            <span class="cop-sanitary-label">Avarias críticas</span>
-                            <strong class="cop-sanitary-value">1</strong>
-                        </div>
-
-                        <div class="cop-sanitary-item is-warning">
-                            <span class="cop-sanitary-label">Restrições de uso</span>
-                            <strong class="cop-sanitary-value">2</strong>
-                            <small>balneários condicionados</small>
-                        </div>
-
-                    </div>
-                </article>
+<!--                <article class="cop-card cop-module cop-sanitary-card">-->
+<!--                    <header class="cop-module-head">-->
+<!--                        <div>-->
+<!--                            <span class="cop-eyebrow">Situação sanitária</span>-->
+<!--                            <h3>Estado sanitário e restrições</h3>-->
+<!--                        </div>-->
+<!--                        <span class="cop-badge cop-badge-warning">Atenção</span>-->
+<!--                    </header>-->
+<!---->
+<!--                    <div class="cop-sanitary-grid">-->
+<!---->
+<!--                        <div class="cop-sanitary-item is-danger">-->
+<!--                            <span class="cop-sanitary-label">Avarias críticas</span>-->
+<!--                            <strong class="cop-sanitary-value">1</strong>-->
+<!--                        </div>-->
+<!---->
+<!--                        <div class="cop-sanitary-item is-warning">-->
+<!--                            <span class="cop-sanitary-label">Restrições de uso</span>-->
+<!--                            <strong class="cop-sanitary-value">2</strong>-->
+<!--                            <small>balneários condicionados</small>-->
+<!--                        </div>-->
+<!---->
+<!--                    </div>-->
+<!--                </article>-->
 
             </aside>
 
@@ -425,8 +425,7 @@ $copMapOptions = [
 
                 <header class="cop-module-head">
                     <div>
-                        <span class="cop-eyebrow">Execução</span>
-                        <h3>Top 10 tarefas — WO Tracker</h3>
+                        <span class="cop-eyebrow">Top 10 tarefas — WO Tracker</span>
                     </div>
                 </header>
 
@@ -484,8 +483,7 @@ $copMapOptions = [
             <article class="cop-card">
                 <header class="cop-module-head">
                     <div>
-                        <span class="cop-eyebrow">Coordenação</span>
-                        <h3>Decisions Log</h3>
+                        <span class="cop-eyebrow">Decisions Log</span>
                     </div>
                     <span class="cop-badge">Últimas 10</span>
                 </header>
@@ -540,8 +538,7 @@ $copMapOptions = [
             <article class="cop-card">
                 <header class="cop-module-head">
                     <div>
-                        <span class="cop-eyebrow">Risco</span>
-                        <h3>Riscos do dia</h3>
+                        <span class="cop-eyebrow">Riscos do Dia</span>
                     </div>
                     <span class="cop-badge">Top 5</span>
                 </header>
