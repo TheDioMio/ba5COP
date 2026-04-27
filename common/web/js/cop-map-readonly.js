@@ -1,33 +1,24 @@
 // Função global que inicia o mapa em read-only.
-// "opts" é VITAL para o mapa funcionar, e é depois convertido para JSON.
 window.initCopMapReadOnly = function (opts) {
-    // ID do elemento HTML onde o Leaflet vai ser montado.
-    // Se não vier nada, usa "map" por defeito.
     const elId = opts.elId || 'map';
 
-    // O mapa read-only depende sempre de uma imagem de fundo.
     if (!opts.imageUrl) {
         console.error('initCopMapReadOnly: imageUrl é obrigatório');
         return;
     }
 
-    // Este mapa foi pensado apenas para modo "image".
     if (opts.mode !== 'image') {
         throw new Error('Este mapa está preparado apenas para mode=image');
     }
 
-    // Converte largura/altura da imagem para Number.
     const IMG_W = Number(opts.imageWidth);
     const IMG_H = Number(opts.imageHeight);
 
-    // Sem largura e altura válidas, o Leaflet não sabe a área útil do mapa.
     if (!IMG_W || !IMG_H) {
         console.error('initCopMapReadOnly: imageWidth e imageHeight são obrigatórios');
         return;
     }
 
-    // Cria a instância principal do Leaflet.
-    // Usa CRS.Simple porque estamos a trabalhar com coordenadas planas de imagem.
     const map = L.map(elId, {
         crs: L.CRS.Simple,
         minZoom: opts.minZoom ?? -2,
@@ -37,26 +28,128 @@ window.initCopMapReadOnly = function (opts) {
         scrollWheelZoom: opts.scrollWheelZoom ?? false,
     });
 
-    // Define os limites totais da imagem.
     const bounds = [[0, 0], [IMG_H, IMG_W]];
-
-    // Centro geométrico da imagem.
     const center = [IMG_H / 2, IMG_W / 2];
 
-    // Coloca a imagem de fundo no mapa.
     L.imageOverlay(opts.imageUrl, bounds).addTo(map);
 
-    // Guarda a layer GeoJSON atual.
     let geoJsonLayer = null;
+    let allMapLayers = [];
 
-    // Ajusta o mapa para mostrar a imagem inteira.
+    const activeFilters = {
+        statusRed: true,
+        statusYellow: true,
+        statusGreen: true,
+        roads: true,
+        buildings: true,
+        vedation: true,
+        criticalPoints: true,
+        incidents: true,
+        tasks: true,
+        lodgingSites: true,
+        others: true,
+    };
+
+    const visibleFilters = {
+        statusRed: true,
+        statusYellow: true,
+        statusGreen: true,
+        roads: true,
+        buildings: true,
+        vedation: true,
+        criticalPoints: true,
+        incidents: false,
+        tasks: false,
+        lodgingSites: true,
+        others: true,
+    };
+
+    const filterLabels = {
+        statusRed: 'INOP',
+        statusYellow: 'Alerta',
+        statusGreen: 'Operacional',
+        roads: 'Vias e corredores logísticos',
+        buildings: 'Edifícios',
+        vedation: 'Vedação',
+        criticalPoints: 'Pontos críticos',
+        incidents: 'Incidentes',
+        tasks: 'Tarefas WO',
+        lodgingSites: 'Alojamentos',
+        others: 'Outros',
+    };
+
+    createFilterControl();
+
+    function createFilterControl() {
+        const FilterControl = L.Control.extend({
+            options: {
+                position: 'topright'
+            },
+
+            onAdd: function () {
+                const wrapper = L.DomUtil.create('div', 'cop-layer-filter-wrapper');
+
+                wrapper.innerHTML = `
+                <button type="button" class="cop-layer-filter-toggle" title="Mostrar/ocultar filtros">
+                    <i class="fas fa-layer-group"></i>
+                </button>
+
+                <div class="cop-layer-filter-panel is-open">
+                    <div class="cop-layer-filter-header">
+                        <div>
+                            <strong class="cop-layer-filter-title">Filtros</strong>
+                        </div>
+                    </div>
+
+                    <div class="cop-layer-filter-list">
+                        ${Object.entries(filterLabels)
+                    .filter(([key]) => visibleFilters[key] === true)
+                    .map(([key, label]) => `
+                                <label class="cop-layer-filter-item">
+                                    <input
+                                        type="checkbox"
+                                        data-filter="${key}"
+                                        ${activeFilters[key] ? 'checked' : ''}
+                                    >
+                                    <span class="cop-layer-filter-check"></span>
+                                    <span class="cop-layer-filter-text">${label}</span>
+                                </label>
+                            `).join('')}
+                    </div>
+                </div>
+            `;
+
+                L.DomEvent.disableClickPropagation(wrapper);
+                L.DomEvent.disableScrollPropagation(wrapper);
+
+                const toggleBtn = wrapper.querySelector('.cop-layer-filter-toggle');
+                const panel = wrapper.querySelector('.cop-layer-filter-panel');
+
+                toggleBtn.addEventListener('click', function () {
+                    panel.classList.toggle('is-open');
+                    panel.classList.toggle('is-closed');
+                });
+
+                wrapper.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                    input.addEventListener('change', function () {
+                        activeFilters[this.dataset.filter] = this.checked;
+                        applyFilters();
+                    });
+                });
+
+                return wrapper;
+            }
+        });
+
+        map.addControl(new FilterControl());
+    }
+
     function fitContain() {
         map.invalidateSize(true);
         map.fitBounds(bounds, { animate: false });
         map.setMaxBounds(bounds);
     }
 
-    // Ajusta o mapa para "encher" melhor a área visível.
     function fitCover() {
         map.invalidateSize(true);
         const zoom = map.getBoundsZoom(bounds, true);
@@ -64,16 +157,11 @@ window.initCopMapReadOnly = function (opts) {
         map.setMaxBounds(bounds);
     }
 
-    // Encaixe inicial da imagem.
     fitContain();
-
-    // Segundo ajuste ligeiramente atrasado.
     setTimeout(fitContain, 200);
 
-    // Variável para debounce do resize da janela.
     let resizeTimeout;
 
-    // Quando a janela muda de tamanho, recalcula o mapa.
     window.addEventListener('resize', function () {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
@@ -81,10 +169,8 @@ window.initCopMapReadOnly = function (opts) {
         }, 100);
     });
 
-    // Vai buscar o container real do mapa no DOM.
     const container = document.getElementById(elId);
 
-    // Se existir ResizeObserver, observa diretamente o container.
     if (container && typeof ResizeObserver !== 'undefined') {
         const observer = new ResizeObserver(() => {
             map.invalidateSize(true);
@@ -92,7 +178,6 @@ window.initCopMapReadOnly = function (opts) {
         observer.observe(container);
     }
 
-    // Função auxiliar que traduz o estado operacional numa cor.
     function getStatusColor(status) {
         switch (status) {
             case 'CRÍTICO':
@@ -112,7 +197,6 @@ window.initCopMapReadOnly = function (opts) {
         }
     }
 
-    // Função auxiliar para escapar texto antes de o meter no popup.
     function escapeHtml(value) {
         return String(value ?? '')
             .replaceAll('&', '&amp;')
@@ -122,41 +206,32 @@ window.initCopMapReadOnly = function (opts) {
             .replaceAll("'", '&#039;');
     }
 
-    // Função auxiliar que traduz o tipo de entidade / location_type num ícone.
     function getLocationIcon(entityType, locationTypeId, statusType) {
         const base = opts.iconsBaseUrl || '';
 
-        // Ícone para lodging_site
         if (entityType === 'lodging_site') {
-            let file = 'house-default.png';
-
-            //swich da capacidade disponível dos alojamentos. Por fazer.
-            // switch () {
-            //
-            // }
-
             return L.icon({
-                iconUrl: base + '/' + file,
+                iconUrl: base + '/house-default.png',
                 iconSize: [26, 26],
                 iconAnchor: [13, 13],
                 popupAnchor: [0, -12]
             });
-        } 
+        }
 
-        // Ícones para locations normais
         if (Number(locationTypeId) === 1) {
             let file = 'building-default.png';
 
             switch (statusType) {
                 case 'RED':
+                case 'CRÍTICO':
                     file = 'building-red.png';
                     break;
-
                 case 'YELLOW':
+                case 'ALERTA':
                     file = 'building-yellow.png';
                     break;
-
                 case 'GREEN':
+                case 'OK':
                     file = 'building-green.png';
                     break;
             }
@@ -167,7 +242,9 @@ window.initCopMapReadOnly = function (opts) {
                 iconAnchor: [13, 13],
                 popupAnchor: [0, -12]
             });
-        } else if (Number(locationTypeId) === 7) {
+        }
+
+        if (Number(locationTypeId) === 7) {
             let file = 'navid-default.png';
 
             switch (statusType) {
@@ -175,12 +252,10 @@ window.initCopMapReadOnly = function (opts) {
                 case 'RED':
                     file = 'navid-red.png';
                     break;
-
                 case 'ALERTA':
                 case 'YELLOW':
                     file = 'navid-yellow.png';
                     break;
-
                 case 'OK':
                 case 'GREEN':
                     file = 'navid-green.png';
@@ -198,27 +273,86 @@ window.initCopMapReadOnly = function (opts) {
         return null;
     }
 
-    // Recebe um FeatureCollection GeoJSON e desenha-o no mapa.
+    function getLayerFilters(layer) {
+        const item = layer.feature?.properties || {};
+        const entityType = item.entity_type || 'location';
+        const locationTypeId = Number(item.location_type_id);
+        const statusType = item.status_type_name ?? item.status_type ?? null;
+
+        const filters = [];
+
+        if (statusType === 'RED' || statusType === 'CRÍTICO') {
+            filters.push('statusRed');
+        }
+
+        if (statusType === 'YELLOW' || statusType === 'ALERTA') {
+            filters.push('statusYellow');
+        }
+
+        if (statusType === 'GREEN' || statusType === 'OK') {
+            filters.push('statusGreen');
+        }
+
+        if (entityType === 'lodging_site') {
+            filters.push('lodgingSites');
+        } else if (entityType === 'incident') {
+            filters.push('incidents');
+        } else if (entityType === 'task') {
+            filters.push('tasks');
+        } else if (locationTypeId === 1) {
+            filters.push('buildings');
+        } else if (locationTypeId === 4) {
+            filters.push('roads');
+        } else if (locationTypeId === 5) {
+            filters.push('vedation');
+        } else if (Number(item.is_critical) || locationTypeId === 7) {
+            filters.push('criticalPoints');
+        } else {
+            filters.push('others');
+        }
+
+        return filters;
+    }
+
+    function applyFilters() {
+        allMapLayers.forEach(layer => {
+            const filters = getLayerFilters(layer);
+
+            const shouldShow = filters.every(filterKey => {
+                return activeFilters[filterKey] !== false;
+            });
+
+            if (shouldShow) {
+                if (!map.hasLayer(layer)) {
+                    layer.addTo(map);
+                }
+            } else {
+                if (map.hasLayer(layer)) {
+                    map.removeLayer(layer);
+                }
+            }
+        });
+    }
+
     function renderFeatures(featureCollection) {
         if (!featureCollection || !Array.isArray(featureCollection.features)) {
             console.warn('initCopMapReadOnly: featureCollection inválida');
             return;
         }
 
-        // Se já existir uma layer desenhada anteriormente remove-a antes de voltar a desenhar
-        if (geoJsonLayer) {
-            map.removeLayer(geoJsonLayer);
-        }
+        allMapLayers.forEach(layer => {
+            if (map.hasLayer(layer)) {
+                map.removeLayer(layer);
+            }
+        });
 
-        // Cria uma layer Leaflet a partir do GeoJSON.
+        allMapLayers = [];
+
         geoJsonLayer = L.geoJSON(featureCollection, {
             onEachFeature: function (feature, layer) {
                 const item = feature.properties || {};
                 const entityType = item.entity_type || 'location';
 
-                // =========================
-                // LOCATION
-                // =========================
                 if (entityType === 'location') {
                     const locationType = item.location_type_name ?? item.location_type ?? '—';
 
@@ -264,9 +398,6 @@ window.initCopMapReadOnly = function (opts) {
                     return;
                 }
 
-                // =========================
-                // LODGING SITE
-                // =========================
                 if (entityType === 'lodging_site') {
                     const popupHtml = `
                         <div class="cop-popup">
@@ -315,12 +446,10 @@ window.initCopMapReadOnly = function (opts) {
                 }
             },
 
-            // Define o estilo de linhas e polígonos.
             style: function (feature) {
                 const item = feature.properties || {};
                 const entityType = item.entity_type || 'location';
 
-                // Alojamentos sem status_type usam uma cor própria
                 if (entityType === 'lodging_site') {
                     return {
                         color: '#4dabf7',
@@ -339,7 +468,6 @@ window.initCopMapReadOnly = function (opts) {
                 };
             },
 
-            // Aqui transformam-se os "points" em markers.
             pointToLayer: function (feature, latlng) {
                 const item = feature.properties || {};
                 const entityType = item.entity_type || 'location';
@@ -351,14 +479,12 @@ window.initCopMapReadOnly = function (opts) {
 
                 const customIcon = getLocationIcon(entityType, item.location_type_id, statusType);
 
-                // Se existir ícone, usa marker com ícone
                 if (customIcon) {
                     return L.marker(latlng, {
                         icon: customIcon
                     });
                 }
 
-                // Se não existir ícone, usa círculo normal
                 return L.circleMarker(latlng, {
                     radius: 6,
                     color: color,
@@ -368,19 +494,19 @@ window.initCopMapReadOnly = function (opts) {
             }
         });
 
-        // Adiciona a layer GeoJSON ao mapa.
-        geoJsonLayer.addTo(map);
+        geoJsonLayer.eachLayer(function (layer) {
+            allMapLayers.push(layer);
+        });
+
+        applyFilters();
     }
 
-    // Carrega as features do mapa.
     function loadFeatures() {
-        // Caso 1: os dados já vieram no próprio objeto opts.
         if (opts.featureCollection && Array.isArray(opts.featureCollection.features)) {
             renderFeatures(opts.featureCollection);
             return;
         }
 
-        // Caso 2: os dados têm de ser pedidos via URL.
         if (opts.locationsIndexUrl) {
             fetch(opts.locationsIndexUrl, {
                 method: 'GET',
@@ -408,10 +534,8 @@ window.initCopMapReadOnly = function (opts) {
         console.warn('initCopMapReadOnly: nem featureCollection nem locationsIndexUrl foram fornecidos');
     }
 
-    // Arranca o carregamento inicial das features.
     loadFeatures();
 
-    // Devolve uma pequena API pública do mapa.
     return {
         map: map,
         fitContain: fitContain,
