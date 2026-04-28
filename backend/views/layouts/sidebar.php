@@ -3,6 +3,7 @@
 use hail812\adminlte\widgets\Menu;
 use yii\bootstrap5\Modal;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 $userLogado = Yii::$app->user->identity;
@@ -162,11 +163,10 @@ $userLogado = Yii::$app->user->identity;
                                 'icon' => 'none',
                                 'encode' => false,
                                 'options' => ['class' => 'danger-action-item danger-action-map'],
-                                'linkOptions' => ['class' => 'nav-link danger-action-link'],
                             ],
                             [
                                 'label' => '<span class="danger-action-label">Limpar base de dados</span>',
-                                'url' => '#',
+                                'url' => ['location/clean-map'],
                                 'icon' => 'none',
                                 'encode' => false,
                                 'options' => ['class' => 'danger-action-item danger-action-db'],
@@ -277,7 +277,56 @@ $userLogado = Yii::$app->user->identity;
 
 <?php Modal::end(); ?>
 
+
+
+<?php Modal::begin([
+    'id' => 'dangerConfirmModal',
+    'title' => '
+        <div class="danger-zone-modal-title-wrap">
+            <div>
+                <div class="danger-zone-modal-title-text">Confirmação</div>
+            </div>
+        </div>
+    ',
+    'size' => Modal::SIZE_DEFAULT,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade danger-zone-modal'],
+    'headerOptions' => ['class' => 'danger-zone-modal-header'],
+    'bodyOptions' => ['class' => 'danger-zone-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white',
+    ],
+]); ?>
+
+<div class="danger-zone-alert-box">
+    <div class="danger-zone-alert-icon">
+        <i class="fas fa-triangle-exclamation"></i>
+    </div>
+    <div class="danger-zone-alert-content">
+        <div class="danger-zone-alert-title">Ação irreversível</div>
+        <div class="danger-zone-alert-text" id="dangerConfirmText">
+            Tem a certeza que pretende continuar?
+        </div>
+    </div>
+</div>
+
+<div class="danger-zone-actions">
+    <button type="button" id="dangerConfirmCancel" class="danger-zone-btn danger-zone-btn-cancel">
+        Cancelar
+    </button>
+
+    <button type="button" id="dangerConfirmOk" class="danger-zone-btn danger-zone-btn-confirm">
+        Confirmar
+    </button>
+</div>
+
+<?php Modal::end(); ?>
+
+
+
 <?php
+$cleanMapUrl = Url::to(['/location/clean-map']);
+
 $this->registerJs(<<<JS
 let allowOpenDangerZone = false;
 
@@ -321,5 +370,76 @@ function initDangerZoneWarning() {
 }
 
 initDangerZoneWarning();
+
+function showDangerConfirm(message) {
+    return new Promise((resolve) => {
+        const modalEl = document.getElementById('dangerConfirmModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const textEl = document.getElementById('dangerConfirmText');
+        const btnOk = document.getElementById('dangerConfirmOk');
+        const btnCancel = document.getElementById('dangerConfirmCancel');
+
+        textEl.innerText = message;
+
+        function cleanup(result) {
+            btnOk.removeEventListener('click', onOk);
+            btnCancel.removeEventListener('click', onCancel);
+            modal.hide();
+            resolve(result);
+        }
+
+        function onOk() {
+            cleanup(true);
+        }
+
+        function onCancel() {
+            cleanup(false);
+        }
+
+        btnOk.addEventListener('click', onOk);
+        btnCancel.addEventListener('click', onCancel);
+
+        modal.show();
+    });
+}
+
+document.querySelectorAll('.danger-action-map > a').forEach(el => {
+    el.addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const confirmed = await showDangerConfirm(
+            'Vai apagar TODAS as layers do mapa. Esta ação não pode ser revertida.'
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const res = await fetch('$cleanMapUrl', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': yii.getCsrfToken()
+                },
+                credentials: 'same-origin',
+                body: '{}'
+            });
+
+            if (!res.ok) {
+                throw new Error(await res.text());
+            }
+
+            if (window.copMapInstance?.reload) {
+                window.copMapInstance.reload();
+            }
+
+            alert('Mapa limpo com sucesso.');
+
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    });
+});
 JS, View::POS_READY);
 ?>

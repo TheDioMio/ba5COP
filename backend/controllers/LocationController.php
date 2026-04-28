@@ -57,6 +57,7 @@ class LocationController extends Controller
                         'map-create' => ['POST'],
                         'map-update' => ['POST'],
                         'map-delete' => ['POST'],
+                        'clean-map' => ['POST'],
                     ],
                 ],
             ]
@@ -353,5 +354,17 @@ class LocationController extends Controller
         }
 
         return ['ok' => true];
+    }
+
+    public function actionCleanMap() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        Location::updateAll(['geometry' => null]);
+        LodgingSite::updateAll(['geometry' => null]);
+
+        return [
+            'ok' => true,
+            'message' => 'Mapa limpo com sucesso.',
+        ];
     }
 }
