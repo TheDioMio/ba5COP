@@ -42,11 +42,17 @@ class LocationController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
+                            'roles' => ['login.backend'],
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'actions' => ['clean-map'],
+                            'roles' => ['sensibleEntity.manage'],
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['map-create', 'map-update', 'map-delete'],
+                            'roles' => ['map.manage'],
                         ],
                     ],
                 ],

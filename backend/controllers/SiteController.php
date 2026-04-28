@@ -24,22 +24,26 @@ class SiteController extends Controller
             'access' => [
                 'class' => AccessControl::class,
                 'denyCallback' => function () {
-                    //se tiver acesso ao Backend redireciona para a home do back se não, redireciona para para o login
                     if (Yii::$app->user->can('login.backend')) {
                         return Yii::$app->response->redirect(['/site/index']);
                     }
-                    return Yii::$app->response->redirect(['/site/login']);
 
+                    return Yii::$app->response->redirect(['/site/login']);
                 },
                 'except' => ['error'],
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['login'],
+                        'actions' => ['login', 'error'],
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['@'],
+                        'actions' => ['clean-database'],
+                        'roles' => ['sensibleEntity.manage'],
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['login.backend'],
                     ],
                 ],
             ],
@@ -47,6 +51,7 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                    'clean-database' => ['POST'],
                 ],
             ],
         ];
