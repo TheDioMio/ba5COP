@@ -509,3 +509,180 @@ a.desc:after {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
 }
+
+/* =========================================
+   DANGER ZONE - BOTÕES E HEADER
+========================================= */
+
+.nav-sidebar li.danger-action-item {
+    padding: 0.35rem 0 !important;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link {
+    width: 86%;
+    justify-content: center;
+
+    background: #b91c2b !important;
+    box-shadow: none;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link:hover {
+    background: #dc3545 !important;
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link i {
+    position: absolute;
+    left: 0.8rem;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link p {
+    margin: 0 !important;
+    text-align: center;
+}
+
+.nav-sidebar li.danger-action-db > a.nav-link {
+    background: #991b1b !important;
+}
+
+.nav-sidebar li.danger-action-db > a.nav-link:hover {
+    background: #b91c1c !important;
+}
+
+/* remove o aviso "!" */
+.nav-sidebar li.danger-action-db > a.nav-link::after {
+    content: none !important;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link {
+    display: flex !important;
+    align-items: center;
+    gap: 0.75rem;
+
+    min-height: 46px;
+    padding: 0.7rem 0.85rem !important;
+
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #dc3545, #9f1f2d) !important;
+    color: #fff !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+            0 10px 20px rgba(220, 53, 69, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+    transition: all 0.18s ease;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link i {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.28);
+
+    color: #fff !important;
+    font-size: 0.9rem;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link p {
+    margin: 0 !important;
+    color: #fff !important;
+}
+
+.nav-sidebar li.danger-action-item .danger-action-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    color: #fff !important;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link:hover {
+    background: linear-gradient(135deg, #ff4d4f, #c82333) !important;
+    transform: translateY(-2px);
+    box-shadow:
+            0 15px 28px rgba(220, 53, 69, 0.42),
+            inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link:active {
+    transform: scale(0.97);
+}
+
+/* botão da base de dados mais escuro/perigoso */
+.nav-sidebar li.danger-action-db > a.nav-link {
+    background: linear-gradient(135deg, #b02a37, #701620) !important;
+}
+
+.nav-sidebar li.danger-action-db > a.nav-link::after {
+    content: "!";
+    margin-left: auto;
+
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #111827;
+    color: #ff6b6b;
+
+    font-size: 0.75rem;
+    font-weight: 900;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link i {
+    display: none !important;
+}
+
+.nav-sidebar li.danger-action-item > a.nav-link {
+    justify-content: center !important;
+}
+
+.nav-sidebar .danger-actions-header {
+    padding: 1rem 0.9rem 0.45rem !important;
+    margin-top: 0.8rem;
+    color: transparent !important;
+}
+
+.nav-sidebar .danger-actions-header i {
+    display: none !important;
+}
+
+.nav-sidebar .danger-actions-title {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 120, 120, 0.9);
+    text-shadow: 0 0 6px rgba(220, 53, 69, 0.35);
+}
+
+.nav-sidebar .danger-actions-title::after {
+    content: "";
+    display: block;
+    margin-top: 7px;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+            90deg,
+            rgba(220, 53, 69, 0.7),
+            rgba(220, 53, 69, 0.05)
+    );
+}
+
+/* =========================================
+   DANGER ZONE - BOTÕES E HEADER
+========================================= */

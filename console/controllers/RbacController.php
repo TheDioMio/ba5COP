@@ -20,15 +20,18 @@ class RbacController extends Controller
         $loginFrontend = $this->addPermission($auth, 'login.frontend', 'Acesso ao Frontend');
         $loginBackend = $this->addPermission($auth, 'login.backend', 'Acesso ao Backend');
 
-        // COP / Mapa
+        // Entidades da BD
         $copView  = $this->addPermission($auth, 'cop.view', 'Ver dashboard COP');
         $mapView  = $this->addPermission($auth, 'map.view', 'Ver mapa');
-        $mapManage = $this->addPermission($auth, 'map.manage', 'Gerir mapa (camadas, editar, exportar, etc.)');
 
+        $mapManage = $this->addPermission($auth, 'map.manage', 'Gerir mapa (camadas, editar, exportar, etc.)');
         $incidentManage = $this->addPermission($auth, 'incident.manage', 'Criar/editar/atribuir incidentes');
         $requestManage = $this->addPermission($auth, 'request.manage', 'Criar/editar/atribuir/fechar pedidos');
         $userManage = $this->addPermission($auth, 'user.manage', 'CRUD de utilizadores');
         $auditView  = $this->addPermission($auth, 'audit.view', 'Ver auditoria');
+        $lodgingsManage = $this->addPermission($auth, 'lodging.manage', 'Gestão de alojamentos e check-ins');
+        $decisionLogManage = $this->addPermission($auth, 'decisionLog.manage', 'Fazer e eliminar decisões');
+        $sensibleEntitiesManage = $this->addPermission($auth, 'sensibleEntity.manage', 'CRUD de entidades sensíveis ao sistema');
 
         // -------------------- ROLES --------------------
 
@@ -56,15 +59,18 @@ class RbacController extends Controller
         // -------------------- ROLE -> PERMISSIONS --------------------
 
         // ADMINISTRADOR
-//        $auth->addChild($admin, $loginFrontend);
+        $auth->addChild($admin, $loginFrontend);
         $auth->addChild($admin, $loginBackend);
         $auth->addChild($admin, $userManage);
         $auth->addChild($admin, $auditView);
-//        $auth->addChild($admin, $copView);
+        $auth->addChild($admin, $copView);
         $auth->addChild($admin, $mapView);
         $auth->addChild($admin, $mapManage);
         $auth->addChild($admin, $incidentManage);
         $auth->addChild($admin, $requestManage);
+        $auth->addChild($admin, $lodgingsManage);
+        $auth->addChild($admin, $decisionLogManage);
+        $auth->addChild($admin, $sensibleEntitiesManage);
         // ADMINISTRADOR
 
 
@@ -75,6 +81,7 @@ class RbacController extends Controller
         $auth->addChild($comandante, $incidentManage);
         $auth->addChild($comandante, $requestManage);
         $auth->addChild($comandante, $auditView);
+        $auth->addChild($comandante, $decisionLogManage);
         // COMANDANTE
 
         // OPERADOR
@@ -84,17 +91,13 @@ class RbacController extends Controller
         $auth->addChild($operador, $mapView);
         $auth->addChild($operador, $mapManage);
         $auth->addChild($operador, $incidentManage);
+        $auth->addChild($operador, $lodgingsManage);
+        $auth->addChild($operador, $decisionLogManage);
+        $auth->addChild($operador, $requestManage);
         // OPERADOR
 
-        // GESTOR DE PEDIDOS
-        $auth->addChild($gestorPedidos, $loginFrontend);
-        $auth->addChild($gestorPedidos, $copView);
-        $auth->addChild($gestorPedidos, $mapView);
-        $auth->addChild($gestorPedidos, $requestManage);
-        // GESTOR DE PEDIDOS
-
         // -------------------- ASSIGNMENTS --------------------
-        // Dá admin ao user id=1
+        // Dá admin ao user id=4
         $auth->assign($admin, 4);
     }
 

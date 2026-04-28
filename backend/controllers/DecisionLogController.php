@@ -39,11 +39,7 @@ class DecisionLogController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['decisionLog.manage'],
                         ],
                     ],
                 ],

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Priority;
 use app\models\PrioritySearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -36,11 +37,7 @@ class PriorityController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['sensibleEntity.manage'],
                         ],
                     ],
                 ],

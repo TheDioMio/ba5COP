@@ -73,8 +73,18 @@ $userLogado = Yii::$app->user->identity;
                                 'icon' => 'inbox',
                                 'visible' => Yii::$app->user->can('request.manage'),
                             ],
-                            ['label' => 'Gestão de Alojamentos', 'url' => ['lodging-site/index'], 'icon' => 'hotel'],
-                            ['label' => 'Gestão Decision Log', 'url' => ['decision-log/index'], 'icon' => 'clipboard-list'],
+                            [
+                                'label' => 'Gestão de Alojamentos',
+                                'url' => ['lodging-site/index'],
+                                'icon' => 'hotel',
+                                'visible' => Yii::$app->user->can('lodging.manage'),
+                            ],
+                            [
+                                'label' => 'Gestão Decision Log',
+                                'url' => ['decision-log/index'],
+                                'icon' => 'clipboard-list',
+                                'visible' => Yii::$app->user->can('decisionLog.manage'),
+                            ],
                             [
                                 'label' => 'Gestão de Incidentes',
                                 'url' => ['incident/index'],
@@ -90,8 +100,7 @@ $userLogado = Yii::$app->user->identity;
                         'icon' => 'map-marked-alt',
                         'options' => ['class' => 'nav-item nav-loc'],
                         'items' => [
-                            ['label' => 'Locations', 'url' => ['location/index'], 'icon' => 'map-marker-alt'],
-                            ['label' => 'Ramos', 'url' => ['branch/index'], 'icon' => 'sitemap'],
+//                            ['label' => 'Locations', 'url' => ['location/index'], 'icon' => 'map-marker-alt'],
                         ],
                     ],
 
@@ -126,12 +135,13 @@ $userLogado = Yii::$app->user->identity;
                         'label' => 'DANGER ZONE',
                         'icon' => 'cogs',
                         'options' => ['class' => 'nav-item nav-danger-zone'],
+                        'visible' => Yii::$app->user->can('sensibleEntity.manage'),
                         'items' => [
                             ['label' => 'Entidades', 'url' => ['entity/index'], 'icon' => 'database'],
+                            ['label' => 'Ramos', 'url' => ['branch/index'], 'icon' => 'sitemap'],
                             [
                                 'label' => 'Tipos de Dados', 'icon' => 'layer-group',
                                 'items' => [
-
                                     ['label' => 'Tipos de Prioridades', 'url' => ['priority/index'], 'icon' => 'none'],
                                     ['label' => 'Tipos de Status', 'url' => ['status-type/index'], 'icon' => 'none'],
                                     ['label' => 'Tipos de Incidentes', 'url' => ['incident-type/index'], 'icon' => 'none'],
@@ -139,6 +149,28 @@ $userLogado = Yii::$app->user->identity;
                                     ['label' => 'Tipos de Pedidos', 'url' => ['request-type/index'], 'icon' => 'none'],
                                     ['label' => 'Tipos de Localizações', 'url' => ['location-type/index'], 'icon' => 'none'],
                                 ]
+                            ],
+                            [
+                                'label' => '<div class="danger-actions-title">Ações perigosas</div>',
+                                'encode' => false,
+                                'header' => true,
+                                'options' => ['class' => 'danger-actions-header'],
+                            ],
+                            [
+                                'label' => '<span class="danger-action-label">Limpar mapa</span>',
+                                'url' => '#',
+                                'icon' => 'none',
+                                'encode' => false,
+                                'options' => ['class' => 'danger-action-item danger-action-map'],
+                                'linkOptions' => ['class' => 'nav-link danger-action-link'],
+                            ],
+                            [
+                                'label' => '<span class="danger-action-label">Limpar base de dados</span>',
+                                'url' => '#',
+                                'icon' => 'none',
+                                'encode' => false,
+                                'options' => ['class' => 'danger-action-item danger-action-db'],
+                                'linkOptions' => ['class' => 'nav-link danger-action-link'],
                             ],
                         ],
                     ],

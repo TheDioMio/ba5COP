@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\IncidentType;
 use app\models\IncidentTypeSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -36,11 +37,7 @@ class IncidentTypeController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['sensibleEntity.manage'],
                         ],
                     ],
                 ],

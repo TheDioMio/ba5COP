@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\models\EntityType;
 use common\models\StatusType;
 use app\models\StatusTypeSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -37,11 +38,7 @@ class StatusTypeController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['sensibleEntity.manage'],
                         ],
                     ],
                 ],

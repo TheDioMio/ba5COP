@@ -35,17 +35,12 @@ class LodgingSiteController extends Controller
                             return Yii::$app->response->redirect(['/site/index']);
                         }
                         return Yii::$app->response->redirect(['/site/login']);
-
                     },
                     'except' => ['error'],
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['lodging.manage'],
                         ],
                     ],
                 ],

@@ -6,6 +6,7 @@ use common\models\AuditLog;
 use app\models\AuditLogSearch;
 use common\models\Entity;
 use common\models\User;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -38,11 +39,7 @@ class AuditLogController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['login'],
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['audit.view'],
                         ],
                     ],
                 ],
