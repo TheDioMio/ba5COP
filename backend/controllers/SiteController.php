@@ -175,4 +175,59 @@ class SiteController extends Controller
 
         return $this->render("errors/{$type}");
     }
+
+    public function actionCleanDatabase() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $db = Yii::$app->db;
+        $transaction = $db->beginTransaction();
+
+        try {
+            /*
+             * Mantém tabelas auxiliares:
+             * - location_type
+             * - status_type
+             * - priority
+             * - entity_type
+             * - incident_type
+             * - request_type
+             * Mantém também users/RBAC.
+             */
+
+            $tablesToClean = [
+                'audit_log',
+                'entity_update',
+                'decision_log',
+                'task',
+                'request',
+                'incident',
+                'lodging_site',
+                'lodging_entry',
+                'location',
+                'entity',
+            ];
+
+            $db->createCommand('SET FOREIGN_KEY_CHECKS=0')->execute();
+
+            foreach ($tablesToClean as $table) {
+                $db->createCommand()->delete($table)->execute();
+                $db->createCommand("ALTER TABLE `$table` AUTO_INCREMENT = 1")->execute();
+            }
+
+            $db->createCommand('SET FOREIGN_KEY_CHECKS=1')->execute();
+
+            $transaction->commit();
+
+            return [
+                'ok' => true,
+                'message' => 'Base de dados limpa com sucesso.',
+            ];
+
+        } catch (\Throwable $e) {
+            $db->createCommand('SET FOREIGN_KEY_CHECKS=1')->execute();
+            $transaction->rollBack();
+
+            throw $e;
+        }
+    }
 }

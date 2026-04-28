@@ -166,11 +166,10 @@ $userLogado = Yii::$app->user->identity;
                             ],
                             [
                                 'label' => '<span class="danger-action-label">Limpar base de dados</span>',
-                                'url' => ['location/clean-map'],
+                                'url' => '#',
                                 'icon' => 'none',
                                 'encode' => false,
                                 'options' => ['class' => 'danger-action-item danger-action-db'],
-                                'linkOptions' => ['class' => 'nav-link danger-action-link'],
                             ],
                         ],
                     ],
@@ -280,7 +279,7 @@ $userLogado = Yii::$app->user->identity;
 
 
 <?php Modal::begin([
-    'id' => 'dangerConfirmModal',
+    'id' => 'dangerConfirmModalMap',
     'title' => '
         <div class="danger-zone-modal-title-wrap">
             <div>
@@ -324,8 +323,59 @@ $userLogado = Yii::$app->user->identity;
 
 
 
+<?php Modal::begin([
+    'id' => 'dangerConfirmModalDb',
+    'title' => '
+        <div class="danger-zone-modal-title-wrap">
+            <div>
+                <div class="danger-zone-modal-title-text">Confirmação crítica</div>
+            </div>
+        </div>
+    ',
+    'size' => Modal::SIZE_DEFAULT,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade danger-zone-modal'],
+    'headerOptions' => ['class' => 'danger-zone-modal-header'],
+    'bodyOptions' => ['class' => 'danger-zone-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white',
+    ],
+]); ?>
+
+<div class="danger-zone-alert-box">
+    <div class="danger-zone-alert-icon">
+        <i class="fas fa-database"></i>
+    </div>
+    <div class="danger-zone-alert-content">
+        <div class="danger-zone-alert-title">Limpeza da base de dados</div>
+        <div class="danger-zone-alert-text" id="dangerConfirmTextDb">
+            Esta ação irá apagar toda a informação operacional do sistema.
+        </div>
+    </div>
+</div>
+
+<div class="danger-zone-confirm-box">
+    <i class="fas fa-circle-exclamation"></i>
+    <span>Esta ação não pode ser revertida.</span>
+</div>
+
+<div class="danger-zone-actions">
+    <button type="button" id="dangerConfirmCancelDb" class="danger-zone-btn danger-zone-btn-cancel">
+        Cancelar
+    </button>
+
+    <button type="button" id="dangerConfirmOkDb" class="danger-zone-btn danger-zone-btn-confirm">
+        Limpar base de dados
+    </button>
+</div>
+
+<?php Modal::end(); ?>
+
+
+
 <?php
 $cleanMapUrl = Url::to(['/location/clean-map']);
+$cleanDBUrl = Url::to(['/site/clean-database']);
 
 $this->registerJs(<<<JS
 let allowOpenDangerZone = false;
@@ -371,9 +421,9 @@ function initDangerZoneWarning() {
 
 initDangerZoneWarning();
 
-function showDangerConfirm(message) {
+function showDangerConfirmMap(message) {
     return new Promise((resolve) => {
-        const modalEl = document.getElementById('dangerConfirmModal');
+        const modalEl = document.getElementById('dangerConfirmModalMap');
         const modal = new bootstrap.Modal(modalEl);
 
         const textEl = document.getElementById('dangerConfirmText');
@@ -404,11 +454,44 @@ function showDangerConfirm(message) {
     });
 }
 
+function showDangerConfirmDb(message) {
+    return new Promise((resolve) => {
+        const modalEl = document.getElementById('dangerConfirmModalDb');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const textEl = document.getElementById('dangerConfirmTextDb');
+        const btnOk = document.getElementById('dangerConfirmOkDb');
+        const btnCancel = document.getElementById('dangerConfirmCancelDb');
+
+        textEl.innerText = message;
+
+        function cleanup(result) {
+            btnOk.removeEventListener('click', onOk);
+            btnCancel.removeEventListener('click', onCancel);
+            modal.hide();
+            resolve(result);
+        }
+
+        function onOk() {
+            cleanup(true);
+        }
+
+        function onCancel() {
+            cleanup(false);
+        }
+
+        btnOk.addEventListener('click', onOk);
+        btnCancel.addEventListener('click', onCancel);
+
+        modal.show();
+    });
+}
+
 document.querySelectorAll('.danger-action-map > a').forEach(el => {
     el.addEventListener('click', async function (e) {
         e.preventDefault();
 
-        const confirmed = await showDangerConfirm(
+        const confirmed = await showDangerConfirmMap(
             'Vai apagar TODAS as layers do mapa. Esta ação não pode ser revertida.'
         );
 
@@ -434,6 +517,41 @@ document.querySelectorAll('.danger-action-map > a').forEach(el => {
             }
 
             alert('Mapa limpo com sucesso.');
+
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    });
+});
+
+document.querySelectorAll('.danger-action-db > a').forEach(el => {
+    el.addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const confirmed = await showDangerConfirmDb(
+            'Vai apagar TODA a informação operacional do sistema, mantendo apenas tabelas auxiliares, utilizadores e permissões.'
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const res = await fetch('$cleanDBUrl', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': yii.getCsrfToken()
+                },
+                credentials: 'same-origin',
+                body: '{}'
+            });
+
+            if (!res.ok) {
+                throw new Error(await res.text());
+            }
+
+            alert('Base de dados limpa com sucesso.');
+            location.reload();
 
         } catch (err) {
             console.error(err);

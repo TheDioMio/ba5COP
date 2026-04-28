@@ -55,7 +55,7 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
                 'label' => 'Dashboard',
                 'url' => ['/dashboard/index'],
                 'active' => $currentRoute === 'dashboard/index',
-                'visible' => Yii::$app->user->can('user.manage'),
+                'visible' => Yii::$app->user->can('login.frontend'),
             ],
 //            ['label' => 'COP', 'url' => ['/site/cop'], 'active' => $currentRoute === 'site/cop'],
             ['label' => 'Sobre', 'url' => ['/site/about'], 'active' => $currentRoute === 'site/about'],
