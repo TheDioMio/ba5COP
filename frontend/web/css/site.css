@@ -586,6 +586,26 @@ main > .container-fluid {
     display: block;
 }
 
+.cop-badge-wrapper {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.cop-badge-img {
+    width: auto;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    display: block;
+
+    transform: scale(1.55);
+    transform-origin: center;
+}
+
 .timeline-time {
     display: flex;
     align-items: center;

@@ -16,25 +16,25 @@ $userLogado = Yii::$app->user->identity;
             'alt' => 'Brasao BA5',
             'class' => 'img-logo-dashboard'
         ]) ?>
-        <span class="brand-text font-weight-light"><?=Html::encode('Administração')?></span>
+        <?php if (Yii::$app->user->can('admin')): ?>
+            <span class="brand-text font-weight-light"><?= Html::encode('Administração') ?></span>
+        <?php else: ?>
+            <span class="brand-text font-weight-light"><?= Html::encode('Gestão do COP') ?></span>
+        <?php endif; ?>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="<?=$assetDir?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-            </div>
             <div class="info">
                 <?= Html::a(
-                    $userLogado->username, //Texto que aparece no botão (nome do dono)
-                    ['user/view', 'id' => $userLogado->id], //A rota para onde vai (backend/user/view)
+                    'Bem-vindo(a), ' . $userLogado->username,
+                    ['user/view', 'id' => $userLogado->id],
                     [
                         'target' => '_blank',
                     ]
-                );
-                ?>
+                ); ?>
             </div>
         </div>
 

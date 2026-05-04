@@ -52,13 +52,13 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
 
         $menuItems = [
             [
-                'label' => 'Dashboard',
+                'label' => 'DASHBOARD',
                 'url' => ['/dashboard/index'],
                 'active' => $currentRoute === 'dashboard/index',
                 'visible' => Yii::$app->user->can('login.frontend'),
             ],
 //            ['label' => 'COP', 'url' => ['/site/cop'], 'active' => $currentRoute === 'site/cop'],
-            ['label' => 'Sobre', 'url' => ['/site/about'], 'active' => $currentRoute === 'site/about'],
+            ['label' => 'SOBRE', 'url' => ['/site/about'], 'active' => $currentRoute === 'site/about'],
 //            ['label' => 'Contacto', 'url' => ['/site/contact'], 'active' => $currentRoute === 'site/contact'],
         ];
 
@@ -73,11 +73,10 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
         if (Yii::$app->user->isGuest) {
             echo Html::a('Entrar', ['/site/login'], ['class' => 'btn btn-sm btn-ba5-primary']);
         } else {
-            echo Html::a('Abrir COP', ['/site/cop'], ['class' => 'btn btn-sm btn-ba5-secondary']);
             echo Html::beginForm(['/site/logout'], 'post', ['class' => 'm-0']);
             echo Html::submitButton(
-                'Sair · ' . Html::encode(Yii::$app->user->identity->username),
-                ['class' => 'btn btn-sm btn-outline-light logout']
+                'LOGOUT',
+                ['class' => 'btn btn-sm btn-ba5-secondary']
             );
             echo Html::endForm();
         }

@@ -148,33 +148,33 @@ YiiAsset::register($this);
 
                     <hr>
 
-                    <div class="row text-center mb-2">
-                        <div class="col-md-4">
-                            <span class="text-muted">Tasks</span>
-                        </div>
-
-                        <div class="col-md-4">
-                            <span class="text-muted">Incidents</span>
-                        </div>
-
-                        <div class="col-md-4">
-                            <span class="text-muted">Requests</span>
-                        </div>
-                    </div>
-
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <span class="fw-semibold"><?= Html::encode('10') ?></span>
-                        </div>
-
-                        <div class="col-md-4">
-                            <span class="fw-semibold"><?= Html::encode('40') ?></span>
-                        </div>
-
-                        <div class="col-md-4">
-                            <span class="fw-semibold"><?= Html::encode('9') ?></span>
-                        </div>
-                    </div>
+<!--                    <div class="row text-center mb-2">-->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="text-muted">Tasks</span>-->
+<!--                        </div>-->
+<!---->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="text-muted">Incidents</span>-->
+<!--                        </div>-->
+<!---->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="text-muted">Requests</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!---->
+<!--                    <div class="row text-center">-->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="fw-semibold">--><?php //= Html::encode('10') ?><!--</span>-->
+<!--                        </div>-->
+<!---->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="fw-semibold">--><?php //= Html::encode('40') ?><!--</span>-->
+<!--                        </div>-->
+<!---->
+<!--                        <div class="col-md-4">-->
+<!--                            <span class="fw-semibold">--><?php //= Html::encode('9') ?><!--</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                 </div>
             </div>

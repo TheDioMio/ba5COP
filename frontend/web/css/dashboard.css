@@ -250,14 +250,20 @@ body.dashboard-page-body .frontend-main > .container-fluid {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 24px;
-    padding: 2px 8px;
+
+    min-height: 28px;          /* antes 24px */
+    padding: 4px 10px;         /* antes 2px 8px */
+
     border-radius: var(--cop-radius-pill);
     border: 1px solid rgba(255, 255, 255, 0.1);
+
     background: var(--cop-surface-glass-4);
     color: var(--ba5-text);
-    font-size: 0.68rem;
+
+    font-size: 0.75rem;        /* antes 0.68rem */
     font-weight: 700;
+    letter-spacing: 0.04em;
+
     white-space: nowrap;
 }
 

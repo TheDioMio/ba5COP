@@ -45,29 +45,25 @@ $homeMapOptions = [
             </p>
         </div>
 
-        <div class="hero-image">
-            <?= Html::img('@web/img/f16.jpg', [
-                'class' => 'f16-hero',
-                'alt' => 'F-16'
-            ]) ?>
+        <div class="cop-badge-wrapper">
+            <?= Html::img('@web/img/badgeCOP.png', ['class' => 'cop-badge-img', 'alt' => 'COP Badge']) ?>
         </div>
-
     </div>
 
     <section class="info-card panel-card">
         <div class="panel-head">
-            <div>
+<!--            <div>-->
                 <span class="mini-label">Mapa operacional</span>
-                <h2>Vista geral da base</h2>
-            </div>
-            <?= Html::a(
-                '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>',
-                ['/site/cop'],
-                [
-                    'class' => 'btn btn-ba5-primary',
-                    'title' => 'Abrir mapa em ecrã inteiro'
-                ]
-            ) ?>
+<!--                <h2>Vista geral da base</h2>-->
+<!--            </div>-->
+<!--            --><?php //= Html::a(
+//                '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>',
+//                ['/site/cop'],
+//                [
+//                    'class' => 'btn btn-ba5-primary',
+//                    'title' => 'Abrir mapa em ecrã inteiro'
+//                ]
+//            ) ?>
         </div>
 
         <div id="home-map" class="cop-leaflet-map"></div>
@@ -120,7 +116,7 @@ $homeMapOptions = [
                 </div>
 
                 <div class="quick-actions">
-                    <?= Html::a('Sobre Nós', ['/site/about'], ['class' => 'btn btn-ba5-primary w-100']) ?>
+                    <?= Html::a('Sobre o COP', ['/site/about'], ['class' => 'btn btn-ba5-primary w-100']) ?>
                 </div>
             </div>
         </article>

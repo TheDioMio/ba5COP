@@ -156,12 +156,7 @@ $copMapOptions = [
                 <article class="cop-card cop-module cop-systems-card">
                     <header class="cop-module-head">
                         <div>
-                            <span class="cop-eyebrow">Estado de Sistemas</span>
-                            <h3>NAVAids</h3>
-                        </div>
-                        <div class="cop-systems-meta">
-                            <span class="cop-systems-meta-label">Última atualização</span>
-                            <strong><?= date('Y-m-d H:i') ?></strong>
+                            <span class="cop-eyebrow">Estado de Sistemas NAVAids</span>
                         </div>
                     </header>
 
