@@ -198,6 +198,18 @@ class DashboardController extends Controller
         ]);
         // --- FIM MOBILIDADE ---
 
+        // --- ENERGIA ---
+        $totalPts = Location::getLocationsOfType(LocationType::TYPE_PT);
+        $inopPts = Location::getLocationsInopOfType(LocationType::TYPE_PT);
+        $totalOpPts = count($totalPts) - count($inopPts);
+        $inopPtsProvider = new ActiveDataProvider([
+           'query' => Location::findLocationsInopOfType(LocationType::TYPE_PT),
+           'pagination' => false,
+           'sort' => false,
+        ]);
+        // --- FIM ENERGIA ---
+
+
 
         // --- VEDAÇÃO ---
         //% do perimetro operacional
@@ -347,6 +359,10 @@ class DashboardController extends Controller
             'latest10Tasks' => $latest10Tasks,
             'latest10Decisions' => $latest10Decisions,
             'dailyRisks' => $dailyRisks,
+            'totalPts' => $totalPts,
+            'inopPts' => $inopPts,
+            'inopPtsProvider' => $inopPtsProvider,
+            'totalOpPts' => $totalOpPts,
         ]);
     }
 

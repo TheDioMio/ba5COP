@@ -270,6 +270,32 @@ window.initCopMapReadOnly = function (opts) {
             });
         }
 
+        if (Number(locationTypeId) === 8) {
+            let file = 'pt-default.png';
+
+            switch (statusType) {
+                case 'CRÍTICO':
+                case 'RED':
+                    file = 'pt-red.png';
+                    break;
+                case 'ALERTA':
+                case 'YELLOW':
+                    file = 'pt-yellow.png';
+                    break;
+                case 'OK':
+                case 'GREEN':
+                    file = 'pt-green.png';
+                    break;
+            }
+
+            return L.icon({
+                iconUrl: base + '/' + file,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
+                popupAnchor: [0, -12]
+            });
+        }
+
         return null;
     }
 

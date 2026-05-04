@@ -21,6 +21,7 @@ class LocationType extends \yii\db\ActiveRecord {
     const TYPE_VEDACAO = 5;
     const TYPE_PARKING = 6;
     const TYPE_NAVAIDS = 7;
+    const TYPE_PT = 8;
 
 
     /**

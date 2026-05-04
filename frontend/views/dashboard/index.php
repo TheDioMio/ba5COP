@@ -67,10 +67,14 @@ $copMapOptions = [
                 <p>vedação operacional</p>
             </article>
 
-            <article class="cop-kpi-card">
+            <article class="cop-kpi-card kpi-clickable"
+                     role="region"
+                     tabindex="0"
+                     data-bs-toggle="modal"
+                     data-bs-target="#energyModal">
                 <span class="cop-kpi-label">Energia</span>
-                <div class="cop-kpi-value is-warning">78%</div>
-                <p>base energizada</p>
+                <div class="cop-kpi-value is-warning"><?=$totalOpPts . '/' . count($totalPts)?></div>
+                <p>postos de transformação</p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
@@ -1697,6 +1701,81 @@ $copMapOptions = [
     <!--                                    MODAL - KPI METEO                                                              -->
     <!---------------------------------------------------------------------------------------------------------------------------->
 
+
+
+
+
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                        MODAL - KPI ENERGIA                                                             -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
+<?php Modal::begin([
+    'id' => 'energyModal',
+    'title' => '<span class="cop-modal-title-text">KPI - Postos de Transformação</span>',
+    'size' => Modal::SIZE_LARGE,
+    'centerVertical' => true,
+    'options' => ['class' => 'fade cop-modal'],
+    'headerOptions' => ['class' => 'cop-modal-header'],
+    'bodyOptions' => ['class' => 'cop-modal-body'],
+    'closeButton' => [
+        'class' => 'btn-close btn-close-white cop-modal-close',
+        'aria-label' => 'Fechar',
+    ],
+]);
+?>
+
+    <div class="cop-modal-summary">
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Postos Existentes</span>
+            <strong class="cop-modal-kpi-value is-warning"><?=count($totalPts)?></strong>
+        </div>
+
+        <div class="cop-modal-kpi">
+            <span class="cop-modal-kpi-label">Postos operacionais</span>
+            <strong class="cop-modal-kpi-value is-success"><?=$totalOpPts?></strong>
+        </div>
+    </div>
+
+    <div class="cop-modal-section-head">
+        <span class="cop-eyebrow">postos inoperacionais</span>
+    </div>
+
+<?php if ($inopPtsProvider->getCount() > 0): ?>
+    <div class="cop-modal-table-wrap">
+        <div class="cop-modal-table-scroll">
+            <?= GridView::widget([
+                'dataProvider' => $inopPtsProvider,
+                'tableOptions' => ['class' => 'table cop-modal-table align-middle mb-0'],
+                'layout' => '{items}',
+                'summary' => '',
+                'columns' => [
+                    'name',
+                    [
+                        'label' => 'Status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $badge = StatusType::getStatusLabels($model->status_type_id);
+
+                            return Html::tag('span', Html::encode(' '), [
+                                'class' => $badge,
+                                'style' => 'font-size: 0.95rem;',
+                            ]);
+                        }
+                    ],
+                    'notes'
+                ],
+            ]) ?>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="cop-empty-state">
+        Não existem postos de transformação inoperacionais no momento.
+    </div>
+<?php endif; ?>
+
+<?php Modal::end(); ?>
+    <!---------------------------------------------------------------------------------------------------------------------------->
+    <!--                                    FIM MODAL - KPI ENERGIA                                                             -->
+    <!---------------------------------------------------------------------------------------------------------------------------->
 
 
 

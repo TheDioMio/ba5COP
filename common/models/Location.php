@@ -33,6 +33,7 @@ class Location extends \yii\db\ActiveRecord
     const ROAD = 'ROAD';
     const VEDACAO = 'VEDACAO';
     const PARKING = 'PARKING';
+    const PT = 'PT';
 
     /**
      * {@inheritdoc}
@@ -354,6 +355,38 @@ class Location extends \yii\db\ActiveRecord
             ->orderBy(['name' => SORT_ASC])
             ->all();
     }
+
+    /**
+     * Array de todas as localizações com X tipo de location_type_id que estejam INOP
+     */
+    public static function getLocationsInopOfType($location_type)
+    {
+        return self::find()
+            ->where(['location_type_id' => $location_type])
+            ->andWhere(['status_type_id' => [
+                StatusType::STATUS_RED,
+                StatusType::STATUS_YELLOW
+            ]])
+            ->with('statusType')
+            ->orderBy(['name' => SORT_ASC])
+            ->all();
+    }
+
+    /**
+     * PROVIDER de todas as localizações com X tipo de location_type_id que estejam INOP
+     */
+    public static function findLocationsInopOfType($location_type)
+    {
+        return self::find()
+            ->where(['location_type_id' => $location_type])
+            ->andWhere(['status_type_id' => [
+                StatusType::STATUS_RED,
+                StatusType::STATUS_YELLOW
+            ]])
+            ->with('statusType')
+            ->orderBy(['name' => SORT_ASC]);
+    }
+
 
     /**
      * Este metodo atualiza as tabelas auditLog para ter um histórico automático de mudanças.
