@@ -41,8 +41,9 @@ class SiteController extends Controller
                 'except' => ['error'],
                 'rules' => [
                     [
-                        'actions' => ['login', 'signup'],
                         'allow' => true,
+                        'actions' => ['login', 'error', 'index', 'about', 'build-location-feature-collection', 'cop-data'],
+                        'roles' => ['?'],
                     ],
                     [
                         'allow' => true,
@@ -277,12 +278,6 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionCop()
-    {
-        return $this->render('cop', [
-            'featureCollection' => $this->buildLocationFeatureCollection(),
-        ]);
-    }
 
     /**
      * Devolve locations + lodging sites numa única FeatureCollection

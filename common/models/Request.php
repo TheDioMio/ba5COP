@@ -252,7 +252,7 @@ class Request extends \yii\db\ActiveRecord
         return self::find()
             ->where(['request_type_id' => $requestType])
             ->andWhere(['is_external' => $is_external])
-            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_APPROVED])
             ->asArray()
             ->all();
     }
@@ -281,14 +281,14 @@ class Request extends \yii\db\ActiveRecord
         if ($external === null) {
             return self::find()
                 ->where(['request_type_id' => $requestType])
-                ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
+                ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_APPROVED])
                 ->sum('quantity');
         }
 
         return self::find()
             ->where(['request_type_id' => $requestType])
             ->andWhere(['is_external' => $query])
-            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_DONE])
+            ->andWhere(['status_type_id' => StatusType::STATUS_REQUEST_APPROVED])
             ->sum('quantity');
     }
 

@@ -6,3 +6,7 @@
 No form da task, tem 2 inputs de datas, created_at e due_at, fazer uma verificação de não deixar o user colocar o due_at antes do created_at.
 No cop-map-readonly, fazer um switch com os alojamentos para mostrar os ícones diferentes dependendo da capacidade disponível do alojamento.
 Fazer página de erros no frontend e ocultar a pag comentadas no main/site
+
+Redirecionamentos corretos para quando se cria entidades.
+Colocar mitigate_by nas unidades.
+

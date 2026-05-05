@@ -40,7 +40,7 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
                     'alt' => 'BA5_brasao',
                     'class' => 'ba5-logo'
                 ]) . '<span class="brand-text">COP</span>',
-            'brandUrl' => Yii::$app->homeUrl,
+            'brandUrl' => ['/site/index'],
             'brandOptions' => [
                 'class' => 'navbar-brand d-flex align-items-center'
             ],

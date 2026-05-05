@@ -644,63 +644,63 @@ $copMapOptions = [
         </div>
     </div>
 
-    <div class="cop-beds-dual-grid mb-4">
-
-        <div class="cop-modal-section-card cop-beds-panel">
-            <div class="cop-modal-section-head cop-beds-panel-head">
-                <span class="cop-eyebrow">Indisponibilidade</span>
-                <h6>Motivos atuais</h6>
-            </div>
-
-            <div class="cop-breakdown-grid">
-                <div class="cop-breakdown-cell">
-                    <span class="cop-breakdown-label">Telhado aberto</span>
-                    <strong class="cop-breakdown-value">22</strong>
-                    <small>camas</small>
-                </div>
-
-                <div class="cop-breakdown-cell">
-                    <span class="cop-breakdown-label">Falha de água</span>
-                    <strong class="cop-breakdown-value">18</strong>
-                    <small>camas</small>
-                </div>
-
-                <div class="cop-breakdown-cell">
-                    <span class="cop-breakdown-label">Falha elétrica</span>
-                    <strong class="cop-breakdown-value">10</strong>
-                    <small>camas</small>
-                </div>
-
-                <div class="cop-breakdown-cell">
-                    <span class="cop-breakdown-label">Risco estrutural</span>
-                    <strong class="cop-breakdown-value">6</strong>
-                    <small>camas</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="cop-modal-section-card cop-beds-panel">
-            <div class="cop-modal-section-head cop-beds-panel-head">
-                <span class="cop-eyebrow">Tendência 24h</span>
-                <h6>Recuperação / perda provável</h6>
-            </div>
-
-            <div class="cop-trend-grid-modal">
-                <div class="cop-trend-box-modal is-success">
-                    <span>Camas a recuperar</span>
-                    <strong>+20</strong>
-                    <small>Bloco B após reposição elétrica e limpeza</small>
-                </div>
-
-                <div class="cop-trend-box-modal is-danger">
-                    <span>Camas a perder se chover</span>
-                    <strong>-10</strong>
-                    <small>Bloco D com infiltrações ativas</small>
-                </div>
-            </div>
-        </div>
-
-    </div>
+<!--    <div class="cop-beds-dual-grid mb-4">-->
+<!---->
+<!--        <div class="cop-modal-section-card cop-beds-panel">-->
+<!--            <div class="cop-modal-section-head cop-beds-panel-head">-->
+<!--                <span class="cop-eyebrow">Indisponibilidade</span>-->
+<!--                <h6>Motivos atuais</h6>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="cop-breakdown-grid">-->
+<!--                <div class="cop-breakdown-cell">-->
+<!--                    <span class="cop-breakdown-label">Telhado aberto</span>-->
+<!--                    <strong class="cop-breakdown-value">22</strong>-->
+<!--                    <small>camas</small>-->
+<!--                </div>-->
+<!---->
+<!--                <div class="cop-breakdown-cell">-->
+<!--                    <span class="cop-breakdown-label">Falha de água</span>-->
+<!--                    <strong class="cop-breakdown-value">18</strong>-->
+<!--                    <small>camas</small>-->
+<!--                </div>-->
+<!---->
+<!--                <div class="cop-breakdown-cell">-->
+<!--                    <span class="cop-breakdown-label">Falha elétrica</span>-->
+<!--                    <strong class="cop-breakdown-value">10</strong>-->
+<!--                    <small>camas</small>-->
+<!--                </div>-->
+<!---->
+<!--                <div class="cop-breakdown-cell">-->
+<!--                    <span class="cop-breakdown-label">Risco estrutural</span>-->
+<!--                    <strong class="cop-breakdown-value">6</strong>-->
+<!--                    <small>camas</small>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!---->
+<!--        <div class="cop-modal-section-card cop-beds-panel">-->
+<!--            <div class="cop-modal-section-head cop-beds-panel-head">-->
+<!--                <span class="cop-eyebrow">Tendência 24h</span>-->
+<!--                <h6>Recuperação / perda provável</h6>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="cop-trend-grid-modal">-->
+<!--                <div class="cop-trend-box-modal is-success">-->
+<!--                    <span>Camas a recuperar</span>-->
+<!--                    <strong>+20</strong>-->
+<!--                    <small>Bloco B após reposição elétrica e limpeza</small>-->
+<!--                </div>-->
+<!---->
+<!--                <div class="cop-trend-box-modal is-danger">-->
+<!--                    <span>Camas a perder se chover</span>-->
+<!--                    <strong>-10</strong>-->
+<!--                    <small>Bloco D com infiltrações ativas</small>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!---->
+<!--    </div>-->
 
     <div class="cop-modal-section-head">
         <span class="cop-eyebrow">Habitabilidade</span>
@@ -1289,7 +1289,7 @@ $copMapOptions = [
     </div>
 <?php else: ?>
     <div class="cop-empty-state">
-        Não há efetivos externos neste momento.
+        Não há estradas/estacionamentos críticos INOP neste momento.
     </div>
 <?php endif; ?>
     </div>

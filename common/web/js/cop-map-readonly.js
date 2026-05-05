@@ -43,6 +43,8 @@ window.initCopMapReadOnly = function (opts) {
         roads: true,
         buildings: true,
         vedation: true,
+        pts: true,
+        navids: true,
         criticalPoints: true,
         incidents: true,
         tasks: true,
@@ -57,6 +59,8 @@ window.initCopMapReadOnly = function (opts) {
         roads: true,
         buildings: true,
         vedation: true,
+        pts: true,
+        navids: true,
         criticalPoints: true,
         incidents: false,
         tasks: false,
@@ -71,6 +75,8 @@ window.initCopMapReadOnly = function (opts) {
         roads: 'Vias e corredores logísticos',
         buildings: 'Edifícios',
         vedation: 'Vedação',
+        pts: "PT's",
+        navids: 'NAVids',
         criticalPoints: 'Pontos críticos',
         incidents: 'Incidentes',
         tasks: 'Tarefas WO',
@@ -331,7 +337,11 @@ window.initCopMapReadOnly = function (opts) {
             filters.push('roads');
         } else if (locationTypeId === 5) {
             filters.push('vedation');
-        } else if (Number(item.is_critical) || locationTypeId === 7) {
+        } else if (locationTypeId === 7) {
+            filters.push('navids');
+        } else if (locationTypeId === 8) {
+            filters.push('pts');
+        } else if (Number(item.is_critical)) {
             filters.push('criticalPoints');
         } else {
             filters.push('others');
