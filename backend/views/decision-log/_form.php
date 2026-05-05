@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'impact')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'decided_at')->input('date')?>
-
     <?= $form->field($model, 'decided_by')
         ->dropDownList($usersArray, ['prompt' => '-- DECIDIDO POR --'])
         ->label('Decidido por') ?>

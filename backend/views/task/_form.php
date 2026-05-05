@@ -24,7 +24,9 @@ use yii\widgets\ActiveForm;
         ->dropDownList($usersArray, ['prompt' => '-- ENTREGUE A --'])
         ->label('Entregue a') ?>
 
-    <?= $form->field($model, 'due_at')->input('date') ?>
+    <?= $form->field($model, 'due_at')->input('date', [
+        'min' => date('Y-m-d'),
+    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

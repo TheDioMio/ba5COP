@@ -96,6 +96,7 @@ class DecisionLogController extends Controller
 
             if ($entity !== null) {
                 $model->entity_id = $entity->id;
+                $model->decided_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
                     return $this->redirect(['view', 'id' => $model->id]);

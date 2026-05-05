@@ -50,6 +50,8 @@ class RequestController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'accept-request' => ['POST'],
+                        'deny-request' => ['POST'],
                     ],
                 ],
             ]
@@ -64,7 +66,8 @@ class RequestController extends Controller
 
     public function actionIndex()
     {
-        $status = Yii::$app->request->get('status_type_id');
+        // Por defeito, abre logo nos pendentes
+        $estado = Yii::$app->request->get('estado', 'pending');
 
         $searchModelInternos = new RequestSearch();
         $searchModelInternos->fixedIsExternal = 0;
@@ -77,15 +80,40 @@ class RequestController extends Controller
         $dataProviderInternos = $searchModelInternos->search(Yii::$app->request->queryParams);
         $dataProviderExternos = $searchModelExternos->search(Yii::$app->request->queryParams);
 
-        if (!empty($status)) {
-            $dataProviderInternos->query->andWhere(['status_type_id' => $status]);
-            $dataProviderExternos->query->andWhere(['status_type_id' => $status]);
-        }
+        // IDs dos estados
+        $novoId = $this->getRequestStatusId('NOVO');
+        $emAnaliseId = $this->getRequestStatusId('EM ANÁLISE');
+        $aprovadoId = $this->getRequestStatusId('APROVADO');
+        $rejeitadoId = $this->getRequestStatusId('REJEITADO');
 
-        $statuses = StatusType::find()
-            ->where(['entity_type_id' => Entity::REQUEST_ID])
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
+        // Aplica filtro por grupo
+        switch ($estado) {
+            case 'approved':
+                if ($aprovadoId !== null) {
+                    $dataProviderInternos->query->andWhere(['status_type_id' => $aprovadoId]);
+                    $dataProviderExternos->query->andWhere(['status_type_id' => $aprovadoId]);
+                }
+                break;
+
+            case 'rejected':
+                if ($rejeitadoId !== null) {
+                    $dataProviderInternos->query->andWhere(['status_type_id' => $rejeitadoId]);
+                    $dataProviderExternos->query->andWhere(['status_type_id' => $rejeitadoId]);
+                }
+                break;
+
+            case 'pending':
+            default:
+                $pendingIds = array_filter([$novoId, $emAnaliseId]);
+
+                if (!empty($pendingIds)) {
+                    $dataProviderInternos->query->andWhere(['status_type_id' => $pendingIds]);
+                    $dataProviderExternos->query->andWhere(['status_type_id' => $pendingIds]);
+                }
+
+                $estado = 'pending';
+                break;
+        }
 
         $priorityList = Priority::dropDown();
 
@@ -95,8 +123,7 @@ class RequestController extends Controller
             'dataProviderInternos' => $dataProviderInternos,
             'dataProviderExternos' => $dataProviderExternos,
             'priorityList' => $priorityList,
-            'statuses' => $statuses,
-            'status' => $status,
+            'estado' => $estado,
         ]);
     }
 
@@ -108,8 +135,24 @@ class RequestController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
+        $novoId = $this->getRequestStatusId('NOVO');
+        $emAnaliseId = $this->getRequestStatusId('EM ANÁLISE');
+
+        // Quando o utilizador abre os detalhes de um pedido NOVO,
+        // passa automaticamente para EM ANÁLISE
+        if (
+            $novoId !== null &&
+            $emAnaliseId !== null &&
+            (int)$model->status_type_id === (int)$novoId
+        ) {
+            $model->status_type_id = $emAnaliseId;
+            $model->save(false, ['status_type_id']);
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -203,5 +246,44 @@ class RequestController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    private function getRequestStatusId($description)
+    {
+        return StatusType::find()
+            ->select('id')
+            ->where([
+                'entity_type_id' => Entity::REQUEST_ID,
+                'description' => $description,
+            ])
+            ->scalar();
+    }
+
+    public function actionAcceptRequest($id)
+    {
+        $model = $this->findModel($id);
+
+        $aprovadoId = $this->getRequestStatusId('APROVADO');
+
+        if ($aprovadoId !== null) {
+            $model->status_type_id = $aprovadoId;
+            $model->save(false, ['status_type_id']);
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    public function actionDenyRequest($id)
+    {
+        $model = $this->findModel($id);
+
+        $rejeitadoId = $this->getRequestStatusId('REJEITADO');
+
+        if ($rejeitadoId !== null) {
+            $model->status_type_id = $rejeitadoId;
+            $model->save(false, ['status_type_id']);
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 }

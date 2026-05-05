@@ -434,6 +434,7 @@ $copMapOptions = [
                         <tr>
                             <th>WO</th>
                             <th>Prioridade</th>
+                            <th>Tarefa</th>
                             <th>Responsável</th>
                             <th>Estado</th>
                             <th>Bloqueio</th>
@@ -444,10 +445,14 @@ $copMapOptions = [
                         <?php if (!empty($latest10Tasks)): ?>
                             <?php foreach ($latest10Tasks as $task): ?>
                                 <tr>
-                                    <td><?= $task->id ?? '—' ?></td>
+                                    <td><?= '#'.$task->id ?? '—' ?></td>
 
                                     <td>
                                         <?= $task->priority->description ?? '—' ?>
+                                    </td>
+
+                                    <td>
+                                        <?= $task->title ?? '—' ?>
                                     </td>
 
                                     <td>
@@ -462,7 +467,7 @@ $copMapOptions = [
                                         <?= $task->block_reason ?? 'Sem bloqueio' ?>
                                     </td>
                                     <td>
-                                        <?= strtoupper(date('dMY H:i', strtotime($task->due_at)))?>
+                                        <?= strtoupper(date('dMY', strtotime($task->due_at)))?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

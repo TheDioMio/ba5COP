@@ -135,7 +135,7 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             'filter' => $users,
                         ],
                         [
-                            'label' => 'Detalhe',
+                            'label' => ' ',
                             'format' => 'raw',
                             'value' => function ($model) {
                                 return Html::button('Ver tarefas', [
@@ -146,6 +146,7 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             'contentOptions' => ['style' => 'width: 110px; text-align: center;'],
                         ],
                         [
+                            'template' => '{update} {delete}',
                             'class' => ActionColumn::class,
                             'urlCreator' => function ($action, Incident $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'id' => $model->id]);

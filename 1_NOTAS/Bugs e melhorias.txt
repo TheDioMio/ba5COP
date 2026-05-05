@@ -8,5 +8,9 @@ No cop-map-readonly, fazer um switch com os alojamentos para mostrar os ícones 
 Fazer página de erros no frontend e ocultar a pag comentadas no main/site
 
 Redirecionamentos corretos para quando se cria entidades.
-Colocar mitigate_by nas unidades.
+Colocar mitigate_by nas unidades.  (??????)
+aumentar varchar no titulo das tarefas
+
+
+
 

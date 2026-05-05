@@ -22,25 +22,43 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <?= Html::a(
-                        'Todos',
-                        ['index'],
-                        ['class' => 'btn btn-sm ' . (empty($status) ? 'btn-primary' : 'btn-outline-primary')]
+                        'Pendentes',
+                        [
+                            'index',
+                            'estado' => 'pending',
+                            'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
+                            'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
+                        ],
+                        [
+                            'class' => 'btn btn-sm ' . ($estado === 'pending' ? 'btn-primary' : 'btn-outline-primary')
+                        ]
                     ) ?>
 
-                    <?php foreach ($statuses as $s): ?>
-                        <?= Html::a(
-                            $s->description,
-                            [
-                                'index',
-                                'status_type_id' => $s->id,
-                                'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
-                                'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
-                            ],
-                            [
-                                'class' => 'btn btn-sm ' . ((string)$status === (string)$s->id ? 'btn-primary' : 'btn-outline-primary')
-                            ]
-                        ) ?>
-                    <?php endforeach; ?>
+                    <?= Html::a(
+                        'Aprovados',
+                        [
+                            'index',
+                            'estado' => 'approved',
+                            'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
+                            'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
+                        ],
+                        [
+                            'class' => 'btn btn-sm ' . ($estado === 'approved' ? 'btn-primary' : 'btn-outline-primary')
+                        ]
+                    ) ?>
+
+                    <?= Html::a(
+                        'Rejeitados',
+                        [
+                            'index',
+                            'estado' => 'rejected',
+                            'RequestSearchInternos' => Yii::$app->request->get('RequestSearchInternos'),
+                            'RequestSearchExternos' => Yii::$app->request->get('RequestSearchExternos'),
+                        ],
+                        [
+                            'class' => 'btn btn-sm ' . ($estado === 'rejected' ? 'btn-primary' : 'btn-outline-primary')
+                        ]
+                    ) ?>
                 </div>
 
                 <div class="card-tools">
@@ -85,7 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => $priorityList,
                     ],
                     [
-                        'attribute' => 'status',
+                        'attribute' => 'status_type_id',
                         'label' => 'Estado',
                         'value' => function ($model) {
                             return $model->statusType?->description;
@@ -136,7 +154,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => $priorityList,
                     ],
                     [
-                        'attribute' => 'status',
+                        'attribute' => 'status_type_id',
                         'label' => 'Estado',
                         'value' => function ($model) {
                             return $model->statusType?->description;
