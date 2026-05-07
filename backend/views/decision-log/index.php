@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão do Log de Decisões';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="decision-log-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">
@@ -40,8 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'decided_by',
                         'value' => 'decidedBy.username'
                     ],
-
                     [
+                        'template' => '{update} {delete}',
                         'class' => ActionColumn::className(),
                         'urlCreator' => function ($action, DecisionLog $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);

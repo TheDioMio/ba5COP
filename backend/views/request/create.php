@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\Request $model */
 
 $this->title = 'Gestão de Pedidos';
-$this->params['breadcrumbs'][] = ['label' => 'Requests', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="request-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

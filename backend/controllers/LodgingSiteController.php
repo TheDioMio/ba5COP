@@ -57,6 +57,16 @@ class LodgingSiteController extends Controller
         );
     }
 
+
+    public function beforeAction($action) {
+        if (in_array($action->id, ['create'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Lists all LodgingSite models.
      *

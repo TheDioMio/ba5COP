@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\DecisionLog $model */
 
 $this->title = 'Gestão do Log de Decisões';
-$this->params['breadcrumbs'][] = ['label' => 'Decision Logs', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="decision-log-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

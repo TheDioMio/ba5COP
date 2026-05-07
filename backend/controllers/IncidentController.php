@@ -57,6 +57,15 @@ class IncidentController extends Controller
         );
     }
 
+    public function beforeAction($action) {
+        if (in_array($action->id, ['view'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Lists all Incident models.
      *
@@ -110,7 +119,7 @@ class IncidentController extends Controller
                 $model->entity_id = $entity->id;
 
                 if($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
                 }
             }
         } else {

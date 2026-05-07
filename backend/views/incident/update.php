@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\Incident $model */
 
 $this->title = 'Gestão de Incidentes';
-$this->params['breadcrumbs'][] = ['label' => 'Incidents', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="incident-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

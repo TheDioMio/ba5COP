@@ -30,11 +30,10 @@ $this->title = ' '
             </p>
 
             <div class="error-actions">
-                <?= Html::a(
-                    '<i class="fas fa-arrow-left"></i> Página Principal',
-                    ['site/index'],
-                    ['class' => 'error-btn error-btn-primary']
-                ) ?>
+                <?= Html::button('<i class="fas fa-arrow-left"></i> Voltar', [
+                    'class' => 'btn btn-default',
+                    'onclick' => 'history.back();',
+                ]) ?>
             </div>
         </div>
 

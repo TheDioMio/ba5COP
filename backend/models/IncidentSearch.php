@@ -2,51 +2,52 @@
 
 namespace app\models;
 
+use common\models\StatusType;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Incident;
 
-/**
- * IncidentSearch represents the model behind the search form of `common\models\Incident`.
- */
 class IncidentSearch extends Incident
 {
     public $task_title;
     public $assigned_to;
     public $location_name;
-    /**
-     * {@inheritdoc}
-     */
+    public $tasks_count;
+    public $open_tasks_count;
+
     public function rules()
     {
         return [
             [['id', 'location_id', 'incident_type_id', 'priority_id', 'status_type_id', 'reported_by', 'entity_id'], 'integer'],
             [['title', 'description', 'task_title', 'location_name'], 'safe'],
-            [['assigned_to'], 'integer'],
+            [['assigned_to', 'tasks_count', 'open_tasks_count'], 'integer'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     * @param string|null $formName Form name to be used into `->load()` method.
-     *
-     * @return ActiveDataProvider
-     */
-    public function search($params, $formName = null) {
+    public function search($params, $formName = null)
+    {
         $query = Incident::find()
             ->alias('i')
-            ->joinWith(['location l', 'tasks t']);
+            ->joinWith([
+                'location l',
+                'tasks t',
+                'incidentType it',
+                'priority p',
+                'statusType st',
+            ]);
+
+        $query->select([
+            'i.*',
+            'tasks_count' => 'COUNT(DISTINCT t.id)',
+            'open_tasks_count' => 'COUNT(DISTINCT CASE WHEN t.status_type_id != ' . StatusType::STATUS_TASK_DONE . ' THEN t.id END)',
+        ]);
+
+        $query->groupBy('i.id');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -61,21 +62,39 @@ class IncidentSearch extends Incident
                         'asc' => ['i.title' => SORT_ASC],
                         'desc' => ['i.title' => SORT_DESC],
                     ],
+                    'incident_type_id' => [
+                        'asc' => ['it.description' => SORT_ASC],
+                        'desc' => ['it.description' => SORT_DESC],
+                    ],
+                    'priority_id' => [
+                        'asc' => ['p.id' => SORT_ASC],
+                        'desc' => ['p.id' => SORT_DESC],
+                    ],
+                    'status_type_id' => [
+                        'asc' => ['st.description' => SORT_ASC],
+                        'desc' => ['st.description' => SORT_DESC],
+                    ],
                     'location_name' => [
                         'asc' => ['l.name' => SORT_ASC],
                         'desc' => ['l.name' => SORT_DESC],
                     ],
-                    'incident_type_id' => [
-                        'asc' => ['i.incident_type_id' => SORT_ASC],
-                        'desc' => ['i.incident_type_id' => SORT_DESC],
+                    'task_title' => [
+                        'asc' => ['t.title' => SORT_ASC],
+                        'desc' => ['t.title' => SORT_DESC],
                     ],
-                    'priority_id' => [
-                        'asc' => ['i.priority_id' => SORT_ASC],
-                        'desc' => ['i.priority_id' => SORT_DESC],
+                    'assigned_to' => [
+                        'asc' => ['t.assigned_to' => SORT_ASC],
+                        'desc' => ['t.assigned_to' => SORT_DESC],
                     ],
-                    'status_type_id' => [
-                        'asc' => ['i.status_type_id' => SORT_ASC],
-                        'desc' => ['i.status_type_id' => SORT_DESC],
+
+                    // NOVOS CAMPOS ORDENÁVEIS
+                    'tasks_count' => [
+                        'asc' => ['tasks_count' => SORT_ASC],
+                        'desc' => ['tasks_count' => SORT_DESC],
+                    ],
+                    'open_tasks_count' => [
+                        'asc' => ['open_tasks_count' => SORT_ASC],
+                        'desc' => ['open_tasks_count' => SORT_DESC],
                     ],
                 ],
             ],
@@ -83,8 +102,6 @@ class IncidentSearch extends Incident
                 'pageSize' => 20,
             ],
         ]);
-
-        $query->groupBy('i.id');
 
         $this->load($params, $formName);
 
@@ -102,7 +119,8 @@ class IncidentSearch extends Incident
             'i.entity_id' => $this->entity_id,
         ]);
 
-        $query->andFilterWhere(['like', 'i.title', $this->title])
+        $query
+            ->andFilterWhere(['like', 'i.title', $this->title])
             ->andFilterWhere(['like', 'i.description', $this->description])
             ->andFilterWhere(['like', 'l.name', $this->location_name])
             ->andFilterWhere(['like', 't.title', $this->task_title]);

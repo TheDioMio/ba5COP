@@ -11,22 +11,11 @@ use yii\helpers\Url;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão de Alojamentos';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="lodging-site-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">
         <div class="card-header">
-            <div class="card-tools float-right">
-                <?= Html::a(
-                    '<i class="fas fa-plus-circle"></i>',
-                    ['create'],
-                    [
-                        'class' => 'btn btn-success',
-                        'title' => 'Criar',
-                    ]
-                ) ?>
-            </div>
         </div>
 
         <div class="card-body p-0">
@@ -45,14 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'capacity_available',
                         'label' => 'Capacidade Disponível',
                     ],
-                    [
-                        'label' => 'Disponibilidade Atual',
-                        'format' => 'raw',
-                        'value' => function ($model) {
-                            return $model->getAvailableBeds(true);
-                        },
-                    ],
-                    'notes',
                     [
                         'class' => ActionColumn::class,
                         'urlCreator' => function ($action, LodgingSite $model, $key, $index, $column) {

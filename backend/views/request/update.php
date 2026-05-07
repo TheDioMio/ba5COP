@@ -5,10 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Request $model */
 
-$this->title = 'Update Request: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Requests', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestão de Pedidos';
 ?>
 <div class="request-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

@@ -9,9 +9,6 @@ use yii\widgets\DetailView;
 /** @var yii\data\ActiveDataProvider $entriesDataProvider */
 
 $this->title = 'Gestão de Alojamentos';
-$breadcrumbsTitle = 'Alojamento: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Alojamentos', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $breadcrumbsTitle;
 ?>
 
 <div class="lodging-site-view fade-in-up">
@@ -21,10 +18,6 @@ $this->params['breadcrumbs'][] = $breadcrumbsTitle;
             <h1 class="display-6 font-weight-bold text-primary">
                 <i class="fas fa-bed me-2"></i><?= Html::encode($model->name) ?>
             </h1>
-
-            <p class="text-muted mb-0">
-                <?= 'Alojamento #' . $model->id ?>
-            </p>
         </div>
 
         <div class="d-flex gap-2">
@@ -80,13 +73,13 @@ $this->params['breadcrumbs'][] = $breadcrumbsTitle;
                                 'value' => $model->notes ?: 'Não definido',
                                 'contentOptions' => ['class' => 'align-middle'],
                             ],
-                            [
-                                'label' => 'Geometria',
-                                'attribute' => 'geometry',
-                                'format' => 'ntext',
-                                'value' => $model->geometry ?: 'Não definida',
-                                'contentOptions' => ['class' => 'align-middle'],
-                            ],
+//                            [
+//                                'label' => 'Geometria',
+//                                'attribute' => 'geometry',
+//                                'format' => 'ntext',
+//                                'value' => $model->geometry ?: 'Não definida',
+//                                'contentOptions' => ['class' => 'align-middle'],
+//                            ],
                         ],
                     ]) ?>
                 </div>

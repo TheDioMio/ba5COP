@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Entity;
 use common\models\Incident;
 use common\models\IncidentType;
 use common\models\Location;
@@ -19,11 +20,10 @@ use yii\helpers\Url;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão de Incidentes';
-$this->params['breadcrumbs'][] = $this->title;
 
 $incidentTypes = ArrayHelper::map(IncidentType::find()->orderBy('description')->all(), 'id', 'description');
 $priorities = ArrayHelper::map(Priority::find()->orderBy('id')->all(), 'id', 'description');
-$statuses = ArrayHelper::map(StatusType::find()->orderBy('description')->all(), 'id', 'description');
+$statuses = StatusType::getStatusDropdown(Entity::INCIDENT_ID);
 $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'username');
 ?>
 
@@ -80,22 +80,21 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             'value' => fn($model) => $model->location->name ?? null,
                             'filter' => Html::activeTextInput($searchModel, 'location_name', [
                                 'class' => 'form-control',
-                                'placeholder' => 'Pesquisar local',
                             ]),
                             'format' => 'raw',
                         ],
                         [
+                            'attribute' => 'tasks_count',
                             'label' => 'Nº tarefas',
-                            'value' => fn($model) => count($model->tasks),
+                            'value' => fn($model) => $model->tasks_count ?? 0,
+                            'filter' => false,
                             'contentOptions' => ['style' => 'width: 90px; text-align: center;'],
                         ],
                         [
+                            'attribute' => 'open_tasks_count',
                             'label' => 'Tarefas abertas',
-                            'value' => function ($model) {
-                                return count(array_filter($model->tasks, function ($task) {
-                                    return $task->status_type_id != 10;
-                                }));
-                            },
+                            'value' => fn($model) => $model->open_tasks_count ?? 0,
+                            'filter' => false,
                             'contentOptions' => ['style' => 'width: 120px; text-align: center;'],
                         ],
                         [
@@ -114,7 +113,6 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             },
                             'filter' => Html::activeTextInput($searchModel, 'task_title', [
                                 'class' => 'form-control',
-                                'placeholder' => 'Título da tarefa',
                             ]),
                             'format' => 'raw',
                         ],
@@ -162,7 +160,7 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                         ]);
 
                         return '<tr id="incident-detail-' . $model->id . '" class="incident-detail-row" style="display:none;">'
-                            . '<td colspan="10" class="p-0">'
+                            . '<td colspan="11" class="p-0">'
                             . '<div class="m-2 p-3 border rounded bg-light">'
                             . '<div class="d-flex justify-content-between align-items-start mb-3">'
                             . '<div class="ms-auto">'
@@ -208,7 +206,6 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                                         'contentOptions' => ['style' => 'width: 110px; text-align: center;'],
                                     ],
                                     [
-                                        'label' => 'Ações',
                                         'format' => 'raw',
                                         'value' => function ($task) {
                                             $buttons = Html::a(

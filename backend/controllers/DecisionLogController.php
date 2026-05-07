@@ -53,6 +53,17 @@ class DecisionLogController extends Controller
         );
     }
 
+
+    public function beforeAction($action) {
+        if (in_array($action->id, ['view'])) {
+            return $this->redirect(['site/error-page', 'type' => 'action-unavailable']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+
+
     /**
      * Lists all DecisionLog models.
      *
@@ -99,7 +110,7 @@ class DecisionLogController extends Controller
                 $model->decided_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
                 }
             }
         } else {
@@ -125,7 +136,7 @@ class DecisionLogController extends Controller
         $statusArray = StatusType::getStatusDropdown(Entity::DECISION_ID);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

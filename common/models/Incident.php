@@ -41,6 +41,17 @@ class Incident extends \yii\db\ActiveRecord {
     /**
      * {@inheritdoc}
      */
+    public function attributes()
+    {
+        return array_merge(parent::attributes(), [
+            'tasks_count',
+            'open_tasks_count',
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
@@ -147,7 +158,6 @@ class Incident extends \yii\db\ActiveRecord {
     {
         return $this->hasMany(Task::class, ['incident_id' => 'id']);
     }
-
 
     /**
      * Lista de incidentes para dropdown
