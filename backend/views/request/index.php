@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var string|null $status */
 
 $this->title = 'Gestão de Pedidos';
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
 <div class="request-index container-fluid">
@@ -90,9 +90,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => false,
                     ],
                     [
+                        'attribute' => 'request_type_id',
                         'label' => 'Tipo de Pedido',
-                        'attribute' => 'requestType.description',
-                        'filter' => false,
+                        'value' => function ($model) {
+                            return $model->requestType?->description ?? 'Sem tipo';
+                        },
+                        'filter' => $requestTypeList,
                     ],
                     [
                         'attribute' => 'priority_id',
@@ -141,9 +144,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => false,
                     ],
                     [
+                        'attribute' => 'request_type_id',
                         'label' => 'Tipo de Pedido',
-                        'attribute' => 'requestType.description',
-                        'filter' => false,
+                        'value' => function ($model) {
+                            return $model->requestType?->description ?? 'Sem tipo';
+                        },
+                        'filter' => $requestTypeList,
                     ],
                     [
                         'attribute' => 'priority_id',

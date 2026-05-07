@@ -4,14 +4,11 @@ use common\models\Entity;
 use common\models\StatusType;
 use yii\helpers\Html;
 use yii\web\YiiAsset;
-use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var common\models\Request $model */
 
-$this->title = 'Pedido #' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Gestão de Pedidos', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Gestão de Pedidos';
 
 YiiAsset::register($this);
 
@@ -46,114 +43,74 @@ $isPending = in_array((int)$model->status_type_id, [
     (int)$emAnaliseId,
 ], true);
 
+$requestKind = $model->is_external ? 'Pedido Externo' : 'Pedido Interno';
+$requestType = $model->requestType?->description ?? 'Sem tipo';
+$priority = $model->priority?->description ?? 'Sem prioridade';
+$origin = $model->origin ?: 'Sem origem';
+$createdAt = Yii::$app->formatter->asDatetime($model->created_at, 'short');
+
 ?>
 
-<div class="request-view-user-pro">
-
-    <div class="mb-3 text-right">
-        <?= Html::a('<i class="fas fa-arrow-left"></i>',
-            ['index'],
-            [
-                'class' => 'btn btn-outline-secondary mr-1',
-                'title' => 'Voltar',
-            ]
-        ) ?>
-
-        <?= Html::a('<i class="fas fa-edit"></i>',
-            ['update', 'id' => $model->id],
-            [
-                'class' => 'btn btn-primary mr-1',
-                'title' => 'Editar',
-            ]
-        ) ?>
-
-        <?= Html::a('<i class="fas fa-trash"></i>',
-            ['delete', 'id' => $model->id],
-            [
-                'class' => 'btn btn-danger mr-1',
-                'title' => 'Apagar',
-                'data' => [
-                    'confirm' => 'Tem a certeza que deseja apagar este pedido?',
-                    'method' => 'post',
-                ],
-            ]
-        ) ?>
-    </div>
-
+<div class="request-view">
     <div class="row">
 
-        <div class="col-md-4">
-            <div class="card card-primary card-outline shadow-sm">
+        <div class="col-lg-4 mb-4">
+            <div class="card card-primary card-outline shadow-sm h-100">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-clipboard-list mr-1"></i>
-                        <?= Html::encode('Resumo do Pedido') ?>
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Resumo
                     </h3>
                 </div>
 
-                <div class="card-body box-profile">
+                <div class="card-body">
 
-                    <div class="text-center mb-3">
-                        <span class="img-circle elevation-2 d-inline-flex align-items-center justify-content-center bg-light"
-                              style="width: 80px; height: 80px; font-size: 2rem;">
-                            <span class="fa-stack">
-                                <i class="fas fa-circle fa-stack-2x text-light"></i>
-                                <i class="fas fa-file-alt fa-stack-1x text-secondary"></i>
-                            </span>
-                        </span>
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle shadow-sm"
+                             style="width: 86px; height: 86px; font-size: 2.2rem;">
+                            <i class="fas fa-file-alt text-secondary"></i>
+                        </div>
+
+                        <h4 class="mt-3 mb-1">
+                            <?= Html::encode($requestKind) ?>
+                        </h4>
+
+                        <div class="text-muted small mb-2">
+                            <?= Html::encode($requestType) ?>
+                        </div>
+
+                        <?= Html::tag('span', Html::encode($statusDescription), [
+                            'class' => "badge {$statusClass}",
+                        ]) ?>
                     </div>
 
-                    <h3 class="profile-username text-center">
-                        Pedido #<?= Html::encode($model->id) ?>
-                    </h3>
-
-                    <p class="text-muted text-center">
-                        <?= $model->is_external ? 'Pedido Externo' : 'Pedido Interno' ?>
-                    </p>
-
-                    <ul class="list-group list-group-unbordered mb-3">
-                        <li class="list-group-item">
-                            <b><?= Html::encode('Origem') ?></b>
-                            <a class="float-right">
-                                <?= Html::encode($model->origin ?: 'Sem origem') ?>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <b><?= Html::encode('Tipo') ?></b>
-                            <a class="float-right">
-                                <?= Html::encode($model->requestType?->description ?? 'Sem tipo') ?>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <b><?= Html::encode('Prioridade') ?></b>
-                            <a class="float-right">
-                                <?= Html::encode($model->priority?->description ?? 'Sem prioridade') ?>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <b><?= Html::encode('Estado') ?></b>
-                            <span class="float-right">
-                                <?= Html::tag('span', Html::encode($statusDescription), [
-                                    'class' => "badge {$statusClass}",
-                                ]) ?>
+                    <ul class="list-group list-group-unbordered mb-4">
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <b>Origem</b>
+                            <span class="text-muted text-right">
+                                <?= Html::encode($origin) ?>
                             </span>
                         </li>
 
-                        <li class="list-group-item">
-                            <b><?= Html::encode('Criado em') ?></b>
-                            <a class="float-right">
-                                <?= Yii::$app->formatter->asDatetime($model->created_at, 'short') ?>
-                            </a>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <b>Prioridade</b>
+                            <span class="text-muted text-right">
+                                <?= Html::encode($priority) ?>
+                            </span>
+                        </li>
+
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <b>Criado em</b>
+                            <span class="text-muted text-right">
+                                <?= $createdAt ?>
+                            </span>
                         </li>
                     </ul>
 
                     <?php if ($isPending): ?>
-                        <div class="row mt-4">
+                        <div class="row">
                             <div class="col-6">
-                                <?= Html::a('Negar',
+                                <?= Html::a('<i class="fas fa-times mr-1"></i> Negar',
                                     ['deny-request', 'id' => $model->id],
                                     [
                                         'class' => 'btn btn-danger btn-block',
@@ -166,7 +123,7 @@ $isPending = in_array((int)$model->status_type_id, [
                             </div>
 
                             <div class="col-6">
-                                <?= Html::a('Aceitar',
+                                <?= Html::a('<i class="fas fa-check mr-1"></i> Aceitar',
                                     ['accept-request', 'id' => $model->id],
                                     [
                                         'class' => 'btn btn-success btn-block',
@@ -178,83 +135,119 @@ $isPending = in_array((int)$model->status_type_id, [
                                 ) ?>
                             </div>
                         </div>
-                    <?php endif; ?>
 
+                        <hr>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="card card-info card-outline shadow-sm">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-list-alt mr-1"></i>
-                        <?= Html::encode('Detalhes do Pedido') ?>
+        <div class="col-lg-8 mb-4">
+            <div class="card card-info card-outline shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-align-left mr-1"></i>
+                        Detalhes do Pedido
                     </h3>
+
+                    <div class="ml-auto">
+                        <?= Html::a('<i class="fas fa-arrow-left"></i>', ['index'], [
+                            'class' => 'btn btn-outline-secondary mr-1',
+                            'title' => 'Voltar',
+                        ]) ?>
+
+                        <?= Html::a('<i class="fas fa-edit"></i>', ['update', 'id' => $model->id], [
+                            'class' => 'btn btn-primary',
+                            'title' => 'Editar pedido',
+                        ]) ?>
+                    </div>
                 </div>
 
-                <div class="card-body p-0">
-                    <?= DetailView::widget([
-                        'model' => $model,
-                        'options' => ['class' => 'table table-hover mb-0'],
-                        'attributes' => [
-                            [
-                                'attribute' => 'id',
-                                'label' => 'ID',
-                            ],
-                            [
-                                'attribute' => 'is_external',
-                                'label' => 'Tipo de Pedido',
-                                'value' => function ($model) {
-                                    return $model->is_external ? 'Externo' : 'Interno';
-                                },
-                            ],
-                            [
-                                'attribute' => 'origin',
-                                'label' => 'Origem',
-                            ],
-                            [
-                                'attribute' => 'details',
-                                'label' => 'Detalhes',
-                                'format' => 'ntext',
-                            ],
-                            [
-                                'label' => 'Tipo de Pedido',
-                                'value' => function ($model) {
-                                    return $model->requestType?->description ?? 'Sem tipo';
-                                },
-                            ],
-                            [
-                                'label' => 'Prioridade',
-                                'value' => function ($model) {
-                                    return $model->priority?->description ?? 'Sem prioridade';
-                                },
-                            ],
-                            [
-                                'label' => 'Estado',
-                                'format' => 'raw',
-                                'value' => function ($model) use ($statusClass, $statusDescription) {
-                                    return Html::tag('span', Html::encode($statusDescription), [
-                                        'class' => "badge {$statusClass}",
-                                    ]);
-                                },
-                            ],
-                            [
-                                'attribute' => 'created_at',
-                                'label' => 'Criado em',
-                                'value' => function ($model) {
-                                    return Yii::$app->formatter->asDatetime($model->created_at, 'medium');
-                                },
-                            ],
-                            [
-                                'attribute' => 'entity_id',
-                                'label' => 'Entidade associada',
-                            ],
-                        ],
-                    ]) ?>
+                <div class="card-body">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box bg-light shadow-sm mb-0">
+                                <span class="info-box-icon bg-info">
+                                    <i class="fas fa-tags"></i>
+                                </span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-muted">Tipo</span>
+                                    <span class="info-box-number">
+                                        <?= Html::encode($requestType) ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box bg-light shadow-sm mb-0">
+                                <span class="info-box-icon bg-warning">
+                                    <i class="fas fa-flag"></i>
+                                </span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-muted">Prioridade</span>
+                                    <span class="info-box-number">
+                                        <?= Html::encode($priority) ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box bg-light shadow-sm mb-0">
+                                <span class="info-box-icon bg-secondary">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-muted">Origem</span>
+                                    <span class="info-box-number">
+                                        <?= Html::encode($origin) ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box bg-light shadow-sm mb-0">
+                                <span class="info-box-icon bg-primary">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-muted">Criado em</span>
+                                    <span class="info-box-number">
+                                        <?= $createdAt ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="request-details-section">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-file-alt text-info mr-2"></i>
+                            <h5 class="mb-0">Descrição do Pedido</h5>
+                        </div>
+
+                        <?php if (!empty($model->details)): ?>
+                            <div class="p-4 bg-light rounded border text-break" style="min-height: 220px;">
+                                <?= nl2br(Html::encode($model->details)) ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="p-4 bg-light rounded border text-muted" style="min-height: 220px;">
+                                Sem detalhes registados.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
                 </div>
             </div>
         </div>
 
     </div>
+
 </div>

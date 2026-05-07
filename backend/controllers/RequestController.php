@@ -116,6 +116,7 @@ class RequestController extends Controller
         }
 
         $priorityList = Priority::dropDown();
+        $requestTypeList = RequestType::dropDown();
 
         return $this->render('index', [
             'searchModelInternos' => $searchModelInternos,
@@ -123,6 +124,7 @@ class RequestController extends Controller
             'dataProviderInternos' => $dataProviderInternos,
             'dataProviderExternos' => $dataProviderExternos,
             'priorityList' => $priorityList,
+            'requestTypeList' => $requestTypeList,
             'estado' => $estado,
         ]);
     }
@@ -177,7 +179,7 @@ class RequestController extends Controller
                 $model->entity_id = $entity->id;
 
                 if ($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
                 }
             }
         } else {

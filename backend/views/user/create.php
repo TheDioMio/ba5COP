@@ -1,9 +1,7 @@
 <?php
 use yii\helpers\Html;
 
-$this->title = 'Criar Utilizador';
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Gestão de Utilizadores';
 ?>
 <div class="user-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

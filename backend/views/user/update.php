@@ -1,10 +1,7 @@
 <?php
 use yii\helpers\Html;
 
-$this->title = 'Atualizar utilizador ' . mb_strtoupper($model->username);
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->username, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestão de Utilizadores';
 ?>
 
 <div class="user-update container-fluid">

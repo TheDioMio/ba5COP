@@ -7,11 +7,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\User $model */
 
-$this->title = '';
-$breadcrums = 'Perfil de ' . $model->username;
-$this->params['breadcrumbs'][] = ['label' => 'Utilizadores', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $breadcrums;
-
+$this->title = 'Gestão de Utilizadores';
 YiiAsset::register($this);
 ?>
 

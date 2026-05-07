@@ -14,39 +14,36 @@ class RequestSearch extends Request
     public ?int $fixedIsExternal = null;
     public ?string $customFormName = null;
 
-    /**
-     * {@inheritdoc}
-     */
+    public function formName()
+    {
+        return $this->customFormName ?: parent::formName();
+    }
+
     public function rules()
     {
         return [
-            [['id', 'is_external', 'priority_id', 'status_type_id', 'entity_id'], 'integer'],
+            [[
+                'id',
+                'is_external',
+                'request_type_id',
+                'priority_id',
+                'status_type_id',
+                'entity_id'
+            ], 'integer'],
+
             [['origin', 'details', 'created_at'], 'safe'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     * @param string|null $formName Form name to be used into `->load()` method.
-     *
-     * @return ActiveDataProvider
-     */
-    public function search($params, $formName = null)
+    public function search($params)
     {
-        $query = Request::find()->with(['priority', 'statusType']);
-
-        // add conditions that should always apply here
+        $query = Request::find()
+            ->with(['priority', 'statusType', 'requestType']);
 
         if ($this->fixedIsExternal !== null) {
             $query->andWhere(['is_external' => $this->fixedIsExternal]);
@@ -56,18 +53,16 @@ class RequestSearch extends Request
             'query' => $query,
         ]);
 
-        $this->load($params, $formName);
+        $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'is_external' => $this->is_external,
+            'request_type_id' => $this->request_type_id,
             'priority_id' => $this->priority_id,
             'status_type_id' => $this->status_type_id,
             'created_at' => $this->created_at,
