@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão de Entidades';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="entity-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">
@@ -27,13 +26,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
                     [
+                        'attribute' => 'entity_name',
                         'label' => 'Entidade',
                         'value' => 'entityName',
+                        'filter' => Html::activeTextInput($searchModel, 'entity_name', [
+                            'class' => 'form-control',
+                        ]),
                     ],
                     [
+                        'attribute' => 'entity_type_name',
                         'label' => 'Tipo de Entidade',
                         'value' => 'entityType.name',
-                        'attribute' => 'entity_type_name'
+                        'filter' => $entityTypes,
                     ],
                     [
                         'template' => '{delete}',

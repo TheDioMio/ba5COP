@@ -33,7 +33,25 @@ $this->title = 'Gestão do Log de Decisões';
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
                     'reason',
-                    'decided_at',
+                    [
+                        'attribute' => 'decided_at',
+                        'label' => 'Data/Hora',
+                        'filter' => Html::tag('div',
+                            Html::activeInput('date', $searchModel, 'decided_date', [
+                                'class' => 'form-control',
+                                'title' => 'Filtrar por data',
+                                'style' => 'min-width: 135px;',
+                            ]) .
+                            Html::activeInput('time', $searchModel, 'decided_time', [
+                                'class' => 'form-control',
+                                'title' => 'Filtrar por hora',
+                                'style' => 'min-width: 90px;',
+                            ]),
+                            [
+                                'style' => 'display: flex; gap: 6px; align-items: center;',
+                            ]
+                        ),
+                    ],
                     [
                         'label' => 'Decidido por',
                         'attribute' => 'decided_by',

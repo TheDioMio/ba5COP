@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão do Tipo de Entidades';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="entity-type-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">

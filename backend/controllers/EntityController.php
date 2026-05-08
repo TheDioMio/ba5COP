@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Entity;
 use app\models\EntitySearch;
+use common\models\EntityType;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -68,10 +69,12 @@ class EntityController extends Controller
     {
         $searchModel = new EntitySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $entityTypes = EntityType::dropDown();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'entityTypes' => $entityTypes,
         ]);
     }
 

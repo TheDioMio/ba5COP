@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão de Tipos de Prioridades';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="priority-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">

@@ -4,18 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 use common\models\AuditLog;
 
 class AuditLogSearch extends AuditLog
 {
     public $user_username;
     public $entity_name;
+    public $occurred_date;
+    public $occurred_time;
 
     public function rules()
     {
         return [
             [['id', 'user_id'], 'integer'],
-            [['entity_id', 'action', 'occurred_at', 'user_username', 'entity_name'], 'safe'],
+            [['entity_id', 'action', 'occurred_at', 'user_username', 'entity_name', 'occurred_date', 'occurred_time'], 'safe'],
         ];
     }
 
@@ -32,7 +35,23 @@ class AuditLogSearch extends AuditLog
                 'user u',
                 'entity e',
                 'entity.entityType et',
-            ]);
+            ])
+            ->leftJoin(['l' => 'location'], 'l.entity_id = e.id')
+            ->leftJoin(['i' => 'incident'], 'i.entity_id = e.id')
+            ->leftJoin(['t' => 'task'], 't.entity_id = e.id')
+            ->leftJoin(['r' => 'request'], 'r.entity_id = e.id')
+            ->leftJoin(['d' => 'decision_log'], 'd.entity_id = e.id');
+
+        $entityNameExpression = new Expression("
+        COALESCE(
+            l.name,
+            i.title,
+            t.title,
+            r.origin,
+            d.reason,
+            CONCAT(et.name, ' #', e.id)
+        )
+    ");
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -48,8 +67,24 @@ class AuditLogSearch extends AuditLog
                         'desc' => ['u.username' => SORT_DESC],
                     ],
                     'entity_name' => [
-                        'asc' => ['et.name' => SORT_ASC],
-                        'desc' => ['et.name' => SORT_DESC],
+                        'asc' => [
+                            'et.name' => SORT_ASC,
+                            'l.name' => SORT_ASC,
+                            'i.title' => SORT_ASC,
+                            't.title' => SORT_ASC,
+                            'r.origin' => SORT_ASC,
+                            'd.reason' => SORT_ASC,
+                            'e.id' => SORT_ASC,
+                        ],
+                        'desc' => [
+                            'et.name' => SORT_DESC,
+                            'l.name' => SORT_DESC,
+                            'i.title' => SORT_DESC,
+                            't.title' => SORT_DESC,
+                            'r.origin' => SORT_DESC,
+                            'd.reason' => SORT_DESC,
+                            'e.id' => SORT_DESC,
+                        ],
                     ],
                     'action' => [
                         'asc' => ['al.action' => SORT_ASC],
@@ -75,8 +110,23 @@ class AuditLogSearch extends AuditLog
         $query->andFilterWhere([
             'al.id' => $this->id,
             'al.user_id' => $this->user_id,
-            'al.occurred_at' => $this->occurred_at,
         ]);
+
+        if (!empty($this->occurred_date)) {
+            $query->andWhere([
+                'like',
+                'al.occurred_at',
+                $this->occurred_date
+            ]);
+        }
+
+        if (!empty($this->occurred_time)) {
+            $query->andWhere([
+                'like',
+                new Expression("DATE_FORMAT(al.occurred_at, '%H:%i')"),
+                $this->occurred_time
+            ]);
+        }
 
         $query->andFilterWhere(['like', 'al.action', $this->action]);
 
@@ -87,9 +137,20 @@ class AuditLogSearch extends AuditLog
         if (!empty($this->entity_name)) {
             $query->andWhere([
                 'or',
+                ['like', new Expression('CAST(e.id AS CHAR)'), $this->entity_name],
+                ['like', new Expression('CAST(al.entity_id AS CHAR)'), $this->entity_name],
                 ['like', 'et.name', $this->entity_name],
-                ['like', 'e.id', $this->entity_name],
-                ['like', 'al.entity_id', $this->entity_name],
+
+                // nomes reais das entidades
+                ['like', 'l.name', $this->entity_name],
+                ['like', 'i.title', $this->entity_name],
+                ['like', 't.title', $this->entity_name],
+                ['like', 'r.origin', $this->entity_name],
+                ['like', 'r.details', $this->entity_name],
+                ['like', 'd.reason', $this->entity_name],
+
+                // fallback tipo "LOCATION #10000"
+                ['like', new Expression("CONCAT(et.name, ' #', e.id)"), $this->entity_name],
             ]);
         }
 

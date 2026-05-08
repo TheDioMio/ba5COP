@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\RequestType $model */
 
 $this->title = 'Gestão Tipo de Pedidos';
-$this->params['breadcrumbs'][] = ['label' => 'Request Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="request-type-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

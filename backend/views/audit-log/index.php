@@ -62,6 +62,21 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                     [
                         'attribute' => 'occurred_at',
                         'label' => 'Data/Hora',
+                        'filter' => Html::tag('div',
+                            Html::activeInput('date', $searchModel, 'occurred_date', [
+                                'class' => 'form-control',
+                                'title' => 'Filtrar por data',
+                                'style' => 'min-width: 135px;',
+                            ]) .
+                            Html::activeInput('time', $searchModel, 'occurred_time', [
+                                'class' => 'form-control',
+                                'title' => 'Filtrar por hora',
+                                'style' => 'min-width: 90px;',
+                            ]),
+                            [
+                                'style' => 'display: flex; gap: 6px; align-items: center;',
+                            ]
+                        ),
                     ],
                     [
                         'template' => '{delete}',

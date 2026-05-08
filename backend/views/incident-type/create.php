@@ -5,9 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\IncidentType $model */
 
-$this->title = 'Criar Tipo de Incidente';
-$this->params['breadcrumbs'][] = ['label' => 'Incident Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Gestão do Tipo de Incidentes';
 ?>
 <div class="incident-type-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

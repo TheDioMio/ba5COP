@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão Tipo de Pedidos';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="request-type-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">

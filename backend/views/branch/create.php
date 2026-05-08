@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\Branch $model */
 
 $this->title = 'Gestão de Ramos';
-$this->params['breadcrumbs'][] = ['label' => 'Branches', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="priority-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

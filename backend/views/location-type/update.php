@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\LocationType $model */
 
 $this->title = 'Gestão Tipo de Localizações';
-$this->params['breadcrumbs'][] = ['label' => 'Location Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="location-type-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

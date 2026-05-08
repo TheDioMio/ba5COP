@@ -69,10 +69,12 @@ class StatusTypeController extends Controller
     {
         $searchModel = new StatusTypeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $entityTypes = EntityType::dropDown();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'entityTypes' => $entityTypes,
         ]);
     }
 

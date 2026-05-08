@@ -49,7 +49,7 @@ class RequestType extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'description' => 'Descrição',
+            'description' => 'Nome',
         ];
     }
 

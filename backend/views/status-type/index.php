@@ -11,7 +11,6 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Gestão de Tipos de Status';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="status-type-index container-fluid">
     <div class="card card-outline card-primary shadow-sm">
@@ -37,11 +36,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Nome Tipo de Entidade',
                         'attribute' => 'entity_name',
                         'value' => 'entityType.name',
+                        'filter' => $entityTypes,
                     ],
                     [
                         'label' => 'Nome do Status',
                         'attribute' => 'status_name',
                         'value' => 'description',
+                        'filter' => Html::activeTextInput($searchModel, 'status_name', [
+                            'class' => 'form-control',
+                        ]),
                     ],
                     [
                         'class' => ActionColumn::className(),

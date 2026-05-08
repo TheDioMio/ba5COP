@@ -5,10 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\EntityType $model */
 
-$this->title = 'Atualizar ' . mb_strtoupper($model->name);
-$this->params['breadcrumbs'][] = ['label' => 'Entity Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestão do Tipo de Entidades';
 ?>
 <div class="entity-type-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

@@ -5,9 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\EntityType $model */
 
-$this->title = 'Criar Tipo de Entidade';
-$this->params['breadcrumbs'][] = ['label' => 'Entity Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Gestão do Tipo de Entidades';
 ?>
 <div class="entity-type-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

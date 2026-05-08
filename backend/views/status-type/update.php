@@ -5,10 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\StatusType $model */
 
-$this->title = 'Update Status Type: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Status Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestão de Tipos de Status';
 ?>
 <div class="status-type-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

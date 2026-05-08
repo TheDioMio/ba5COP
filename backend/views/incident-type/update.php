@@ -5,10 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\IncidentType $model */
 
-$this->title = 'Atualizar: ' . mb_strtoupper($model->description);
-$this->params['breadcrumbs'][] = ['label' => 'Incident Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestão do Tipo de Incidentes';
 ?>
 <div class="incident-type-update container-fluid">
     <div class="card card-outline card-success shadow-sm">

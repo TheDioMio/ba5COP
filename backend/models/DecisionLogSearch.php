@@ -5,12 +5,15 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\DecisionLog;
+use yii\db\Expression;
 
 /**
  * DecisionLogSearch represents the model behind the search form of `common\models\DecisionLog`.
  */
 class DecisionLogSearch extends DecisionLog
 {
+    public $decided_date;
+    public $decided_time;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +21,7 @@ class DecisionLogSearch extends DecisionLog
     {
         return [
             [['id', 'decided_by', 'entity_id'], 'integer'],
-            [['reason', 'decided_at'], 'safe'],
+            [['reason', 'decided_at', 'decided_date', 'decided_time'], 'safe'],
         ];
     }
 
@@ -60,10 +63,25 @@ class DecisionLogSearch extends DecisionLog
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'decided_at' => $this->decided_at,
             'decided_by' => $this->decided_by,
             'entity_id' => $this->entity_id,
         ]);
+
+        if (!empty($this->decided_date)) {
+            $query->andWhere([
+                'like',
+                'decided_at',
+                $this->decided_date
+            ]);
+        }
+
+        if (!empty($this->decided_time)) {
+            $query->andWhere([
+                'like',
+                new Expression("DATE_FORMAT(decided_at, '%H:%i')"),
+                $this->decided_time
+            ]);
+        }
 
         $query->andFilterWhere(['like', 'reason', $this->reason]);
 

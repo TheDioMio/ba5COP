@@ -5,9 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\StatusType $model */
 
-$this->title = 'Create Status Type';
-$this->params['breadcrumbs'][] = ['label' => 'Status Types', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Gestão de Tipos de Status';
 ?>
 <div class="status-type-create container-fluid">
     <div class="card card-outline card-success shadow-sm">

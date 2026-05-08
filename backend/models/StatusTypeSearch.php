@@ -6,64 +6,76 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\StatusType;
 
-/**
- * StatusTypeSearch represents the model behind the search form of `common\models\StatusType`.
- */
 class StatusTypeSearch extends StatusType
 {
-    /**
-     * {@inheritdoc}
-     */
+    public $entity_name;
+    public $status_name;
+
     public function rules()
     {
         return [
             [['id', 'entity_type_id'], 'integer'],
-            [['description'], 'safe'],
+            [['description', 'entity_name', 'status_name'], 'safe'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     * @param string|null $formName Form name to be used into `->load()` method.
-     *
-     * @return ActiveDataProvider
-     */
     public function search($params, $formName = null)
     {
-        $query = StatusType::find();
-
-        // add conditions that should always apply here
+        $query = StatusType::find()
+            ->alias('st')
+            ->joinWith(['entityType et']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+                'attributes' => [
+                    'id' => [
+                        'asc' => ['st.id' => SORT_ASC],
+                        'desc' => ['st.id' => SORT_DESC],
+                    ],
+                    'entity_name' => [
+                        'asc' => ['et.name' => SORT_ASC],
+                        'desc' => ['et.name' => SORT_DESC],
+                    ],
+                    'status_name' => [
+                        'asc' => ['st.description' => SORT_ASC],
+                        'desc' => ['st.description' => SORT_DESC],
+                    ],
+                    'description' => [
+                        'asc' => ['st.description' => SORT_ASC],
+                        'desc' => ['st.description' => SORT_DESC],
+                    ],
+                ],
+            ],
+            'pagination' => [
+                'pageSize' => 20,
+            ],
         ]);
 
         $this->load($params, $formName);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'entity_type_id' => $this->entity_type_id,
+            'st.id' => $this->id,
+            'st.entity_type_id' => $this->entity_type_id,
         ]);
 
-        $query->andFilterWhere(['like', 'description', $this->description]);
+        if (!empty($this->entity_name)) {
+            $query->andWhere(['et.name' => $this->entity_name]);
+        }
+
+        if (!empty($this->status_name)) {
+            $query->andFilterWhere(['like', 'st.description', $this->status_name]);
+        }
 
         return $dataProvider;
     }
