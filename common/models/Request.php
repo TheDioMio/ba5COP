@@ -340,6 +340,16 @@ class Request extends \yii\db\ActiveRecord
         return (int)($query->sum('quantity') ?? 0);
     }
 
+    /**
+     * Este metodo devolve todas as tarefas que estejam pendentes
+     */
+
+//    public function getAllRequestsOfStatus($status) {
+//        return
+//
+//    }
+
+
 
     /**
      * Este metodo atualiza as tabelas auditLog para ter um histórico automático de mudanças.

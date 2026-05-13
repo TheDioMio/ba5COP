@@ -2,8 +2,11 @@
 
 namespace backend\controllers;
 
+use common\models\Location;
 use common\models\LocationType;
+use common\models\LodgingSite;
 use common\models\LoginForm;
+use common\models\Request;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -89,10 +92,15 @@ class SiteController extends Controller
     }
     public function actionIndex() {
         $locationTypes = LocationType::dropDown();
+        $locationsCount = count(Location::dropDown());
+        $lodgingSitesCount = count(LodgingSite::dropDown());
+//        $pendingRequestsCount = Request::get
 
         return $this->render(
             'index', [
             'locationTypes' => $locationTypes,
+            'locationsCount' => $locationsCount,
+            'lodgingSitesCount' => $lodgingSitesCount,
         ]);
     }
 
