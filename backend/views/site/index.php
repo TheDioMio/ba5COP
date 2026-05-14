@@ -74,9 +74,9 @@ $this->title = '    ';
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="cop-stat-card__body">
-                    <div class="cop-stat-card__label">Incidentes</div>
-                    <div class="cop-stat-card__value"><?= Html::encode($auditLogsCount ?? 0) ?></div>
-                    <div class="cop-stat-card__meta">registados</div>
+                    <div class="cop-stat-card__label">Incidentes pendentes</div>
+                    <div class="cop-stat-card__value"><?= Html::encode($incidentsCount ?? 0) ?></div>
+                    <div class="cop-stat-card__meta">por resolver</div>
                 </div>
             </div>
         </div>

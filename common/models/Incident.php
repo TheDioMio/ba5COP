@@ -216,11 +216,17 @@ class Incident extends \yii\db\ActiveRecord {
      *
      * Devolve -1 se não encontrar nada.
      */
-    public static function incidentActiveTotal($incidentType){
-        if(Incident::find()->where(['incident_type_id' => $incidentType]) != null) {
+    public static function incidentActiveTotal($incidentType = null){
+        if($incidentType != null) {
             $incidentCount = Incident::find()
                 ->where(['incident_type_id' => $incidentType])
                 ->andWhere(['status_type_id' => [StatusType::STATUS_INCIDENT_OPEN, StatusType::STATUS_INCIDENT_IN_PROGRESS,]])
+                ->asArray()
+                ->all();
+            return $incidentCount;
+        } else  if ($incidentType == null){
+            $incidentCount = Incident::find()
+                ->where(['status_type_id' => [StatusType::STATUS_INCIDENT_OPEN, StatusType::STATUS_INCIDENT_IN_PROGRESS,]])
                 ->asArray()
                 ->all();
             return $incidentCount;

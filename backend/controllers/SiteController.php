@@ -2,11 +2,13 @@
 
 namespace backend\controllers;
 
+use common\models\Incident;
 use common\models\Location;
 use common\models\LocationType;
 use common\models\LodgingSite;
 use common\models\LoginForm;
 use common\models\Request;
+use common\models\StatusType;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -94,13 +96,19 @@ class SiteController extends Controller
         $locationTypes = LocationType::dropDown();
         $locationsCount = count(Location::dropDown());
         $lodgingSitesCount = count(LodgingSite::dropDown());
-//        $pendingRequestsCount = Request::get
+
+        $newRequests = Request::getAllRequestsOfStatus(StatusType::STATUS_REQUEST_NEW);
+        $inAnalisisRequests = Request::getAllRequestsOfStatus(StatusType::STATUS_REQUEST_IN_PROGRESS);
+        $pendingRequestsCount = $newRequests + $inAnalisisRequests;
+        $incidentsCount = count(Incident::incidentActiveTotal());
 
         return $this->render(
             'index', [
             'locationTypes' => $locationTypes,
             'locationsCount' => $locationsCount,
             'lodgingSitesCount' => $lodgingSitesCount,
+            'pendingRequestsCount' => $pendingRequestsCount,
+            'incidentsCount' => $incidentsCount,
         ]);
     }
 

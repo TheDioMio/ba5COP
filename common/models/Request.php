@@ -340,14 +340,15 @@ class Request extends \yii\db\ActiveRecord
         return (int)($query->sum('quantity') ?? 0);
     }
 
+
     /**
      * Este metodo devolve todas as tarefas que estejam pendentes
      */
-
-//    public function getAllRequestsOfStatus($status) {
-//        return
-//
-//    }
+    public static function getAllRequestsOfStatus($status) {
+        return self::find()
+            ->where(['status_type_id' => $status])
+            ->count();
+    }
 
 
 

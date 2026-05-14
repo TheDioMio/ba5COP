@@ -173,6 +173,12 @@ $userLogado = Yii::$app->user->identity;
                             ],
                         ],
                     ],
+                    [
+                        'label' => 'Abrir COP',
+                        'url' => Yii::$app->params['frontendUrl'],
+                        'icon' => 'external-link-alt',
+                        'options' => ['class' => 'nav-item nav-open-cop'],
+                    ],
                 ],
             ]);
             ?>
