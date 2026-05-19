@@ -351,6 +351,22 @@ class Request extends \yii\db\ActiveRecord
     }
 
 
+    public static function getActiveExternalAt(string $datetime): int
+    {
+        return (int) self::find()
+            ->where(['is_external' => 1])
+            ->andWhere(['<=', 'created_at', $datetime])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_REQUEST_NEW,
+                    StatusType::STATUS_REQUEST_APPROVED,
+                    StatusType::STATUS_REQUEST_IN_PROGRESS,
+                ],
+            ])
+            ->count();
+    }
+
+
 
     /**
      * Este metodo atualiza as tabelas auditLog para ter um histórico automático de mudanças.

@@ -195,6 +195,15 @@ class LodgingSite extends \yii\db\ActiveRecord
         return max(0, $unavailable);
     }
 
+    public static function getTotalAvailableBedsAt(string $datetime): int
+    {
+        $operationalBeds = self::getTotalOperationalBeds();
+
+        $occupiedBedsAt = LodgingEntry::getTotalOccupancyAt($datetime);
+
+        return max(0, $operationalBeds - $occupiedBedsAt);
+    }
+
     /**
      * Devolve a geometria descodificada em array.
      */

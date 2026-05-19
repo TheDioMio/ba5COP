@@ -102,9 +102,34 @@ $copMapOptions = [
                      tabindex="0"
                      data-bs-toggle="modal"
                      data-bs-target="#bedsModal">
-                <span class="cop-kpi-label">Camas</span>
-                <div class="cop-kpi-value is-warning"><?=$availableBeds ?? 0?></div>
-                <p>disponíveis</p>
+
+                <div class="cop-kpi-head">
+                    <span class="cop-kpi-label">Camas</span>
+
+                    <span class="cop-kpi-indicators">
+            <span class="cop-kpi-semaphore <?= $kpis['beds']['stateClass'] ?>"></span>
+
+            <?php if ($kpis['beds']['hasTrend']): ?>
+                <span class="cop-kpi-trend <?= $kpis['beds']['trendClass'] ?>"
+                      title="<?= $kpis['beds']['trendLabel'] ?>">
+                    <?= $kpis['beds']['trendIcon'] ?>
+                </span>
+            <?php endif; ?>
+        </span>
+                </div>
+
+                <div class="cop-kpi-value <?= $kpis['beds']['stateClass'] ?>">
+                    <?= $availableBeds ?? 0 ?>
+                </div>
+
+                <p>
+                    disponíveis
+                    <?php if (($availableBedsDifference24H ?? 0) != 0): ?>
+                        <small class="cop-kpi-delta">
+                            <?= ($availableBedsDifference24H > 0 ? '+' : '') . $availableBedsDifference24H ?> H24
+                        </small>
+                    <?php endif; ?>
+                </p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
@@ -112,9 +137,34 @@ $copMapOptions = [
                      tabindex="0"
                      data-bs-toggle="modal"
                      data-bs-target="#externalManpower">
-                <span class="cop-kpi-label">Efetivos externos</span>
-                <div class="cop-kpi-value is-warning"><?= $externalOccupancy ?? 0?></div>
-                <p>ativos</p>
+
+                <div class="cop-kpi-head">
+                    <span class="cop-kpi-label">Efetivos externos</span>
+
+                    <span class="cop-kpi-indicators">
+            <span class="cop-kpi-semaphore <?= $kpis['externalOccupancy']['stateClass'] ?>"></span>
+
+            <?php if ($kpis['externalOccupancy']['hasTrend']): ?>
+                <span class="cop-kpi-trend <?= $kpis['externalOccupancy']['trendClass'] ?>"
+                      title="<?= $kpis['externalOccupancy']['trendLabel'] ?>">
+                    <?= $kpis['externalOccupancy']['trendIcon'] ?>
+                </span>
+            <?php endif; ?>
+        </span>
+                </div>
+
+                <div class="cop-kpi-value <?= $kpis['externalOccupancy']['stateClass'] ?>">
+                    <?= $externalOccupancy ?? 0 ?>
+                </div>
+
+                <p>
+                    ativos
+                    <?php if (($externalOccupancyDifference24H ?? 0) != 0): ?>
+                        <small class="cop-kpi-delta">
+                            <?= ($externalOccupancyDifference24H > 0 ? '+' : '') . $externalOccupancyDifference24H ?> H24
+                        </small>
+                    <?php endif; ?>
+                </p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
@@ -122,9 +172,34 @@ $copMapOptions = [
                      tabindex="0"
                      data-bs-toggle="modal"
                      data-bs-target="#externalRequestsModal">
-                <span class="cop-kpi-label">Pedidos externos</span>
-                <div class="cop-kpi-value is-warning"><?= count($activeExternalRequests) ?></div>
-                <p>pendentes</p>
+
+                <div class="cop-kpi-head">
+                    <span class="cop-kpi-label">Pedidos externos</span>
+
+                    <span class="cop-kpi-indicators">
+            <span class="cop-kpi-semaphore <?= $kpis['externalRequests']['stateClass'] ?>"></span>
+
+            <?php if ($kpis['externalRequests']['hasTrend']): ?>
+                <span class="cop-kpi-trend <?= $kpis['externalRequests']['trendClass'] ?>"
+                      title="<?= $kpis['externalRequests']['trendLabel'] ?>">
+                    <?= $kpis['externalRequests']['trendIcon'] ?>
+                </span>
+            <?php endif; ?>
+        </span>
+                </div>
+
+                <div class="cop-kpi-value <?= $kpis['externalRequests']['stateClass'] ?>">
+                    <?= count($activeExternalRequests) ?>
+                </div>
+
+                <p>
+                    pendentes
+                    <?php if (($externalRequestsDifference24H ?? 0) != 0): ?>
+                        <small class="cop-kpi-delta">
+                            <?= ($externalRequestsDifference24H > 0 ? '+' : '') . $externalRequestsDifference24H ?> H24
+                        </small>
+                    <?php endif; ?>
+                </p>
             </article>
 
             <article class="cop-kpi-card kpi-clickable"
@@ -132,9 +207,34 @@ $copMapOptions = [
                      tabindex="0"
                      data-bs-toggle="modal"
                      data-bs-target="#criticalTasksModal">
-                <span class="cop-kpi-label">WO críticas</span>
-                <div class="cop-kpi-value is-warning"><?= count($criticalTasks) ?></div>
-                <p>planeadas</p>
+
+                <div class="cop-kpi-head">
+                    <span class="cop-kpi-label">WO críticas</span>
+
+                    <span class="cop-kpi-indicators">
+            <span class="cop-kpi-semaphore <?= $kpis['criticalTasks']['stateClass'] ?>"></span>
+
+            <?php if ($kpis['criticalTasks']['hasTrend']): ?>
+                <span class="cop-kpi-trend <?= $kpis['criticalTasks']['trendClass'] ?>"
+                      title="<?= $kpis['criticalTasks']['trendLabel'] ?>">
+                    <?= $kpis['criticalTasks']['trendIcon'] ?>
+                </span>
+            <?php endif; ?>
+        </span>
+                </div>
+
+                <div class="cop-kpi-value <?= $kpis['criticalTasks']['stateClass'] ?>">
+                    <?= count($activeCriticalTasks) ?>
+                </div>
+
+                <p>
+                    planeadas
+                    <?php if (($criticalTasksDifference24H ?? 0) != 0): ?>
+                        <small class="cop-kpi-delta">
+                            <?= ($criticalTasksDifference24H > 0 ? '+' : '') . $criticalTasksDifference24H ?> H24
+                        </small>
+                    <?php endif; ?>
+                </p>
             </article>
 
             <article id="meteoCard" class="cop-kpi-card kpi-clickable"

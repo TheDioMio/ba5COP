@@ -97,6 +97,10 @@ class DashboardController extends Controller
         $occupiedBeds = LodgingSite::getTotalOccupiedBeds();
         $availableBeds = LodgingSite::getTotalAvailableBeds();
         $unavailableBeds = LodgingSite::getTotalUnavailableBeds();
+        $availableBedsYesterday = LodgingSite::getTotalAvailableBedsAt(
+            date('Y-m-d H:i:s', strtotime('-1 day'))
+        );
+        $availableBedsDifference24H = $availableBeds - $availableBedsYesterday;
 
         //Data provider para o widget do KPI (listagem dos alojamentos com camas disponíveis)
         $availableLodgingsProvider = new ArrayDataProvider([
@@ -138,6 +142,10 @@ class DashboardController extends Controller
         $acceptedExternalRequests = Request::getExternalAccepted();
         //pedidos novos nas ultimas 24h e que ainda estao no status "new"
         $newExternalRequests = Request::getExternalNew();
+        $activeExternalRequestsYesterday = Request::getActiveExternalAt(
+            date('Y-m-d H:i:s', strtotime('-1 day'))
+        );
+        $externalRequestsDifference24H = count($activeExternalRequests) - $activeExternalRequestsYesterday;
 
         //Data provider para o widget do KPI
         $externalRequestsProvider = new ActiveDataProvider([
@@ -161,6 +169,14 @@ class DashboardController extends Controller
             'pagination' => false,
             'sort' => false,
         ]);
+        $activeCriticalTasksYesterday = Task::getActiveCriticalTasksAt(
+            date('Y-m-d H:i:s', strtotime('-1 day'))
+        );
+
+        $criticalTasksDifference24H = count($activeCriticalTasks) - $activeCriticalTasksYesterday;
+
+
+
         // --- FIM TAREFAS CRÍTICAS ---
 
 
@@ -290,6 +306,106 @@ class DashboardController extends Controller
         // --- FIM RISCOS DO DIA ---
 
 
+
+
+
+        // --- KPI STATES / SEMÁFOROS ---
+
+        $securityCount = count($activeSecurityIncidents);
+        $securityState = $securityCount === 0
+            ? 'success'
+            : ($securityCount <= 2 ? 'warning' : 'danger');
+
+        $waterCount = count($activeWaterIncidents);
+        $waterState = $waterCount === 0
+            ? 'success'
+            : ($waterCount <= 2 ? 'warning' : 'danger');
+
+        $externalRequestsCount = count($activeExternalRequests);
+        $externalRequestsState = $externalRequestsCount <= 2
+            ? 'success'
+            : ($externalRequestsCount <= 5 ? 'warning' : 'danger');
+
+        $criticalTasksCount = count($activeCriticalTasks);
+        $criticalTasksState = $criticalTasksCount === 0
+            ? 'success'
+            : ($criticalTasksCount <= 3 ? 'warning' : 'danger');
+
+        $perimeterState = $perimeterPercentage >= 95
+            ? 'success'
+            : ($perimeterPercentage >= 80 ? 'warning' : 'danger');
+
+        $totalPtsCount = count($totalPts);
+        $energyPercentage = $totalPtsCount > 0
+            ? round(($totalOpPts / $totalPtsCount) * 100)
+            : 100;
+
+        $energyState = $energyPercentage >= 95
+            ? 'success'
+            : ($energyPercentage >= 80 ? 'warning' : 'danger');
+
+        $mobilityPercentage = $totalCriticalRoads > 0
+            ? round(($openCriticalRoads / $totalCriticalRoads) * 100)
+            : 100;
+
+        $mobilityState = $mobilityPercentage >= 90
+            ? 'success'
+            : ($mobilityPercentage >= 70 ? 'warning' : 'danger');
+
+        $bedsState = $availableBeds > 20
+            ? 'success'
+            : ($availableBeds > 5 ? 'warning' : 'danger');
+
+        $externalOccupancyTrend = $this->getTrendFromDifference($externalOccupancyDifference24H);
+
+        $externalOccupancyState = $externalOccupancy > 0
+            ? 'success'
+            : 'danger';
+
+        $criticalTasksCount = count($activeCriticalTasks);
+
+        $criticalTasksState = $criticalTasksCount === 0
+            ? 'success'
+            : 'warning';
+
+        $kpis = [
+            // Só semáforo
+            'security' => $this->buildKpi($securityState),
+            'perimeter' => $this->buildKpi($perimeterState),
+            'energy' => $this->buildKpi($energyState),
+            'water' => $this->buildKpi($waterState),
+            'mobility' => $this->buildKpi($mobilityState),
+            'criticalTasks' => $this->buildKpi(
+                $criticalTasksState,
+                $this->getTrendFromDifference($criticalTasksDifference24H),
+                false
+            ),
+            'meteo' => $this->buildKpi('success'),
+
+            // Semáforo + tendência real
+            // Mais camas disponíveis = bom.
+            'beds' => $this->buildKpi(
+                $bedsState,
+                $this->getTrendFromDifference($availableBedsDifference24H),
+                true
+            ),
+
+            // Mais efetivos externos = mais pressão sobre alojamento/apoios, portanto pode ser mau.
+            'externalOccupancy' => $this->buildKpi(
+                $externalOccupancyState,
+                $this->getTrendFromDifference($externalOccupancyDifference24H),
+                true
+            ),
+
+            // Mais pedidos externos pendentes = pior.
+            'externalRequests' => $this->buildKpi(
+                $externalRequestsState,
+                $this->getTrendFromDifference($externalRequestsDifference24H),
+                false
+            ),
+        ];
+
+
         return $this->render('index', [
             'availableBeds' => $availableBeds,
             'totalBeds' => $totalBeds,
@@ -363,6 +479,10 @@ class DashboardController extends Controller
             'inopPts' => $inopPts,
             'inopPtsProvider' => $inopPtsProvider,
             'totalOpPts' => $totalOpPts,
+            'kpis' => $kpis,
+            'availableBedsDifference24H' => $availableBedsDifference24H,
+            'externalRequestsDifference24H' => $externalRequestsDifference24H,
+            'criticalTasksDifference24H' => $criticalTasksDifference24H,
         ]);
     }
 
@@ -430,5 +550,80 @@ class DashboardController extends Controller
             'success' => true,
             'data' => $data,
         ];
+    }
+
+
+
+
+
+    private function buildKpi(string $state, ?string $trend = null, bool $trendUpIsGood = true): array
+    {
+        return [
+            'state' => $state,
+            'stateClass' => $this->kpiStateClass($state),
+
+            'hasTrend' => $trend !== null,
+            'trend' => $trend,
+            'trendIcon' => $trend !== null ? $this->kpiTrendIcon($trend) : null,
+            'trendClass' => $trend !== null ? $this->kpiTrendClass($trend, $trendUpIsGood) : null,
+            'trendLabel' => $trend !== null ? $this->kpiTrendLabel($trend) : null,
+        ];
+    }
+
+    private function kpiStateClass(string $state): string
+    {
+        return match ($state) {
+            'success' => 'is-success',
+            'danger' => 'is-danger',
+            default => 'is-warning',
+        };
+    }
+
+    private function kpiTrendIcon(string $trend): string
+    {
+        return match ($trend) {
+            'up' => '↗︎',
+            'down' => '↘︎',
+            default => '→',
+        };
+    }
+
+    private function kpiTrendClass(string $trend, bool $upIsGood = true): string
+    {
+        if ($trend === 'stable') {
+            return 'is-neutral';
+        }
+
+        if ($trend === 'up') {
+            return $upIsGood ? 'is-success' : 'is-danger';
+        }
+
+        if ($trend === 'down') {
+            return $upIsGood ? 'is-danger' : 'is-success';
+        }
+
+        return 'is-neutral';
+    }
+
+    private function kpiTrendLabel(string $trend): string
+    {
+        return match ($trend) {
+            'up' => 'A subir',
+            'down' => 'A descer',
+            default => 'Estável',
+        };
+    }
+
+    private function getTrendFromDifference(int|float $difference): string
+    {
+        if ($difference > 0) {
+            return 'up';
+        }
+
+        if ($difference < 0) {
+            return 'down';
+        }
+
+        return 'stable';
     }
 }

@@ -1564,3 +1564,59 @@ FILTROS MAPA LEAFLET
 .cop-layer-filter-text {
     line-height: 1.2;
 }
+.cop-kpi-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.cop-kpi-indicators {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.cop-kpi-semaphore {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.cop-kpi-semaphore.is-success {
+    background: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, .75);
+}
+
+.cop-kpi-semaphore.is-warning {
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, .75);
+}
+
+.cop-kpi-semaphore.is-danger {
+    background: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, .75);
+}
+
+.cop-kpi-trend {
+    font-size: .9rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.cop-kpi-trend.is-success {
+    color: #22c55e;
+}
+
+.cop-kpi-trend.is-warning {
+    color: #f59e0b;
+}
+
+.cop-kpi-trend.is-danger {
+    color: #ef4444;
+}
+
+.cop-kpi-trend.is-neutral {
+    color: rgba(255, 255, 255, .55);
+}

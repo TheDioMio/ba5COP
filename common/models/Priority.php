@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
  */
 class Priority extends \yii\db\ActiveRecord
 {
+    public const PRIORITY_CRITICAL = 1;
 
 
     /**

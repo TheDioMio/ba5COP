@@ -263,4 +263,18 @@ class Task extends \yii\db\ActiveRecord {
 
         AuditLog::logAction($action, $entityID, $userID);
     }
+
+    public static function getActiveCriticalTasksAt(string $datetime): int
+    {
+        return (int) self::find()
+            ->where(['priority_id' => Priority::PRIORITY_CRITICAL])
+            ->andWhere(['<=', 'created_at', $datetime])
+            ->andWhere([
+                'status_type_id' => [
+                    StatusType::STATUS_TASK_NEW,
+                    StatusType::STATUS_TASK_DOING,
+                ],
+            ])
+            ->count();
+    }
 }

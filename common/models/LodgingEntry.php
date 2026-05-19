@@ -159,4 +159,16 @@ class LodgingEntry extends \yii\db\ActiveRecord
             }
         }
     }
+
+    public static function getTotalOccupancyAt(string $datetime): int
+    {
+        return (int) self::find()
+            ->where(['<=', 'checkin_at', date('Y-m-d', strtotime($datetime))])
+            ->andWhere([
+                'or',
+                ['checkout_at' => null],
+                ['>', 'checkout_at', $datetime],
+            ])
+            ->sum('people_count');
+    }
 }
