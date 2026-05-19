@@ -35,6 +35,9 @@ window.initCopMapReadOnly = function (opts) {
 
     let geoJsonLayer = null;
     let allMapLayers = [];
+    let lastUpdateControl = null;
+    let refreshTimer = null;
+    const refreshInterval = Number(opts.refreshInterval ?? 30000);
 
     const activeFilters = {
         statusRed: true,
@@ -85,6 +88,7 @@ window.initCopMapReadOnly = function (opts) {
     };
 
     createFilterControl();
+    createLastUpdateControl();
 
     function createFilterControl() {
         const FilterControl = L.Control.extend({
@@ -148,6 +152,62 @@ window.initCopMapReadOnly = function (opts) {
         });
 
         map.addControl(new FilterControl());
+    }
+
+    function createLastUpdateControl() {
+        const LastUpdateControl = L.Control.extend({
+            options: {
+                position: 'bottomright'
+            },
+
+            onAdd: function () {
+                const wrapper = L.DomUtil.create('div', 'cop-last-update-control');
+
+                wrapper.innerHTML = `
+                <i class="fas fa-sync-alt"></i>
+                <span>Última atualização: --</span>
+            `;
+
+                L.DomEvent.disableClickPropagation(wrapper);
+                L.DomEvent.disableScrollPropagation(wrapper);
+
+                lastUpdateControl = wrapper;
+
+                return wrapper;
+            }
+        });
+
+        map.addControl(new LastUpdateControl());
+    }
+
+    function setLastUpdateSuccess() {
+        if (!lastUpdateControl) {
+            return;
+        }
+
+        const now = new Date();
+
+        lastUpdateControl.classList.remove('is-error');
+        lastUpdateControl.classList.add('is-success');
+
+        lastUpdateControl.innerHTML = `
+        <i class="fas fa-sync-alt"></i>
+        <span>Última atualização: ${now.toLocaleTimeString('pt-PT')}</span>
+    `;
+    }
+
+    function setLastUpdateError() {
+        if (!lastUpdateControl) {
+            return;
+        }
+
+        lastUpdateControl.classList.remove('is-success');
+        lastUpdateControl.classList.add('is-error');
+
+        lastUpdateControl.innerHTML = `
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Atualização falhou</span>
+    `;
     }
 
     function fitContain() {
@@ -540,6 +600,7 @@ window.initCopMapReadOnly = function (opts) {
     function loadFeatures() {
         if (opts.featureCollection && Array.isArray(opts.featureCollection.features)) {
             renderFeatures(opts.featureCollection);
+            setLastUpdateSuccess();
             return;
         }
 
@@ -559,9 +620,11 @@ window.initCopMapReadOnly = function (opts) {
                 })
                 .then(function (data) {
                     renderFeatures(data);
+                    setLastUpdateSuccess();
                 })
                 .catch(function (error) {
                     console.error('Erro ao carregar itens do mapa:', error);
+                    setLastUpdateError();
                 });
 
             return;
@@ -572,10 +635,20 @@ window.initCopMapReadOnly = function (opts) {
 
     loadFeatures();
 
+    if (refreshInterval > 0 && opts.locationsIndexUrl) {
+        refreshTimer = setInterval(loadFeatures, refreshInterval);
+    }
+
     return {
         map: map,
         fitContain: fitContain,
         fitCover: fitCover,
-        reload: loadFeatures
+        reload: loadFeatures,
+        stopAutoRefresh: function () {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+            }
+        }
     };
 };

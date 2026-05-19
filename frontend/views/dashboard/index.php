@@ -33,6 +33,7 @@ $copMapOptions = [
     'scrollWheelZoom' => true,
     'locationsIndexUrl' => Url::to(['/site/cop-data']),
     'iconsBaseUrl' => $mapIconsBaseUrl,
+    'refreshInterval' => 30000,
 ];
 ?>
     <div class="cop-dashboard">
