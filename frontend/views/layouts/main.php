@@ -70,6 +70,22 @@ $mainClass = $isDashboard ? 'frontend-main dashboard-layout' : 'frontend-main';
 
         echo '<div class="d-flex align-items-center gap-2 ms-lg-3">';
 
+        /* Switch Dark / Light Mode */
+        echo Html::button(
+            '<span class="cop-theme-toggle-track">
+        <span class="cop-theme-toggle-thumb">
+            <i class="fas fa-moon"></i>
+        </span>
+    </span>',
+            [
+                'id' => 'copThemeToggle',
+                'class' => 'cop-theme-toggle',
+                'type' => 'button',
+                'title' => 'Alternar tema',
+                'aria-label' => 'Alternar entre modo escuro e modo claro',
+            ]
+        );
+
         if (Yii::$app->user->isGuest) {
             echo Html::a('Entrar', ['/site/login'], ['class' => 'btn btn-sm btn-ba5-primary']);
         } else {
