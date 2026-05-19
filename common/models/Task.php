@@ -223,14 +223,18 @@ class Task extends \yii\db\ActiveRecord {
     /**
      * Devolve o array total das últimas 10 tarefas
      */
-    public static function getLatest10Tasks() {
-        return Task::find()
-            ->with(['priority', 'statusType'])
-            ->orderBy([
-                'created_at' => SORT_DESC
-            ])
-            ->limit(10)
-            ->all();
+    public static function getLatest10Tasks($statusTypeId = null)
+    {
+        $query = self::find()
+            ->with(['priority', 'assignedTo', 'statusType'])
+            ->orderBy(['priority_id' => SORT_ASC])
+            ->limit(10);
+
+        if ($statusTypeId !== null) {
+            $query->andWhere(['status_type_id' => $statusTypeId]);
+        }
+
+        return $query->all();
     }
 
 

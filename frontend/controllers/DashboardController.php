@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\DecisionLog;
+use common\models\Entity;
 use common\models\Incident;
 use common\models\IncidentType;
 use common\models\Location;
@@ -11,6 +12,7 @@ use common\models\LodgingEntry;
 use common\models\LodgingSite;
 use common\models\Request;
 use common\models\RequestType;
+use common\models\StatusType;
 use common\models\Task;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -293,7 +295,15 @@ class DashboardController extends Controller
 
 
         // --- TOP 10 TAREFAS  ---
-        $latest10Tasks = Task::getLatest10Tasks();
+        $taskStatusFilter = Yii::$app->request->get('task_status_filter');
+
+        $taskStatusFilter = $taskStatusFilter !== null && $taskStatusFilter !== ''
+            ? (int)$taskStatusFilter
+            : null;
+
+        $taskStatusOptions = StatusType::getStatusDropdown(Entity::TASK_ID);
+
+        $latest10Tasks = Task::getLatest10Tasks($taskStatusFilter);
         // --- FIM TOP 10 TAREFAS  ---
 
 
@@ -483,6 +493,8 @@ class DashboardController extends Controller
             'availableBedsDifference24H' => $availableBedsDifference24H,
             'externalRequestsDifference24H' => $externalRequestsDifference24H,
             'criticalTasksDifference24H' => $criticalTasksDifference24H,
+            'taskStatusFilter' => $taskStatusFilter,
+            'taskStatusOptions' => $taskStatusOptions,
         ]);
     }
 

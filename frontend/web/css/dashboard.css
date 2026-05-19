@@ -1620,3 +1620,261 @@ FILTROS MAPA LEAFLET
 .cop-kpi-trend.is-neutral {
     color: rgba(255, 255, 255, .55);
 }
+
+/* =========================================================
+   WO TRACKER - FILTRO POR ESTADO
+   ========================================================= */
+
+/* Header do card com título à esquerda e filtro à direita */
+.cop-module-head-with-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cop-gap-sm);
+    margin-bottom: var(--cop-gap-sm);
+}
+
+/* Container Bootstrap do dropdown */
+.cop-wo-status-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Botão principal fechado */
+.cop-wo-status-toggle {
+    height: 38px;
+    min-width: 176px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+
+    padding: 4px;
+
+    border: 1px solid var(--cop-line-strong);
+    border-radius: var(--cop-radius-pill);
+
+    background: var(--cop-surface-glass-3);
+    color: var(--ba5-muted);
+
+    cursor: pointer;
+    outline: none;
+
+    box-shadow: none;
+
+    transition:
+            background 0.18s ease,
+            border-color 0.18s ease,
+            color 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+/* Hover/focus/open do botão */
+.cop-wo-status-toggle:hover,
+.cop-wo-status-toggle:focus,
+.cop-wo-status-toggle.show {
+    color: var(--ba5-text);
+    border-color: var(--cop-color-primary-border);
+    background: var(--cop-surface-glass-4);
+    box-shadow: 0 0 0 2px var(--cop-color-primary-soft);
+}
+
+/* Remove estilos automáticos do Bootstrap, se aparecerem */
+.cop-wo-status-toggle.btn,
+.cop-wo-status-toggle.btn:focus,
+.cop-wo-status-toggle.btn:active {
+    border: 1px solid var(--cop-line-strong);
+    box-shadow: none;
+}
+
+/* Ícone azul à esquerda */
+.cop-wo-status-icon {
+    width: 38px;
+    height: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 38px;
+
+    border-radius: var(--cop-radius-pill);
+
+    background: var(--cop-bg-active);
+    color: #ffffff;
+
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.22);
+
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+/* Texto do estado selecionado */
+.cop-wo-status-label {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    padding: 0 8px;
+
+    color: inherit;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    line-height: 30px;
+    text-align: left;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Seta à direita */
+.cop-wo-status-caret {
+    width: 28px;
+    height: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 28px;
+
+    color: var(--ba5-muted);
+
+    font-size: 0.68rem;
+    line-height: 1;
+
+    transition:
+            color 0.18s ease,
+            transform 0.18s ease;
+}
+
+.cop-wo-status-toggle:hover .cop-wo-status-caret,
+.cop-wo-status-toggle:focus .cop-wo-status-caret,
+.cop-wo-status-toggle.show .cop-wo-status-caret {
+    color: var(--ba5-text);
+}
+
+.cop-wo-status-toggle.show .cop-wo-status-caret {
+    transform: rotate(180deg);
+}
+
+/* Menu aberto */
+.cop-wo-status-menu {
+    min-width: 176px;
+
+    margin-top: 8px !important;
+    padding: 6px;
+
+    border: 1px solid var(--cop-line-strong);
+    border-radius: var(--cop-radius-lg);
+
+    background:
+            linear-gradient(
+                    180deg,
+                    rgba(16, 28, 42, 0.98) 0%,
+                    rgba(10, 19, 30, 0.98) 100%
+            );
+
+    box-shadow: var(--cop-shadow-card);
+    backdrop-filter: blur(10px);
+
+    overflow: hidden;
+}
+
+/* Corrige variáveis Bootstrap dentro do menu */
+.cop-wo-status-menu.dropdown-menu {
+    --bs-dropdown-bg: transparent;
+    --bs-dropdown-border-color: transparent;
+    --bs-dropdown-link-color: var(--cop-color-text-mid);
+    --bs-dropdown-link-hover-color: var(--cop-color-text-strong);
+    --bs-dropdown-link-hover-bg: transparent;
+    --bs-dropdown-link-active-color: #ffffff;
+    --bs-dropdown-link-active-bg: transparent;
+}
+
+/* Cada opção */
+.cop-wo-status-item {
+    min-height: 34px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 12px;
+
+    border-radius: var(--cop-radius-sm);
+
+    color: var(--cop-color-text-mid);
+
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+
+    line-height: 1.2;
+
+    transition:
+            background 0.15s ease,
+            color 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+/* Hover das opções */
+.cop-wo-status-item:hover,
+.cop-wo-status-item:focus {
+    background: var(--cop-surface-glass-4);
+    color: var(--cop-color-text-strong);
+}
+
+/* Opção ativa */
+.cop-wo-status-item.is-active {
+    background: var(--cop-bg-active);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.22);
+}
+
+/* Check da opção ativa */
+.cop-wo-status-item.is-active::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+
+    margin-left: auto;
+
+    font-size: 0.72rem;
+    line-height: 1;
+    color: #ffffff;
+}
+
+/* Evita o azul default do Bootstrap no clique */
+.cop-wo-status-item.dropdown-item:active,
+.cop-wo-status-item.dropdown-item.active {
+    background: var(--cop-bg-active);
+    color: #ffffff;
+}
+
+/* Pequeno ajuste para ecrãs estreitos */
+@media (max-width: 768px) {
+    .cop-module-head-with-filter {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cop-wo-status-dropdown,
+    .cop-wo-status-toggle {
+        width: 100%;
+    }
+
+    .cop-wo-status-toggle {
+        min-width: 0;
+    }
+
+    .cop-wo-status-menu {
+        width: 100%;
+    }
+}

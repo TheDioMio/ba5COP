@@ -333,7 +333,8 @@ $copMapOptions = [
                         <div>
                             <span class="cop-eyebrow">Pedidos externos</span>
                         </div>
-                        <span class="cop-badge">11 backlog</span>
+<!--                        <span class="cop-badge">11 backlog</span>-->
+<!--                        PARA O FUTURO, FAZER EXTERNO/INTERNO COMO NOS APOIOS ABAIXO-->
                     </header>
 
                     <div class="cop-request-kpis">
@@ -522,9 +523,61 @@ $copMapOptions = [
         <section class="cop-bottom">
             <article class="cop-card cop-bottom-wide">
 
-                <header class="cop-module-head">
+                <?php
+                $selectedTaskStatusLabel = 'TODOS';
+
+                if (!empty($taskStatusFilter) && isset($taskStatusOptions[$taskStatusFilter])) {
+                    $selectedTaskStatusLabel = $taskStatusOptions[$taskStatusFilter];
+                }
+                ?>
+
+                <header class="cop-module-head cop-module-head-with-filter">
                     <div>
                         <span class="cop-eyebrow">Top 10 tarefas — WO Tracker</span>
+                    </div>
+
+                    <div class="dropdown cop-wo-status-dropdown">
+                        <button class="cop-wo-status-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+
+            <span class="cop-wo-status-icon">
+                <i class="fa-solid fa-filter"></i>
+            </span>
+
+                            <span class="cop-wo-status-label">
+                <?= Html::encode($selectedTaskStatusLabel) ?>
+            </span>
+
+                            <span class="cop-wo-status-caret">
+                <i class="fa-solid fa-chevron-down"></i>
+            </span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end cop-wo-status-menu">
+                            <li>
+                                <?= Html::a(
+                                    'TODOS',
+                                    Url::current(['task_status_filter' => null]),
+                                    [
+                                        'class' => 'dropdown-item cop-wo-status-item' . (empty($taskStatusFilter) ? ' is-active' : ''),
+                                    ]
+                                ) ?>
+                            </li>
+
+                            <?php foreach ($taskStatusOptions as $statusId => $statusLabel): ?>
+                                <li>
+                                    <?= Html::a(
+                                        Html::encode($statusLabel),
+                                        Url::current(['task_status_filter' => $statusId]),
+                                        [
+                                            'class' => 'dropdown-item cop-wo-status-item' . ((int)$taskStatusFilter === (int)$statusId ? ' is-active' : ''),
+                                        ]
+                                    ) ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                 </header>
 
