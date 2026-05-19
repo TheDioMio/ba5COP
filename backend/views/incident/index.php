@@ -144,14 +144,70 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             'contentOptions' => ['style' => 'width: 110px; text-align: center;'],
                         ],
                         [
-                            'template' => '{update} {delete}',
+                            'header' => 'Ações',
+                            'template' => '{done} {update} {delete}',
                             'class' => ActionColumn::class,
-                            'urlCreator' => function ($action, Incident $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'id' => $model->id]);
-                            },
+                            'contentOptions' => [
+                                'class' => 'incident-actions-cell',
+                            ],
+                            'buttons' => [
+                                'done' => function ($url, $model, $key) {
+                                    if ($model->status_type_id == StatusType::STATUS_INCIDENT_RESOLVED) {
+                                        return Html::tag(
+                                            'span',
+                                            '<i class="fas fa-check"></i>',
+                                            [
+                                                'class' => 'incident-action-icon incident-action-finished',
+                                                'title' => 'Incidente já terminado',
+                                            ]
+                                        );
+                                    }
+
+                                    return Html::a(
+                                        '<i class="far fa-check-circle"></i>',
+                                        ['/incident/done', 'id' => $model->id],
+                                        [
+                                            'class' => 'incident-action-icon incident-action-done',
+                                            'title' => 'Marcar incidente como terminado',
+                                            'data' => [
+                                                'method' => 'post',
+                                                'confirm' => 'Marcar este incidente como terminado?',
+                                            ],
+                                        ]
+                                    );
+                                },
+
+                                'update' => function ($url, $model, $key) {
+                                    return Html::a(
+                                        '<i class="fas fa-pen"></i>',
+                                        ['/incident/update', 'id' => $model->id],
+                                        [
+                                            'class' => 'incident-action-icon incident-action-edit',
+                                            'title' => 'Editar incidente',
+                                        ]
+                                    );
+                                },
+
+                                'delete' => function ($url, $model, $key) {
+                                    return Html::a(
+                                        '<i class="fas fa-trash-alt"></i>',
+                                        ['/incident/delete', 'id' => $model->id],
+                                        [
+                                            'class' => 'incident-action-icon incident-action-delete',
+                                            'title' => 'Apagar incidente',
+                                            'data' => [
+                                                'method' => 'post',
+                                                'confirm' => 'Tens a certeza que queres apagar este incidente?',
+                                            ],
+                                        ]
+                                    );
+                                },
+                            ],
                         ],
                     ],
                     'afterRow' => function ($model, $key, $index, $grid) {
+                        $incidentIsDone = $model->status_type_id == StatusType::STATUS_INCIDENT_RESOLVED;
+
                         $tasksProvider = new ActiveDataProvider([
                             'query' => Task::find()
                                 ->where(['incident_id' => $model->id])
@@ -159,30 +215,48 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                             'pagination' => false,
                         ]);
 
-                        return '<tr id="incident-detail-' . $model->id . '" class="incident-detail-row" style="display:none;">'
-                            . '<td colspan="11" class="p-0">'
-                            . '<div class="m-2 p-3 border rounded bg-light">'
-                            . '<div class="d-flex justify-content-between align-items-start mb-3">'
-                            . '<div class="ms-auto">'
-                            . Html::a(
+                        $createTaskButton = $incidentIsDone
+                            ? Html::tag(
+                                'span',
+                                '<i class="fas fa-lock"></i>',
+                                [
+                                    'class' => 'incident-task-create-locked',
+                                    'title' => 'Incidente terminado — não é possível criar tarefas',
+                                ]
+                            )
+                            : Html::a(
                                 '<i class="fas fa-plus-circle"></i>',
                                 ['task/create', 'incident_id' => $model->id],
                                 [
                                     'class' => 'btn btn-success btn-xs',
                                     'title' => 'Criar tarefa',
                                 ]
+                            );
+
+                        return '<tr id="incident-detail-' . $model->id . '" class="incident-detail-row" style="display:none;">'
+                            . '<td colspan="11" class="p-0">'
+                            . '<div class="m-2 p-3 border rounded bg-light">'
+                            . '<div class="d-flex justify-content-between align-items-start mb-3">'
+                            . '<div>'
+                            . ($incidentIsDone
+                                ? '<span class="incident-locked-info"><i class="fas fa-lock"></i> Incidente terminado — tarefas bloqueadas</span>'
+                                : ''
                             )
                             . '</div>'
-                            . '<div class="text-right">'
+                            . '<div class="ms-auto">'
+                            . $createTaskButton
                             . '</div>'
                             . '</div>'
                             . GridView::widget([
                                 'dataProvider' => $tasksProvider,
                                 'summary' => '',
-                                'tableOptions' => ['class' => 'table table-hover table-striped table-sm mb-0'],
+                                'tableOptions' => ['class' => 'table table-hover table-striped table-sm mb-0 incident-task-table'],
                                 'layout' => "{items}",
                                 'columns' => [
-                                    'title',
+                                    [
+                                        'attribute' => 'title',
+                                        'label' => 'Tarefa',
+                                    ],
                                     [
                                         'attribute' => 'priority_id',
                                         'label' => 'Prioridade',
@@ -206,49 +280,89 @@ $users = ArrayHelper::map(User::find()->orderBy('username')->all(), 'id', 'usern
                                         'contentOptions' => ['style' => 'width: 110px; text-align: center;'],
                                     ],
                                     [
+                                        'label' => 'Ações',
                                         'format' => 'raw',
-                                        'value' => function ($task) {
+                                        'value' => function ($task) use ($incidentIsDone) {
                                             $buttons = Html::a(
-                                                'Abrir',
+                                                '<i class="fas fa-eye"></i>',
                                                 ['/task/view', 'id' => $task->id],
-                                                ['class' => 'btn btn-xs btn-secondary mr-1']
+                                                [
+                                                    'class' => 'incident-task-action incident-task-view',
+                                                    'title' => 'Ver tarefa',
+                                                ]
                                             );
 
+                                            if ($incidentIsDone) {
+                                                $buttons .= Html::tag(
+                                                    'span',
+                                                    '<i class="fas fa-pen"></i>',
+                                                    [
+                                                        'class' => 'incident-task-action incident-task-disabled',
+                                                        'title' => 'Incidente terminado — não é possível editar tarefas',
+                                                    ]
+                                                );
+
+                                                $buttons .= Html::tag(
+                                                    'span',
+                                                    '<i class="fas fa-check"></i>',
+                                                    [
+                                                        'class' => 'incident-task-action incident-task-disabled',
+                                                        'title' => 'Incidente terminado — não é possível alterar o estado da tarefa',
+                                                    ]
+                                                );
+
+                                                return $buttons;
+                                            }
+
                                             $buttons .= Html::a(
-                                                'Editar',
+                                                '<i class="fas fa-pen"></i>',
                                                 ['/task/update', 'id' => $task->id],
-                                                ['class' => 'btn btn-xs btn-warning mr-1']
+                                                [
+                                                    'class' => 'incident-task-action incident-task-edit',
+                                                    'title' => 'Editar tarefa',
+                                                ]
                                             );
 
                                             if ($task->status_type_id == StatusType::STATUS_TASK_NEW) {
                                                 $buttons .= Html::a(
-                                                    'Iniciar',
+                                                    '<i class="fas fa-play"></i>',
                                                     ['/task/change-status', 'id' => $task->id],
                                                     [
-                                                        'class' => 'btn btn-xs btn-primary',
+                                                        'class' => 'incident-task-action incident-task-start',
+                                                        'title' => 'Iniciar tarefa',
                                                         'data' => [
                                                             'method' => 'post',
-                                                            'confirm' => 'Passar esta tarefa para DOING?',
+                                                            'confirm' => 'Passar esta tarefa para em execução?',
                                                         ],
                                                     ]
                                                 );
                                             } elseif ($task->status_type_id == StatusType::STATUS_TASK_DOING) {
                                                 $buttons .= Html::a(
-                                                    'Concluir',
+                                                    '<i class="fas fa-check"></i>',
                                                     ['/task/change-status', 'id' => $task->id],
                                                     [
-                                                        'class' => 'btn btn-xs btn-success',
+                                                        'class' => 'incident-task-action incident-task-done',
+                                                        'title' => 'Concluir tarefa',
                                                         'data' => [
                                                             'method' => 'post',
-                                                            'confirm' => 'Marcar esta tarefa como DONE?',
+                                                            'confirm' => 'Marcar esta tarefa como concluída?',
                                                         ],
+                                                    ]
+                                                );
+                                            } else {
+                                                $buttons .= Html::tag(
+                                                    'span',
+                                                    '<i class="fas fa-check"></i>',
+                                                    [
+                                                        'class' => 'incident-task-action incident-task-finished',
+                                                        'title' => 'Tarefa já concluída',
                                                     ]
                                                 );
                                             }
 
                                             return $buttons;
                                         },
-                                        'contentOptions' => ['style' => 'width: 220px; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 130px; text-align: center;'],
                                     ],
                                 ],
                             ])

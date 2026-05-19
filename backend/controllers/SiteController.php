@@ -185,7 +185,7 @@ class SiteController extends Controller
 
         $allowedTypes = [
             'action-unavailable',
-            'access-denied',
+            'delete-error',
             'not-found',
             'maintenance',
         ];

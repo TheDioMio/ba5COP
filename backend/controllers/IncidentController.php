@@ -51,6 +51,7 @@ class IncidentController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'done' => ['POST'],
                     ],
                 ],
             ]
@@ -176,7 +177,20 @@ class IncidentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $tasksCount = $model->getTasks()->count();
+
+        if ($tasksCount > 0) {
+            return $this->redirect(['site/error-page', 'type' => 'delete-error']);
+        }
+
+        $model->delete();
+
+        Yii::$app->session->setFlash(
+            'success',
+            'Incidente apagado com sucesso.'
+        );
 
         return $this->redirect(['index']);
     }
@@ -195,5 +209,33 @@ class IncidentController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionDone($id)
+    {
+        $model = $this->findModel($id);
+
+        $openTasksCount = $model->getTasks()
+            ->andWhere(['!=', 'status_type_id', StatusType::STATUS_TASK_DONE])
+            ->count();
+
+        if ($openTasksCount > 0) {
+            Yii::$app->session->setFlash(
+                'error',
+                'Não é possível terminar o incidente porque ainda existem tarefas abertas.'
+            );
+
+            return $this->redirect(['index']);
+        }
+
+        $model->status_type_id = StatusType::STATUS_INCIDENT_RESOLVED;
+
+        if ($model->save(false, ['status_type_id'])) {
+            Yii::$app->session->setFlash('success', 'Incidente marcado como terminado.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Não foi possível terminar o incidente.');
+        }
+
+        return $this->redirect(['index']);
     }
 }

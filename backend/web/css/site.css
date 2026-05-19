@@ -1941,3 +1941,177 @@ a.desc:after {
     color: #fee2e2;
     border: 1px solid rgba(248, 113, 113, 0.45);
 }
+
+/* =========================================
+   INCIDENT ACTION ICONS
+========================================= */
+
+.incident-actions-cell {
+    width: 130px;
+    min-width: 130px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.incident-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    margin: 0 2px;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none !important;
+    border: 1px solid transparent;
+    transition: all .15s ease-in-out;
+}
+
+/* Marcar como terminado - ainda clicável */
+.incident-action-done {
+    color: #198754;
+    background: #ffffff;
+    border-color: #198754;
+}
+
+.incident-action-done:hover {
+    color: #ffffff;
+    background: #198754;
+    border-color: #198754;
+    box-shadow: 0 2px 6px rgba(25, 135, 84, .25);
+    transform: translateY(-1px);
+}
+
+/* Já terminado - estado, não ação */
+.incident-action-finished {
+    color: #ffffff;
+    background: #198754;
+    border-color: #198754;
+    cursor: default;
+    opacity: .9;
+}
+
+/* Editar */
+.incident-action-edit {
+    color: #0d6efd;
+    background: #eef5ff;
+    border-color: #cfe2ff;
+}
+
+.incident-action-edit:hover {
+    color: #ffffff;
+    background: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 2px 6px rgba(13, 110, 253, .25);
+    transform: translateY(-1px);
+}
+
+/* Apagar */
+.incident-action-delete {
+    color: #dc3545;
+    background: #fff1f3;
+    border-color: #f5c2c7;
+}
+
+.incident-action-delete:hover {
+    color: #ffffff;
+    background: #dc3545;
+    border-color: #dc3545;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, .25);
+    transform: translateY(-1px);
+}
+
+.incident-action-icon:focus,
+.incident-action-icon:visited {
+    text-decoration: none !important;
+}
+
+/* =========================================
+   INCIDENT DETAIL TASK ACTIONS
+========================================= */
+
+.incident-task-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    margin: 0 2px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-decoration: none !important;
+    border: 1px solid transparent;
+    transition: all .15s ease-in-out;
+}
+
+.incident-task-view {
+    color: #6c757d;
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.incident-task-view:hover {
+    color: #ffffff;
+    background: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-1px);
+}
+
+.incident-task-edit {
+    color: #0d6efd;
+    background: #eef5ff;
+    border-color: #cfe2ff;
+}
+
+.incident-task-edit:hover {
+    color: #ffffff;
+    background: #0d6efd;
+    border-color: #0d6efd;
+    transform: translateY(-1px);
+}
+
+.incident-task-start {
+    color: #0d6efd;
+    background: #eef5ff;
+    border-color: #0d6efd;
+}
+
+.incident-task-start:hover {
+    color: #ffffff;
+    background: #0d6efd;
+    border-color: #0d6efd;
+    transform: translateY(-1px);
+}
+
+.incident-task-done {
+    color: #198754;
+    background: #ffffff;
+    border-color: #198754;
+}
+
+.incident-task-done:hover {
+    color: #ffffff;
+    background: #198754;
+    border-color: #198754;
+    transform: translateY(-1px);
+}
+
+.incident-task-finished {
+    color: #ffffff;
+    background: #198754;
+    border-color: #198754;
+    cursor: default;
+}
+
+.incident-task-disabled {
+    color: #adb5bd;
+    background: #f1f3f5;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+    opacity: .75;
+}
+
+.incident-task-action:focus,
+.incident-task-action:visited {
+    text-decoration: none !important;
+}

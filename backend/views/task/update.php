@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\Task $model */
 
 $this->title = 'Gestão de Tarefas';
-$this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="task-update container-fluid">
     <div class="card card-outline card-success shadow-sm">
